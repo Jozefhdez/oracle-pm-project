@@ -72,6 +72,14 @@ spec:
                   name: frontendadmin
                   key: password
                   optional: true
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: telegram-secret
+                  key: token
+                  optional: false
+            - name: TELEGRAM_BOT_NAME
+              value: "oci_cloud_devops_bot"
           volumeMounts:
             - name: creds
               mountPath: /mtdrworkshop/creds

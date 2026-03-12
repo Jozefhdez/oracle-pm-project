@@ -62,3 +62,16 @@ docker run -d --name todolistapp -p 8080:8080 --env-file .env todolistapp-spring
 ```
 
 Open **http://localhost:8080**.
+
+---
+
+## OCI/Kubernetes deployment note
+
+Before running `deploy.sh`, `TELEGRAM_BOT_TOKEN` must be available as an environment variable. `deploy.sh` will automatically create the `telegram-secret` K8s secret from it:
+
+```bash
+export TELEGRAM_BOT_TOKEN="your-telegram-bot-token"
+source deploy.sh
+```
+
+If the secret already exists from a previous deploy it will be updated in-place (`--dry-run=client | kubectl apply`).

@@ -38,6 +38,19 @@ if [ -z "$UI_USERNAME" ]; then
     exit 1
 fi
 
+if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
+    export TELEGRAM_BOT_TOKEN=$(state_get TELEGRAM_BOT_TOKEN)
+fi
+if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
+    echo "Error: TELEGRAM_BOT_TOKEN env variable needs to be set!"
+    exit 1
+fi
+
+echo "Creating telegram-secret in Kubernetes..."
+kubectl create secret generic telegram-secret \
+  --from-literal=token="$TELEGRAM_BOT_TOKEN" \
+  -n mtdrworkshop --dry-run=client -o yaml | kubectl apply -f -
+
 echo "Creating springboot deplyoment and service"
 export CURRENTTIME=$( date '+%F_%H:%M:%S' )
 echo CURRENTTIME is $CURRENTTIME  ...this will be appended to generated deployment yaml
