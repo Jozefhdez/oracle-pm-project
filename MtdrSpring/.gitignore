@@ -1,3 +1,16 @@
 **/node_modules/**
 **/build/**
 **/target/**
+
+# Local development overrides
+# team's wallet files for local Docker builds
+backend/wallet-local/
+
+# Local build script with team's DB credentials
+backend/build-local.sh
+
+# Spring Boot local profile overrides (logging tweaks, test keys, etc.)
+backend/src/main/resources/application-local.properties
+
+# Local secrets passed to docker run at runtime (never commit this)
+backend/.env

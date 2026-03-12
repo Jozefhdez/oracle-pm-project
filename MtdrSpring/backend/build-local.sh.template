@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Instructions:
+# 1. cp build-local.sh.template build-local.sh
+# 2. Fill in database credentials
+# 3. Download your team's ATP wallet from OCI Console:
+#    Autonomous Database → your DB → DB Connection → Download Wallet
+#    Unzip it into:  backend/wallet-local/
+# 4. Run this script instead of build.sh:  ./build-local.sh
+
+export IMAGE_NAME=todolistapp-springboot
+export IMAGE_VERSION=local
+
+# fill manually, ask Jozef hehe
+DB_USER="YOUR_DB_USER"
+DB_PASSWORD="YOUR_DB_PASSWORD"
+DB_URL="jdbc:oracle:thin:@YOURTEAMATP_tp?TNS_ADMIN=/mtdrworkshop/creds"
+
+mvn clean package spring-boot:repackage
+
+docker build -f DockerfileDev \
+  --build-arg WALLET_DIR=wallet-local \
+  --build-arg DB_USER="${DB_USER}" \
+  --build-arg DB_PASSWORD="${DB_PASSWORD}" \
+  --build-arg DB_URL="${DB_URL}" \
+  -t "${IMAGE_NAME}:${IMAGE_VERSION}" .
+
+echo ""
+echo "Build complete. Run locally with:"
+echo "  docker stop todolistapp 2>/dev/null; docker rm todolistapp 2>/dev/null"
+echo "  docker run -d --name todolistapp -p 8080:8080 ${IMAGE_NAME}:${IMAGE_VERSION}"
+echo ""
+echo "Then open: http://localhost:8080"
