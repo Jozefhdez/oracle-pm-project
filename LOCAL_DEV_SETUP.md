@@ -12,7 +12,7 @@ chmod +x build-local.sh
 
 ## Step 2: Get the team's wallet
 
-1. Go to **OCI Console → Autonomous Database → your team's DB → Database Connection**
+1. Go to **OCI Console → Autonomous Database → team's DB → Database Connection**
 2. Click **Download wallet** and set any password
 3. Unzip it and change its name to wallet-local, then move it into `MtdrSpring/backend/`, at the end should be here `MtdrSpring/backend/wallet-local/`:
 
