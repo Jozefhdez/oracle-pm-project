@@ -4,6 +4,7 @@ metadata:
   name: todolistapp-springboot-service
   annotations:
     oci.oraclecloud.com/loadbalancer-policy: "IP_HASH"
+    oci.oraclecloud.com/load-balancer-ip: "159.54.128.218"
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Local
@@ -70,6 +71,16 @@ spec:
                   optional: false
             - name: TELEGRAM_BOT_NAME
               value: "oci_cloud_devops_bot"
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gemini-secret
+                  key: apikey
+                  optional: false
+            - name: GEMINI_API_BASE_URL
+              value: "https://generativelanguage.googleapis.com/v1beta"
+            - name: GEMINI_MODEL
+              value: "gemini-2.5-flash-lite"
           volumeMounts:
             - name: creds
               mountPath: /mtdrworkshop/creds

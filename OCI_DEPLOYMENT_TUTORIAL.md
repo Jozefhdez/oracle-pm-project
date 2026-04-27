@@ -15,9 +15,11 @@ cd ~/reacttodo/oracle-pm-project && git pull origin main
 cd MtdrSpring/backend
 . build.sh
 . deploy.sh
-kubectl rollout restart deployment/todolistapp-springboot-deployment -n mtdrworkshop
+. setup-https.sh  # always run after deploy, OCI wipes the HTTPS listener on every reconcile
 kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop
 ```
+
+> The app will be available at **https://oracle-pm.duckdns.org**
 
 > If `build.sh` fails with `denied: Anonymous users are only allowed read access`, log in to OCIR first:
 > ```bash
@@ -55,6 +57,7 @@ cd ~/reacttodo/oracle-pm-project/MtdrSpring/backend
 cd ~/reacttodo/oracle-pm-project/MtdrSpring/backend
 . deploy.sh
 kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop
+. setup-https.sh
 ```
 
 **3. Verify:**
