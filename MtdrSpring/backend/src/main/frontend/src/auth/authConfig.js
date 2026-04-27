@@ -3,9 +3,8 @@ export const oidcConfig = {
   client_id: process.env.REACT_APP_OIDC_CLIENT_ID,
   client_secret: process.env.REACT_APP_OIDC_CLIENT_SECRET,
   redirect_uri: `${window.location.origin}/callback`,
-  response_type: 'token id_token',
   scope: 'openid profile email',
-  automaticSilentRenew: false,
+  automaticSilentRenew: true,
   loadUserInfo: true,
   prompt: 'login',
 };
