@@ -19,6 +19,13 @@ kubectl rollout restart deployment/todolistapp-springboot-deployment -n mtdrwork
 kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop
 ```
 
+> After deploy, the Load Balancer is recreated. Run this to restore HTTPS:
+> ```bash
+> cd ~/reacttodo/oracle-pm-project/MtdrSpring/backend
+> . setup-https.sh
+> ```
+> The app will be available at **https://oracle-pm.duckdns.org**
+
 > If `build.sh` fails with `denied: Anonymous users are only allowed read access`, log in to OCIR first:
 > ```bash
 > docker login mx-queretaro-1.ocir.io -u 'axeeisoondbm/a01644644@tec.mx' -p '<auth-token>'
@@ -55,6 +62,7 @@ cd ~/reacttodo/oracle-pm-project/MtdrSpring/backend
 cd ~/reacttodo/oracle-pm-project/MtdrSpring/backend
 . deploy.sh
 kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop
+. setup-https.sh
 ```
 
 **3. Verify:**
