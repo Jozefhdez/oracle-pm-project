@@ -42,6 +42,16 @@ oci lb certificate create \
   --private-key-file "$CERT_DIR/oracle-pm.duckdns.org.key" \
   --wait-for-state SUCCEEDED 2>&1 | grep -E "lifecycle-state|type|message" || true
 
+echo "==> Tearing down existing HTTPS config (if any)..."
+oci lb listener delete \
+  --load-balancer-id "$LB_ID" \
+  --listener-name "HTTPS-443" \
+  --force --wait-for-state SUCCEEDED 2>&1 | grep -E "lifecycle-state|type" || true
+oci lb backend-set delete \
+  --load-balancer-id "$LB_ID" \
+  --backend-set-name "HTTP-HTTPS" \
+  --force --wait-for-state SUCCEEDED 2>&1 | grep -E "lifecycle-state|type" || true
+
 echo "==> Creating HTTP-HTTPS backend set..."
 oci lb backend-set create \
   --load-balancer-id "$LB_ID" \
