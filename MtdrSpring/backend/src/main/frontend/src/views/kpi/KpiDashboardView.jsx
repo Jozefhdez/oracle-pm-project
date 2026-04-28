@@ -9,11 +9,22 @@ import {
   Select,
   Typography,
 } from '@mui/material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 import { ORANGE_ACCENT } from '../../styles/theme';
 
 const BAR_TASKS = '#31a09c';
 const BAR_HOURS = '#d7790e';
+
+const DEV_COLORS = ['#5999B5', '#D7790F', '#699E61', '#9E7FCC', '#F0CC72'];
 
 const STAT_BORDERS = {
   tasks: '#2196F3',
@@ -126,15 +137,170 @@ function StatBarChart({ data, dataKey, fill, tooltipFormatter }) {
   );
 }
 
+const truncate = (str, n) => (str.length > n ? `${str.slice(0, n)}…` : str);
+
+function GroupedBarChart({ data, devNames, dataKeySuffix, tooltipFormatter }) {
+  const displayData = data.map((d) => ({ ...d, sprint: truncate(d.sprint, 18) }));
+  return (
+    <ResponsiveContainer width="100%" height={320}>
+      <BarChart data={displayData} margin={{ top: 4, right: 8, left: 0, bottom: 72 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#EBEBEB" vertical={false} />
+        <XAxis
+          dataKey="sprint"
+          tick={{ fontSize: 10, fill: '#717171' }}
+          angle={-40}
+          textAnchor="end"
+          interval={0}
+          axisLine={false}
+          tickLine={false}
+        />
+        <YAxis
+          tick={{ fontSize: 11, fill: '#717171' }}
+          allowDecimals={false}
+          width={32}
+          axisLine={false}
+          tickLine={false}
+        />
+        <Tooltip
+          formatter={tooltipFormatter}
+          contentStyle={TOOLTIP_STYLE}
+          cursor={{ fill: 'rgba(0,0,0,0.03)' }}
+        />
+        <Legend verticalAlign="top" wrapperStyle={{ fontSize: '11px', paddingBottom: '12px' }} />
+        {devNames.map((dev, i) => (
+          <Bar
+            key={dev}
+            dataKey={`${dev}__${dataKeySuffix}`}
+            name={dev}
+            fill={DEV_COLORS[i % DEV_COLORS.length]}
+            radius={[3, 3, 0, 0]}
+            maxBarSize={28}
+          />
+        ))}
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+function AllSprintsCharts({ allSprintsStats, currentUserEmail }) {
+  const allStats = allSprintsStats.flatMap((s) => s.developerStats);
+  const devNames = [...new Set(allStats.map((d) => d.email.split('@')[0]))];
+
+  const totalTasks = allStats.reduce((s, d) => s + d.totalAssigned, 0);
+  const totalHours = allStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0);
+
+  const myStats = currentUserEmail ? allStats.filter((d) => d.email === currentUserEmail) : [];
+  const myTasks = myStats.length ? myStats.reduce((s, d) => s + d.tasksCompleted, 0) : null;
+  const myHours = myStats.length
+    ? myStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0)
+    : null;
+
+  const tasksData = allSprintsStats.map(({ sprint, developerStats }) => {
+    const point = { sprint: sprint.name };
+    developerStats.forEach((d) => {
+      point[`${d.email.split('@')[0]}__tasks`] = d.tasksCompleted;
+    });
+    return point;
+  });
+
+  const hoursData = allSprintsStats.map(({ sprint, developerStats }) => {
+    const point = { sprint: sprint.name };
+    developerStats.forEach((d) => {
+      point[`${d.email.split('@')[0]}__hours`] = Number(Number(d.totalHoursWorked ?? 0).toFixed(1));
+    });
+    return point;
+  });
+
+  if (devNames.length === 0) {
+    return (
+      <Typography sx={{ fontSize: '0.875rem', color: '#717171' }}>
+        No developer data found.
+      </Typography>
+    );
+  }
+
+  return (
+    <Grid container spacing="28px">
+      <Grid item xs={12} md={6} data-testid="sprint-totals-card">
+        <ChartCard title="All Sprints Totals">
+          <Grid container spacing="12px">
+            <Grid item xs={6}>
+              <StatCard
+                label="Total Tasks"
+                value={totalTasks}
+                description="All tasks across all sprints"
+                borderColor={STAT_BORDERS.tasks}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <StatCard
+                label="Total Real Hours"
+                value={totalHours.toFixed(1)}
+                description="Hours logged across all sprints"
+                borderColor={STAT_BORDERS.hours}
+              />
+            </Grid>
+          </Grid>
+        </ChartCard>
+      </Grid>
+      <Grid item xs={12} md={6} data-testid="your-stats-card">
+        <ChartCard title="Your Stats (All Sprints)">
+          <Grid container spacing="12px">
+            <Grid item xs={6}>
+              <StatCard
+                label="Tasks Completed"
+                value={myTasks !== null ? String(myTasks) : '—'}
+                description="Your tasks across all sprints"
+                borderColor={STAT_BORDERS.avgTasks}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <StatCard
+                label="Hours Logged"
+                value={myHours !== null ? myHours.toFixed(1) : '—'}
+                description="Your hours across all sprints"
+                borderColor={STAT_BORDERS.avgHours}
+              />
+            </Grid>
+          </Grid>
+        </ChartCard>
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <ChartCard title="Tasks Completed by Developer per Sprint">
+          <GroupedBarChart
+            data={tasksData}
+            devNames={devNames}
+            dataKeySuffix="tasks"
+            tooltipFormatter={(v, name) => [v, name]}
+          />
+        </ChartCard>
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <ChartCard title="Real Hours by Developer per Sprint">
+          <GroupedBarChart
+            data={hoursData}
+            devNames={devNames}
+            dataKeySuffix="hours"
+            tooltipFormatter={(v, name) => [`${v}h`, name]}
+          />
+        </ChartCard>
+      </Grid>
+    </Grid>
+  );
+}
+
 export default function KpiDashboardView({
   projectName,
   sprints,
   sprintId,
   developerStats,
+  allSprintsStats,
   currentUserEmail,
   loadingStats,
   onSprintChange,
 }) {
+  const isAllSprints = sprintId === 'all';
+
   const totalTasks = developerStats.reduce((s, d) => s + d.totalAssigned, 0);
   const totalHours = developerStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0);
 
@@ -190,6 +356,9 @@ export default function KpiDashboardView({
             <MenuItem value="" disabled sx={{ fontSize: '0.85rem', color: '#717171' }}>
               Select sprint…
             </MenuItem>
+            <MenuItem value="all" sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#2B2B2B' }}>
+              All Sprints
+            </MenuItem>
             {sprints.map((s) => (
               <MenuItem
                 key={s.id}
@@ -215,7 +384,13 @@ export default function KpiDashboardView({
         </Box>
       )}
 
-      {sprintId && !loadingStats && (
+      {/* All Sprints view */}
+      {isAllSprints && !loadingStats && (
+        <AllSprintsCharts allSprintsStats={allSprintsStats} currentUserEmail={currentUserEmail} />
+      )}
+
+      {/* Single sprint view */}
+      {sprintId && !isAllSprints && !loadingStats && (
         <>
           {/* Row 1: Sprint totals + Per-dev averages */}
           <Grid container spacing="28px" sx={{ mb: '28px' }}>
