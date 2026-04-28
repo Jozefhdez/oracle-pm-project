@@ -42,6 +42,23 @@ oci lb certificate create \
   --private-key-file "$CERT_DIR/oracle-pm.duckdns.org.key" \
   --wait-for-state SUCCEEDED 2>&1 | grep -E "lifecycle-state|type|message" || true
 
+echo "==> Waiting for CCM to finish reconciling the LB..."
+for i in $(seq 1 30); do
+  LB_STATE=$(oci lb load-balancer get --load-balancer-id "$LB_ID" \
+    --query "data.\"lifecycle-state\"" --raw-output)
+  BACKEND_HEALTH=$(oci lb backend-health get \
+    --load-balancer-id "$LB_ID" \
+    --backend-set-name "TCP-80" \
+    --backend-name "$(echo $BACKEND_IPS | awk '{print $1}'):$NODEPORT" \
+    --query "data.status" --raw-output 2>/dev/null || echo "UNKNOWN")
+  echo "    LB state: $LB_STATE | TCP-80 health: $BACKEND_HEALTH"
+  if [ "$LB_STATE" = "ACTIVE" ] && [ "$BACKEND_HEALTH" = "OK" ]; then
+    echo "    LB is stable."
+    break
+  fi
+  sleep 10
+done
+
 echo "==> Tearing down existing HTTPS config (if any)..."
 oci lb listener delete \
   --load-balancer-id "$LB_ID" \
