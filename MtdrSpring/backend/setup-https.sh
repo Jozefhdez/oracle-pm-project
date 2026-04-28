@@ -60,14 +60,22 @@ for i in $(seq 1 30); do
 done
 
 echo "==> Tearing down existing HTTPS config (if any)..."
-oci lb listener delete \
-  --load-balancer-id "$LB_ID" \
-  --listener-name "HTTPS-443" \
-  --force --wait-for-state SUCCEEDED 2>&1 | grep -E "lifecycle-state|type" || true
-oci lb backend-set delete \
-  --load-balancer-id "$LB_ID" \
-  --backend-set-name "HTTP-HTTPS" \
-  --force --wait-for-state SUCCEEDED 2>&1 | grep -E "lifecycle-state|type" || true
+LISTENER_EXISTS=$(oci lb load-balancer get --load-balancer-id "$LB_ID" \
+  --query "data.listeners.\"HTTPS-443\".name" --raw-output 2>/dev/null || echo "")
+if [ "$LISTENER_EXISTS" = "HTTPS-443" ]; then
+  oci lb listener delete \
+    --load-balancer-id "$LB_ID" \
+    --listener-name "HTTPS-443" \
+    --force --wait-for-state SUCCEEDED --max-wait-seconds 60 2>&1 | grep -E "lifecycle-state|type" || true
+fi
+BACKENDSET_EXISTS=$(oci lb load-balancer get --load-balancer-id "$LB_ID" \
+  --query "data.\"backend-sets\".\"HTTP-HTTPS\".name" --raw-output 2>/dev/null || echo "")
+if [ "$BACKENDSET_EXISTS" = "HTTP-HTTPS" ]; then
+  oci lb backend-set delete \
+    --load-balancer-id "$LB_ID" \
+    --backend-set-name "HTTP-HTTPS" \
+    --force --wait-for-state SUCCEEDED --max-wait-seconds 60 2>&1 | grep -E "lifecycle-state|type" || true
+fi
 
 echo "==> Creating HTTP-HTTPS backend set..."
 oci lb backend-set create \
