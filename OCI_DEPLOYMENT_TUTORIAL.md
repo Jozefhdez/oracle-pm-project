@@ -15,8 +15,9 @@ cd ~/reacttodo/oracle-pm-project && git pull origin main
 cd MtdrSpring/backend
 . build.sh
 . deploy.sh
-. setup-https.sh  # always run after deploy, OCI wipes the HTTPS listener on every reconcile
+kubectl rollout restart deployment/todolistapp-springboot-deployment -n mtdrworkshop
 kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop
+. setup-https.sh  # always run after deploy — OCI wipes the HTTPS listener on every reconcile
 ```
 
 > The app will be available at **https://oracle-pm.duckdns.org**
