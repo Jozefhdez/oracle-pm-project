@@ -7,8 +7,6 @@ metadata:
     oci.oraclecloud.com/load-balancer-ip: "159.54.128.218"
 spec:
   type: LoadBalancer
-  externalTrafficPolicy: Local
-
   ports:
     - port: 80
       protocol: TCP
