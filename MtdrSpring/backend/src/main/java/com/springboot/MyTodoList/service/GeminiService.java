@@ -32,7 +32,7 @@ public class GeminiService {
 
     public GeminiService(
         @Value("${gemini.api.key:}") String apiKey,
-        @Value("${gemini.api.model:gemini-1.5-flash}") String model,
+        @Value("${gemini.api.model:gemini-2.5-flash}") String model,
       @Value("${gemini.api.base-url:https://generativelanguage.googleapis.com/v1beta}") String baseUrl,
       @Value("${bot.parser.allow-heuristic-fallback:false}") boolean allowHeuristicFallback
     ) {
@@ -347,12 +347,11 @@ public class GeminiService {
             throw new IllegalStateException("GEMINI_API_KEY is not configured.");
         }
 
-      String endpoint = "%s/interactions".formatted(baseUrl);
+      String endpoint = "%s/models/%s:generateContent?key=%s".formatted(baseUrl, model, apiKey);
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(endpoint))
             .timeout(Duration.ofSeconds(25))
             .header("Content-Type", "application/json")
-        .header("x-goog-api-key", apiKey)
             .POST(HttpRequest.BodyPublishers.ofString(body))
             .build();
 
@@ -447,19 +446,18 @@ public class GeminiService {
     private String buildTextRequestBody(String prompt) {
         return """
             {
-              "model": "%s",
-              "input": "%s"
+              "contents": [{"parts": [{"text": "%s"}]}]
             }
-            """.formatted(model, prompt.replace("\"", "\\\"").replace("\n", "\\n"));
+            """.formatted(prompt.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n"));
     }
 
     private String buildJsonResponseRequestBody(String prompt) {
         return """
             {
-              "model": "%s",
-              "input": "%s"
+              "contents": [{"parts": [{"text": "%s"}]}],
+              "generationConfig": {"responseMimeType": "application/json"}
             }
-            """.formatted(model, prompt.replace("\"", "\\\"").replace("\n", "\\n"));
+            """.formatted(prompt.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n"));
     }
 
     private String stripCodeFences(String raw) {
