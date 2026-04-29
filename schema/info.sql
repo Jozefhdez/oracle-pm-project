@@ -160,11 +160,11 @@ VALUES (
 -- planned_task_count will be updated at the end of this script.
 -- =============================================================================
 
--- Sprint 1 — Infrastructure & Kickoff  (COMPLETED — was "Active overdue")
+-- Sprint 0 — Infrastructure & Kickoff  (COMPLETED — was "Active overdue")
 INSERT INTO sprints (id, name, project_id, status, start_date, end_date, planned_task_count)
 VALUES (
     HEXTORAW('A4F9BF0579724468B818665F2FC03AA1'),
-    'Sprint 1 — Infrastructure & Kickoff',
+    'Sprint 0 — Infrastructure & Kickoff',
     HEXTORAW('F18FB987E9A04CA58213404D089F41AA'),
     'COMPLETED',
     DATE '2026-02-23',
@@ -172,11 +172,11 @@ VALUES (
     0   -- will be updated
 );
 
--- Sprint 2 — Dashboard & Database  (COMPLETED — was "Active overdue")
+-- Sprint 1 — Dashboard & Database  (COMPLETED — was "Active overdue")
 INSERT INTO sprints (id, name, project_id, status, start_date, end_date, planned_task_count)
 VALUES (
     HEXTORAW('9E957AA9278043FDB4AAD86065F344F9'),
-    'Sprint 2 — Dashboard & Database',
+    'Sprint 1 — Dashboard & Database',
     HEXTORAW('F18FB987E9A04CA58213404D089F41AA'),
     'COMPLETED',
     DATE '2026-03-23',
@@ -184,11 +184,11 @@ VALUES (
     0
 );
 
--- Sprint 3 — Auth via OCI IAM  (COMPLETED)
+-- Sprint 2 — Auth via OCI IAM  (COMPLETED)
 INSERT INTO sprints (id, name, project_id, status, start_date, end_date, planned_task_count)
 VALUES (
     HEXTORAW('99087F6CA1DC4845989F419A1D58B6DA'),
-    'Sprint 3 — Auth via OCI IAM (OIDC)',
+    'Sprint 2 — Auth via OCI IAM (OIDC)',
     HEXTORAW('F18FB987E9A04CA58213404D089F41AA'),
     'COMPLETED',
     DATE '2026-04-13',
