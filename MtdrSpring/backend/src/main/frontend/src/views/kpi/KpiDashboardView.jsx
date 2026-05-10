@@ -26,6 +26,19 @@ const BAR_HOURS = '#d7790e';
 
 const DEV_COLORS = ['#5999B5', '#D7790F', '#699E61', '#9E7FCC', '#F0CC72'];
 
+const MATRICULA_NAMES = {
+  A01643496: 'Baltazar S.',
+  A01644423: 'Luis G.',
+  A01644875: 'Ana P.',
+  A01639866: 'Ana E.',
+  A01644644: 'Jozef H.',
+};
+
+const devName = (email) => {
+  const matricula = email.split('@')[0].toUpperCase();
+  return MATRICULA_NAMES[matricula] ?? matricula;
+};
+
 const STAT_BORDERS = {
   tasks: '#2196F3',
   hours: '#4CAF50',
@@ -184,7 +197,7 @@ function GroupedBarChart({ data, devNames, dataKeySuffix, tooltipFormatter }) {
 
 function AllSprintsCharts({ allSprintsStats, currentUserEmail }) {
   const allStats = allSprintsStats.flatMap((s) => s.developerStats);
-  const devNames = [...new Set(allStats.map((d) => d.email.split('@')[0]))];
+  const devNames = [...new Set(allStats.map((d) => devName(d.email)))];
 
   const totalTasks = allStats.reduce((s, d) => s + d.totalAssigned, 0);
   const totalHours = allStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0);
@@ -198,7 +211,7 @@ function AllSprintsCharts({ allSprintsStats, currentUserEmail }) {
   const tasksData = allSprintsStats.map(({ sprint, developerStats }) => {
     const point = { sprint: sprint.name };
     developerStats.forEach((d) => {
-      point[`${d.email.split('@')[0]}__tasks`] = d.tasksCompleted;
+      point[`${devName(d.email)}__tasks`] = d.tasksCompleted;
     });
     return point;
   });
@@ -206,7 +219,7 @@ function AllSprintsCharts({ allSprintsStats, currentUserEmail }) {
   const hoursData = allSprintsStats.map(({ sprint, developerStats }) => {
     const point = { sprint: sprint.name };
     developerStats.forEach((d) => {
-      point[`${d.email.split('@')[0]}__hours`] = Number(Number(d.totalHoursWorked ?? 0).toFixed(1));
+      point[`${devName(d.email)}__hours`] = Number(Number(d.totalHoursWorked ?? 0).toFixed(1));
     });
     return point;
   });
@@ -311,7 +324,7 @@ export default function KpiDashboardView({
   const myHours = myStat ? Number(myStat.totalHoursWorked ?? 0).toFixed(1) : '—';
 
   const chartData = developerStats.map((d) => ({
-    name: d.email.split('@')[0],
+    name: devName(d.email),
     tasksCompleted: d.tasksCompleted,
     totalHours: Number(Number(d.totalHoursWorked ?? 0).toFixed(1)),
   }));
