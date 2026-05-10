@@ -416,7 +416,7 @@ public class BotActions {
             long blocked = projectTasks.stream().filter(t -> t.getStatus() == TaskStatus.BLOCKED).count();
             long done = projectTasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
 
-            String msg = String.format("<b>%s</b>\n\nTodo          %d\nIn Progress   %d\nBlocked       %d\nDone          %d",
+            String msg = String.format("<b>%s</b>\n\n<code>Todo         %d\nIn Progress  %d\nBlocked      %d\nDone         %d</code>",
                                        project.getName(), todo, inProgress, blocked, done);
             BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
             exit = true;
@@ -457,7 +457,7 @@ public class BotActions {
             long done = sprintTasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
 
             String msg = String.format(
-                "<b>%s</b>\n\nTodo          %d\nIn Progress   %d\nBlocked       %d\nDone          %d",
+                "<b>%s</b>\n\n<code>Todo         %d\nIn Progress  %d\nBlocked      %d\nDone         %d</code>",
                 sprintMatch.getName(),
                 todo,
                 inProgress,
