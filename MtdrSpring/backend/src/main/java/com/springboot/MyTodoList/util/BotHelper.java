@@ -13,42 +13,28 @@ public class BotHelper {
 	private static final Logger logger = LoggerFactory.getLogger(BotHelper.class);
 
 	public static void sendMessageToTelegram(Long chatId, String text, TelegramClient bot) {
-
 		try {
-			// prepare message
-			SendMessage messageToTelegram = 
-					SendMessage
-					.builder()
+			SendMessage messageToTelegram = SendMessage.builder()
 					.chatId(chatId)
 					.text(text)
+					.parseMode("HTML")
 					.replyMarkup(new ReplyKeyboardRemove(true))
-					.build()
-				;
-
-			// send message
+					.build();
 			bot.execute(messageToTelegram);
-
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}
 	}
 
-	public static void sendMessageToTelegram(Long chatId, String text,TelegramClient bot, ReplyKeyboardMarkup rk ) {
-
+	public static void sendMessageToTelegram(Long chatId, String text, TelegramClient bot, ReplyKeyboardMarkup rk) {
 		try {
-			// prepare message
-			SendMessage messageToTelegram = 
-					SendMessage
-					.builder()
+			SendMessage messageToTelegram = SendMessage.builder()
 					.chatId(chatId)
 					.text(text)
+					.parseMode("HTML")
 					.replyMarkup(rk)
-					.build()
-				;
-
-			// send message
+					.build();
 			bot.execute(messageToTelegram);
-
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		}

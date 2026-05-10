@@ -2,15 +2,14 @@ package com.springboot.MyTodoList.util;
 
 public enum BotMessages {
 	
-	HELLO_MYTODO_BOT(
-	"Hello! I'm MyTodoList Bot!\nType a new todo item below and press the send button (blue arrow), or select an option below:"),
-	BOT_REGISTERED_STARTED("Bot registered and started succesfully!"),
-	ITEM_DONE("Item done! Select /todolist to return to the list of todo items, or /start to go to the main screen."), 
-	ITEM_UNDONE("Item undone! Select /todolist to return to the list of todo items, or /start to go to the main screen."), 
-	ITEM_DELETED("Item deleted! Select /todolist to return to the list of todo items, or /start to go to the main screen."),
-	TYPE_NEW_TODO_ITEM("Type a new todo item below and press the send button (blue arrow) on the rigth-hand side."),
-	NEW_ITEM_ADDED("New item added! Select /todolist to return to the list of todo items, or /start to go to the main screen."),
-	BYE("Bye! Select /start to resume!");
+	HELLO_MYTODO_BOT("Oracle Project Manager\n\nType /help to see available commands.\nFirst time? Link your account with /link &lt;code&gt;."),
+	BOT_REGISTERED_STARTED("Bot registered and started successfully."),
+	ITEM_DONE("Done. Use /todolist to go back or /start for the main screen."),
+	ITEM_UNDONE("Marked as not done. Use /todolist to go back or /start for the main screen."),
+	ITEM_DELETED("Task deleted. Use /todolist to go back or /start for the main screen."),
+	TYPE_NEW_TODO_ITEM("Type the task title and press send."),
+	NEW_ITEM_ADDED("Task added. Use /todolist to go back or /start for the main screen."),
+	BYE("Keyboard hidden. Use /start to bring it back.");
 
 	private String message;
 

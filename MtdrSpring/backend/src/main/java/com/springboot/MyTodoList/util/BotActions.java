@@ -130,7 +130,7 @@ public class BotActions {
         if (now - pending.createdAtMs() > CONFIRMATION_TTL_MS) {
             pendingCommands.remove(chatId);
             BotHelper.sendMessageToTelegram(chatId,
-                "Pending confirmation expired. Please send your request again.",
+                "Confirmation expired. Please send your request again.",
                 telegramClient,
                 null);
             exit = true;
@@ -147,7 +147,7 @@ public class BotActions {
         if (normalized.equals("cancel") || normalized.equals("no") || normalized.equals("cancel delete")) {
             pendingCommands.remove(chatId);
             BotHelper.sendMessageToTelegram(chatId,
-                "Cancelled. No changes were applied.",
+                "Cancelled.",
                 telegramClient,
                 null);
             exit = true;
@@ -155,7 +155,7 @@ public class BotActions {
         }
 
         BotHelper.sendMessageToTelegram(chatId,
-            "You have a pending command. Reply 'confirm'/'confirm delete' to execute or 'cancel'/'cancel delete' to discard.",
+            "You have a pending action. Reply <b>confirm</b> to execute or <b>cancel</b> to discard.",
             telegramClient,
             null);
         exit = true;
@@ -324,9 +324,9 @@ public class BotActions {
             String code = parts[1];
             boolean linked = telegramLinkService.linkAccount(code, String.valueOf(chatId));
             if (linked) {
-                BotHelper.sendMessageToTelegram(chatId, "Account successfully linked!", telegramClient);
+                BotHelper.sendMessageToTelegram(chatId, "Account linked. You can now use all bot features.", telegramClient);
             } else {
-                BotHelper.sendMessageToTelegram(chatId, "Invalid or expired linking code.", telegramClient);
+                BotHelper.sendMessageToTelegram(chatId, "Invalid or expired code.", telegramClient);
             }
         } else {
             BotHelper.sendMessageToTelegram(chatId, "Usage: /link <code>", telegramClient);
@@ -339,7 +339,7 @@ public class BotActions {
                 || requestText.equals(BotLabels.SHOW_MAIN_SCREEN.getLabel())) || exit)
             return;
 
-        BotHelper.sendMessageToTelegram(chatId, "Welcome to the Oracle Project Manager Bot!\nUse /help to see all available commands.\nIf you haven't linked your account, use /link <code>.", telegramClient,
+        BotHelper.sendMessageToTelegram(chatId, "Oracle Project Manager\n\nType /help to see available commands.\nFirst time? Link your account with /link &lt;code&gt;.", telegramClient,
             ReplyKeyboardMarkup.builder()
                 .keyboardRow(new KeyboardRow("/help", "/status", "/create New Task"))
                 .build());
@@ -348,15 +348,13 @@ public class BotActions {
 
     public void fnHelp() {
         if (!requestText.equals("/help") || exit) return;
-        String helpMsg = "Available Commands:\n" +
-                         "/start - View welcome message\n" +
-                         "/link <code> - Link your Telegram account\n" +
-                         "/help - Show available commands\n" +
-                         "/status [sprint name | task title] - Get project summary, sprint summary, or task status\n" +
-                         "/create <title> | <LOW|MEDIUM|HIGH> - Create a task with priority (e.g. /create Fix DB bug | HIGH)\n" +
-                         "/delete <title> - Request deletion for a matching task (requires confirmation)\n" +
-                         "/updatestatus <IN_PROGRESS/BLOCKED/DONE> <task title> - Update task status\n" +
-                         "/loghours <hours> <task title> - Log hours worked on a task";
+        String helpMsg = "<b>Commands</b>\n\n" +
+                         "/link &lt;code&gt;\n" +
+                         "/status [sprint or task name]\n" +
+                         "/create &lt;title&gt; | LOW | MEDIUM | HIGH\n" +
+                         "/updatestatus &lt;TODO|IN_PROGRESS|BLOCKED|DONE&gt; &lt;title&gt;\n" +
+                         "/loghours &lt;hours&gt; &lt;title&gt;\n" +
+                         "/delete &lt;title&gt;";
         BotHelper.sendMessageToTelegram(chatId, helpMsg, telegramClient);
         exit = true;
     }
@@ -366,7 +364,7 @@ public class BotActions {
         
         User user = userRepository.findByTelegramChatId(String.valueOf(chatId)).orElse(null);
         if (user == null) {
-            BotHelper.sendMessageToTelegram(chatId, "To check status via bot, please link your account first with /link <code>.", telegramClient);
+            BotHelper.sendMessageToTelegram(chatId, "Link your account first with /link &lt;code&gt;.", telegramClient);
             exit = true;
             return;
         }
@@ -418,7 +416,7 @@ public class BotActions {
             long blocked = projectTasks.stream().filter(t -> t.getStatus() == TaskStatus.BLOCKED).count();
             long done = projectTasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
 
-            String msg = String.format("Status for Project: %s\nTODO: %d\nIN_PROGRESS: %d\nBLOCKED: %d\nDONE: %d",
+            String msg = String.format("<b>%s</b>\n\nTodo          %d\nIn Progress   %d\nBlocked       %d\nDone          %d",
                                        project.getName(), todo, inProgress, blocked, done);
             BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
             exit = true;
@@ -459,7 +457,7 @@ public class BotActions {
             long done = sprintTasks.stream().filter(t -> t.getStatus() == TaskStatus.DONE).count();
 
             String msg = String.format(
-                "Status for Sprint: %s\nTODO: %d\nIN_PROGRESS: %d\nBLOCKED: %d\nDONE: %d",
+                "<b>%s</b>\n\nTodo          %d\nIn Progress   %d\nBlocked       %d\nDone          %d",
                 sprintMatch.getName(),
                 todo,
                 inProgress,
@@ -480,7 +478,7 @@ public class BotActions {
 
         if (taskMatch != null) {
             String msg = String.format(
-                "Task Status\nTitle: %s\nStatus: %s\nPriority: %s",
+                "<b>%s</b>\nStatus    %s\nPriority  %s",
                 taskMatch.getTitle(),
                 taskMatch.getStatus(),
                 taskMatch.getPriority()
@@ -496,7 +494,7 @@ public class BotActions {
 
         if (exactTaskMatches.isEmpty()) {
             BotHelper.sendMessageToTelegram(chatId,
-                "No sprint or task found with that name/title. Use /status for project summary.",
+                "No sprint or task found with that name. Use /status for a project summary.",
                 telegramClient);
         } else if (exactTaskMatches.size() > 1) {
             BotHelper.sendMessageToTelegram(chatId,
@@ -505,7 +503,7 @@ public class BotActions {
         } else {
             Task task = exactTaskMatches.get(0);
             String msg = String.format(
-                "Task Status\nTitle: %s\nStatus: %s\nPriority: %s",
+                "<b>%s</b>\nStatus    %s\nPriority  %s",
                 task.getTitle(),
                 task.getStatus(),
                 task.getPriority()
@@ -520,7 +518,7 @@ public class BotActions {
         
         User user = userRepository.findByTelegramChatId(String.valueOf(chatId)).orElse(null);
         if (user == null) {
-            BotHelper.sendMessageToTelegram(chatId, "To create tasks via bot, please link your account first with /link <code>.", telegramClient);
+            BotHelper.sendMessageToTelegram(chatId, "Link your account first with /link &lt;code&gt;.", telegramClient);
             exit = true;
             return;
         }
@@ -587,8 +585,8 @@ public class BotActions {
         
         try {
             todoService.addToDoItem(t, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
-            String location = sprint != null ? "sprint '" + sprint.getName() + "'" : "backlog";
-            BotHelper.sendMessageToTelegram(chatId, "Task created successfully in " + location + " with priority " + priority + ":\n" + title, telegramClient);
+            String location = sprint != null ? sprint.getName() : "backlog";
+            BotHelper.sendMessageToTelegram(chatId, "Task created in " + location + "\n<b>" + title + "</b> (" + priority + ")", telegramClient);
         } catch (Exception e) {
             logger.error("Failed to create task", e);
             BotHelper.sendMessageToTelegram(chatId, "Failed to create task due to a server error.", telegramClient);
@@ -647,9 +645,9 @@ public class BotActions {
 
             boolean deleted = todoService.deleteToDoItem(taskToDelete.getId());
             if (deleted) {
-                BotHelper.sendMessageToTelegram(chatId, "Task deleted successfully: " + taskToDelete.getTitle(), telegramClient);
+                BotHelper.sendMessageToTelegram(chatId, "\"" + taskToDelete.getTitle() + "\" deleted.", telegramClient);
             } else {
-                BotHelper.sendMessageToTelegram(chatId, "Failed to delete task due to an error.", telegramClient);
+                BotHelper.sendMessageToTelegram(chatId, "Could not delete the task. Try again.", telegramClient);
             }
             exit = true;
             return;
@@ -681,7 +679,7 @@ public class BotActions {
                 new PendingCommand("/_deleteconfirm " + selectedTask.getId(), System.currentTimeMillis())
             );
             String baseConfirmMsg = String.format(
-                "Please confirm task deletion.\nTitle: %s\nStatus: %s\nPriority: %s\n\nReply 'confirm' to delete or 'cancel' to keep it.",
+                "Delete \"%s\"?\n%s / %s\n\nReply <b>confirm</b> or <b>cancel</b>.",
                 selectedTask.getTitle(),
                 selectedTask.getStatus(),
                 selectedTask.getPriority()
@@ -768,9 +766,9 @@ public class BotActions {
             boolean assignedToSprint = selectedTask.getSprint() == null && activeSprint != null;
             todoService.patchStatusAndSprint(selectedTask.getId(), newStatus, activeSprint, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
 
-            String msg = "Task status updated to " + newStatus;
+            String msg = "\"" + selectedTask.getTitle() + "\" moved to " + newStatus;
             if (assignedToSprint) {
-                msg += " in sprint '" + activeSprint.getName() + "'";
+                msg += " in " + activeSprint.getName();
             }
             BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
         } catch (Exception e) {
@@ -852,7 +850,7 @@ public class BotActions {
         log.setWorkDate(LocalDate.now());
         log.setHoursWorked(BigDecimal.valueOf(hours));
         taskWorkLogRepository.save(log);
-        BotHelper.sendMessageToTelegram(chatId, "Logged " + hours + " hours to task: " + selectedTask.getTitle(), telegramClient);
+        BotHelper.sendMessageToTelegram(chatId, "Logged " + hours + "h on \"" + selectedTask.getTitle() + "\"", telegramClient);
         exit = true;
     }
 
