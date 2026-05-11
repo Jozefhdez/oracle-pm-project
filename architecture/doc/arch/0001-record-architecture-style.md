@@ -2,13 +2,9 @@
 
 Date: 2026-03-11
 
-## Status
-
-Accepted
-
 ## Context
 
-The Oracle PM Tool is a pilot-phase agile tool built by a five-person student team under a $300 OCI credit budget and a semester deadline. The system must support a Kanban web interface, a Telegram bot, and a KPI dashboard — all sharing the same Oracle 26ai ATP database.
+The system must support a Kanban web interface, a Telegram bot, and a KPI dashboard — all sharing the same Oracle database.
 
 The team evaluated the following architecture styles covered in the course:
 
@@ -26,21 +22,21 @@ The team evaluated the following architecture styles covered in the course:
 
 ## Decision
 
-**Primary style — Modular Monolith**
+**Primary style: Modular Monolith**
 
 The entire application ships as a single Spring Boot JAR containing the REST API, the React SPA (bundled via `frontend-maven-plugin`), the Telegram bot handler, and the Gemini integration. This single artifact is packaged into one Docker image (`todolistapp-springboot:0.1`) and deployed as one Kubernetes Deployment (`todolistapp-springboot-deployment`) with two replicas on OCI OKE.
 
-**Internal structure — Layered Architecture**
+**Internal structure: Layered Architecture**
 
 Inside the monolith, code is organized into three horizontal layers:
 
-- **Controller layer** — Spring MVC REST controllers and the Telegram bot handler. Entry points only; no business logic.
-- **Service layer** — Business rules, KPI calculations, Gemini NLP orchestration. Stateless Spring `@Service` beans.
-- **Repository layer** — Spring Data JPA repositories backed by Oracle 26ai ATP. No raw SQL in application code except for named queries.
+- **Controller layer**: Spring MVC REST controllers and the Telegram bot handler. Entry points only; no business logic.
+- **Service layer**: Business rules, KPI calculations, Gemini NLP orchestration. Stateless Spring `@Service` beans.
+- **Repository layer**: Spring Data JPA repositories backed by Oracle 26ai ATP. No raw SQL in application code except for named queries.
 
-**Bot edge — Event-Driven**
+**Bot edge: Event-Driven**
 
-Incoming Telegram messages arrive as discrete events via long-polling. Each message triggers an independent processing pipeline: Bot Handler → Gemini Service → Task/Sprint Module → Database. This edge behaves event-driven even though the rest of the system is synchronous.
+Incoming Telegram messages arrive as discrete events via long-polling. Each message triggers an independent processing pipeline: Bot Handler -> Gemini Service -> Task/Sprint Module -> Database. This edge behaves event-driven even though the rest of the system is synchronous.
 
 ## Consequences
 

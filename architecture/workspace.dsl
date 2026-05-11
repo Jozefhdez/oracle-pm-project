@@ -2,12 +2,12 @@ workspace "Oracle PM Tool" "Cloud-native project management tool for agile teams
 
     model {
 
-        # ── Actors ───────────────────────────────────────────────────────────
+        # Actors
         developer      = person "Developer"        "Uses the Kanban board and Telegram bot to manage tasks daily."
         projectManager = person "Project Manager"  "Creates sprints, monitors KPI dashboard, queries bot for summaries."
         devops         = person "DevOps Engineer"  "Provisions OCI infrastructure, manages CI/CD, deploys to OKE."
 
-        # ── External Systems ─────────────────────────────────────────────────
+        # External Systems
         ociIam = softwareSystem "OCI IAM" "Oracle Cloud Identity and Access Management. OIDC identity provider for all user authentication." {
             tags "External System"
         }
@@ -24,7 +24,7 @@ workspace "Oracle PM Tool" "Cloud-native project management tool for agile teams
             tags "External System"
         }
 
-        # ── Main System (inside enterprise boundary) ──────────────────────────
+        # Main System (inside enterprise boundary)
         group "Team 13" {
 
         oraclePmTool = softwareSystem "Oracle PM Tool" "Cloud-native project management tool. Provides a Kanban web app, Telegram bot, and KPI dashboard." {
@@ -47,7 +47,7 @@ workspace "Oracle PM Tool" "Cloud-native project management tool for agile teams
 
         } # end group
 
-        # ── System-level Relationships ───────────────────────────────────────
+        # System-level Relationships
         developer      -> oraclePmTool "Manages tasks and views KPI dashboard"
         projectManager -> oraclePmTool "Creates sprints and monitors team performance"
         devops         -> oraclePmTool "Deploys and operates"
@@ -57,7 +57,7 @@ workspace "Oracle PM Tool" "Cloud-native project management tool for agile teams
         oraclePmTool -> geminiApi "Natural language processing for bot commands"
         devops        -> ocir     "Pushes Docker images via build.sh"
 
-        # ── Container-level Relationships ────────────────────────────────────
+        # Container-level Relationships
         developer      -> springBoot "Accesses Kanban board and REST API via browser (HTTPS)"
         developer      -> telegram   "Sends task updates via Telegram"
         projectManager -> springBoot "Accesses KPI dashboard via browser (HTTPS)"
@@ -66,7 +66,7 @@ workspace "Oracle PM Tool" "Cloud-native project management tool for agile teams
         springBoot     -> ociIam     "Validates JWT bearer tokens"           "HTTPS / JWKS"
         springBoot     -> geminiApi  "Sends NLP prompts and receives responses" "HTTPS / REST"
 
-        # ── Component-level Relationships ────────────────────────────────────
+        # Component-level Relationships
         securityModule      -> ociIam           "Fetches JWKS and validates tokens" "HTTPS"
         telegramBot         -> geminiService    "Forwards raw message text for NLP parsing"
         telegramBot         -> taskModule       "Calls status-update and work-log endpoints"
@@ -77,7 +77,7 @@ workspace "Oracle PM Tool" "Cloud-native project management tool for agile teams
         kpiModule           -> database         "Reads history tables for KPI math"  "JPA"
         userModule          -> database         "User profile and link-code storage" "JPA"
 
-        # ── Deployment ───────────────────────────────────────────────────────
+        # Deployment
         deploymentEnvironment "Production — OCI mx-queretaro-1" {
 
             deploymentNode "Oracle Cloud Infrastructure" "OCI Region: mx-queretaro-1" "OCI" {
