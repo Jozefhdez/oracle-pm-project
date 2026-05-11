@@ -52,6 +52,8 @@ frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
 /MtdrSpring/backend/wallet
+/MtdrSpring/backend/wallet-local
+/MtdrSpring/backend/wallet-local-vector
 
 /MtdrSpring/backend/DockerfileDev
 
