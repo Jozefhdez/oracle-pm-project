@@ -119,6 +119,7 @@ CREATE TABLE tasks (
     blocked_at              TIMESTAMP,
     completed_at            TIMESTAMP,
     rework_count            NUMBER(4)     DEFAULT 0 NOT NULL,
+    embedding               VECTOR(384, FLOAT32),
 
     CONSTRAINT pk_task              PRIMARY KEY (id),
     CONSTRAINT fk_task_project      FOREIGN KEY (project_id)  REFERENCES projects (id) ON DELETE CASCADE,

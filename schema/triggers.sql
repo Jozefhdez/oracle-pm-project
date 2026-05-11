@@ -288,3 +288,27 @@ BEGIN
       AND  used    = 0;
 END trg_tlc_bi;
 /
+
+
+-- =============================================================================
+-- VECTOR SEARCH TRIGGER
+-- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- trg_task_embedding_bu — BEFORE INSERT OR UPDATE OF title
+-- Auto-generates a 384-dim sentence embedding for the task title using the
+-- ALL_MINILM_L12_V2 ONNX model loaded via DBMS_VECTOR.
+-- Requires Oracle 23ai+ and the model to be loaded before this trigger fires.
+-- -----------------------------------------------------------------------------
+CREATE OR REPLACE TRIGGER trg_task_embedding_bu
+BEFORE INSERT OR UPDATE OF title ON tasks
+FOR EACH ROW
+DECLARE
+    v_emb VECTOR(384, FLOAT32);
+BEGIN
+    SELECT VECTOR_EMBEDDING(ALL_MINILM_L12_V2 USING :NEW.title AS data)
+    INTO v_emb
+    FROM dual;
+    :NEW.embedding := v_emb;
+END;
+/
