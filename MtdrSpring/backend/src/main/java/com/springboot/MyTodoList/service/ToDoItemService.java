@@ -131,6 +131,25 @@ public class ToDoItemService {
     }
 
     /**
+     * Returns the IDs (as uppercase hex strings) of the tasks most semantically similar
+     * to the query, using Oracle Vector Search with the ALL_MINILM_L12_V2 embedding model.
+     * Returns an empty list if the model is not loaded or the column does not exist.
+     */
+    public List<String> findSimilarTaskIds(UUID projectId, String query, int limit) {
+        try {
+            String sql = "SELECT RAWTOHEX(id) FROM tasks " +
+                         "WHERE project_id = HEXTORAW(?) AND embedding IS NOT NULL " +
+                         "ORDER BY VECTOR_DISTANCE(embedding, VECTOR_EMBEDDING(ALL_MINILM_L12_V2 USING ? AS data), COSINE) " +
+                         "FETCH FIRST ? ROWS ONLY";
+            String hex = projectId.toString().replace("-", "").toUpperCase();
+            return jdbcTemplate.queryForList(sql, String.class, hex, query, limit);
+        } catch (Exception e) {
+            logger.warn("Vector search unavailable: {}", e.getMessage());
+            return List.of();
+        }
+    }
+
+    /**
      * Bot-specific helper that updates status and optionally assigns the task to a sprint
      * inside a single transaction.
      */

@@ -280,7 +280,25 @@ public class BotActions {
         return null;
     }
 
-    private ResolvedReference resolveTaskReference(String userQuery, String context, List<Task> tasks) {
+    private ResolvedReference resolveTaskReference(UUID projectId, String userQuery, List<Task> tasks) {
+        // Try vector search first — faster and no API quota
+        try {
+            List<String> similarIds = todoService.findSimilarTaskIds(projectId, userQuery, 1);
+            if (!similarIds.isEmpty()) {
+                String topHex = similarIds.get(0);
+                Task match = tasks.stream()
+                    .filter(t -> t.getId().toString().replace("-", "").equalsIgnoreCase(topHex))
+                    .findFirst().orElse(null);
+                if (match != null) {
+                    logger.info("Vector search matched task '{}' for query '{}'", match.getTitle(), userQuery);
+                    return new ResolvedReference("TASK", match.getId(), match.getTitle(), 0.9);
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("Vector search failed for task resolution: {}", e.getMessage());
+        }
+
+        // Fall back to Gemini semantic resolution
         List<GeminiService.SemanticCandidate> candidates = new ArrayList<>();
         Map<String, Task> taskById = new HashMap<>();
 
@@ -295,7 +313,7 @@ public class BotActions {
             ));
         }
 
-        GeminiService.SemanticSelection selection = resolveCandidate(userQuery, context, candidates);
+        GeminiService.SemanticSelection selection = resolveCandidate(userQuery, "Resolve the task.", candidates);
         if (selection == null || selection.id() == null) {
             return null;
         }
@@ -653,7 +671,7 @@ public class BotActions {
             return;
         }
 
-        ResolvedReference taskReference = resolveTaskReference(title, "Resolve the task to delete.", tasks);
+        ResolvedReference taskReference = resolveTaskReference(projectId, title, tasks);
         Task selectedTask = null;
         if (taskReference != null) {
             selectedTask = tasks.stream().filter(t -> t.getId().equals(taskReference.id())).findFirst().orElse(null);
@@ -733,7 +751,7 @@ public class BotActions {
             Sprint activeSprint = getActiveSprint(projectId);
 
             List<Task> projectTasks = todoService.findByProjectId(projectId);
-            ResolvedReference taskReference = resolveTaskReference(title, "Resolve the task for a status update.", projectTasks);
+            ResolvedReference taskReference = resolveTaskReference(projectId, title, projectTasks);
             Task selectedTask = null;
             if (taskReference != null) {
                 selectedTask = projectTasks.stream().filter(t -> t.getId().equals(taskReference.id())).findFirst().orElse(null);
@@ -808,7 +826,7 @@ public class BotActions {
         Sprint activeSprint = getActiveSprint(projectId);
 
         List<Task> projectTasks = todoService.findByProjectId(projectId);
-        ResolvedReference taskReference = resolveTaskReference(title, "Resolve the task for logging hours.", projectTasks);
+        ResolvedReference taskReference = resolveTaskReference(projectId, title, projectTasks);
         Task selectedTask = null;
         if (taskReference != null) {
             selectedTask = projectTasks.stream().filter(t -> t.getId().equals(taskReference.id())).findFirst().orElse(null);
