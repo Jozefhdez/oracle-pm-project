@@ -1,0 +1,907 @@
+{
+  "configuration" : { },
+  "description" : "Cloud-native project management tool for agile teams, built on OCI.",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedDate" : "2026-05-11T16:12:29Z",
+  "model" : {
+    "deploymentNodes" : [ {
+      "children" : [ {
+        "description" : "Public HTTPS endpoint. TLS termination. Routes port 443 to OKE NodePort 32541.",
+        "environment" : "Production — OCI mx-queretaro-1",
+        "id" : "43",
+        "infrastructureNodes" : [ {
+          "description" : "oracle-pm.duckdns.org — RSA certificate (oracle-pm-cert-rsa)",
+          "environment" : "Production — OCI mx-queretaro-1",
+          "id" : "44",
+          "name" : "HTTPS Listener (443)",
+          "properties" : {
+            "structurizr.dsl.identifier" : "3ed20d10-631d-4f2f-89a1-9cf784bc4e84"
+          },
+          "tags" : "Element,Infrastructure Node",
+          "technology" : "OCI LBaaS"
+        } ],
+        "instances" : "1",
+        "name" : "OCI Load Balancer",
+        "properties" : {
+          "structurizr.dsl.identifier" : "4ed49bc4-0760-42b2-a8b0-e0f29df8a034"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "OCI LBaaS"
+      }, {
+        "children" : [ {
+          "containerInstances" : [ {
+            "containerId" : "9",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Production — OCI mx-queretaro-1",
+            "id" : "47",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "44dae14a-98f2-407f-b8af-23e0a90f9018"
+            },
+            "relationships" : [ {
+              "description" : "Reads and writes all application data",
+              "destinationId" : "51",
+              "id" : "52",
+              "linkedRelationshipId" : "30",
+              "sourceId" : "47",
+              "technology" : "JDBC / JPA"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Spring Boot pod",
+          "environment" : "Production — OCI mx-queretaro-1",
+          "id" : "46",
+          "instances" : "1",
+          "name" : "Pod Replica 1",
+          "properties" : {
+            "structurizr.dsl.identifier" : "bb90aca9-2be3-45ce-ac0d-8b0c91489b00"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "Docker / OKE"
+        }, {
+          "containerInstances" : [ {
+            "containerId" : "9",
+            "deploymentGroups" : [ "Default" ],
+            "environment" : "Production — OCI mx-queretaro-1",
+            "id" : "49",
+            "instanceId" : 1,
+            "properties" : {
+              "structurizr.dsl.identifier" : "65697e33-c80f-42b6-ac64-51e2af34060e"
+            },
+            "relationships" : [ {
+              "description" : "Reads and writes all application data",
+              "destinationId" : "51",
+              "id" : "53",
+              "linkedRelationshipId" : "30",
+              "sourceId" : "49",
+              "technology" : "JDBC / JPA"
+            } ],
+            "tags" : "Container Instance"
+          } ],
+          "description" : "Spring Boot pod",
+          "environment" : "Production — OCI mx-queretaro-1",
+          "id" : "48",
+          "instances" : "1",
+          "name" : "Pod Replica 2",
+          "properties" : {
+            "structurizr.dsl.identifier" : "4a287a11-a010-462c-80ed-9ba37c927e80"
+          },
+          "tags" : "Element,Deployment Node",
+          "technology" : "Docker / OKE"
+        } ],
+        "description" : "Oracle Kubernetes Engine. Node pool across worker nodes.",
+        "environment" : "Production — OCI mx-queretaro-1",
+        "id" : "45",
+        "instances" : "1",
+        "name" : "OKE Cluster — mtdrworkshop namespace",
+        "properties" : {
+          "structurizr.dsl.identifier" : "3412f5da-f7a5-4600-996f-60b9831d0257"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "OCI OKE"
+      }, {
+        "containerInstances" : [ {
+          "containerId" : "17",
+          "deploymentGroups" : [ "Default" ],
+          "environment" : "Production — OCI mx-queretaro-1",
+          "id" : "51",
+          "instanceId" : 1,
+          "properties" : {
+            "structurizr.dsl.identifier" : "5fdbb843-45c2-4eae-bfa9-d69ec882bab9"
+          },
+          "tags" : "Container Instance"
+        } ],
+        "description" : "Managed Autonomous Transaction Processing. Schema: TODOUSER. TNS alias: oraclepmdb_tp.",
+        "environment" : "Production — OCI mx-queretaro-1",
+        "id" : "50",
+        "instances" : "1",
+        "name" : "Oracle 26ai ATP — oraclepmdb",
+        "properties" : {
+          "structurizr.dsl.identifier" : "88ac4d5b-3e15-4ed8-af77-05d4d1adb4a6"
+        },
+        "tags" : "Element,Deployment Node",
+        "technology" : "OCI ATP"
+      } ],
+      "description" : "OCI Region: mx-queretaro-1",
+      "environment" : "Production — OCI mx-queretaro-1",
+      "id" : "42",
+      "instances" : "1",
+      "name" : "Oracle Cloud Infrastructure",
+      "properties" : {
+        "structurizr.dsl.identifier" : "2ad38ef3-f85d-476e-9148-2f9cff5655ca"
+      },
+      "tags" : "Element,Deployment Node",
+      "technology" : "OCI"
+    } ],
+    "people" : [ {
+      "description" : "Uses the Kanban board and Telegram bot to manage tasks daily.",
+      "id" : "1",
+      "name" : "Developer",
+      "properties" : {
+        "structurizr.dsl.identifier" : "developer"
+      },
+      "relationships" : [ {
+        "description" : "Manages tasks and views KPI dashboard",
+        "destinationId" : "8",
+        "id" : "18",
+        "sourceId" : "1",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Accesses Kanban board and REST API via browser (HTTPS)",
+        "destinationId" : "9",
+        "id" : "25",
+        "sourceId" : "1",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Sends task updates via Telegram",
+        "destinationId" : "5",
+        "id" : "26",
+        "sourceId" : "1",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Creates sprints, monitors KPI dashboard, queries bot for summaries.",
+      "id" : "2",
+      "name" : "Project Manager",
+      "properties" : {
+        "structurizr.dsl.identifier" : "projectManager"
+      },
+      "relationships" : [ {
+        "description" : "Creates sprints and monitors team performance",
+        "destinationId" : "8",
+        "id" : "19",
+        "sourceId" : "2",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Accesses KPI dashboard via browser (HTTPS)",
+        "destinationId" : "9",
+        "id" : "27",
+        "sourceId" : "2",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Person"
+    }, {
+      "description" : "Provisions OCI infrastructure, manages CI/CD, deploys to OKE.",
+      "id" : "3",
+      "name" : "DevOps Engineer",
+      "properties" : {
+        "structurizr.dsl.identifier" : "devops"
+      },
+      "relationships" : [ {
+        "description" : "Deploys and operates",
+        "destinationId" : "8",
+        "id" : "20",
+        "sourceId" : "3",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Pushes Docker images via build.sh",
+        "destinationId" : "7",
+        "id" : "24",
+        "sourceId" : "3",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "softwareSystems" : [ {
+      "description" : "Oracle Cloud Identity and Access Management. OIDC identity provider for all user authentication.",
+      "documentation" : { },
+      "id" : "4",
+      "name" : "OCI IAM",
+      "properties" : {
+        "structurizr.dsl.identifier" : "ociIam"
+      },
+      "tags" : "Element,Software System,External System"
+    }, {
+      "description" : "Messaging platform. The bot uses long-polling to receive developer and PM commands.",
+      "documentation" : { },
+      "id" : "5",
+      "name" : "Telegram",
+      "properties" : {
+        "structurizr.dsl.identifier" : "telegram"
+      },
+      "relationships" : [ {
+        "description" : "Delivers bot messages via long-polling",
+        "destinationId" : "9",
+        "id" : "28",
+        "sourceId" : "5",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Delivers bot messages via long-polling",
+        "destinationId" : "8",
+        "id" : "29",
+        "linkedRelationshipId" : "28",
+        "sourceId" : "5"
+      } ],
+      "tags" : "Element,Software System,External System"
+    }, {
+      "description" : "Google Gemini large language model. Used by the bot to parse natural language task commands.",
+      "documentation" : { },
+      "id" : "6",
+      "name" : "Gemini API",
+      "properties" : {
+        "structurizr.dsl.identifier" : "geminiApi"
+      },
+      "tags" : "Element,Software System,External System"
+    }, {
+      "description" : "Stores the Docker image for the Spring Boot application.",
+      "documentation" : { },
+      "id" : "7",
+      "name" : "OCI Container Registry",
+      "properties" : {
+        "structurizr.dsl.identifier" : "ocir"
+      },
+      "tags" : "Element,Software System,External System"
+    }, {
+      "containers" : [ {
+        "components" : [ {
+          "description" : "Validates JWTs issued by OCI IAM and enforces role-based access. Configured via Spring Security OAuth2 Resource Server.",
+          "documentation" : { },
+          "id" : "10",
+          "name" : "Security Module",
+          "properties" : {
+            "structurizr.dsl.identifier" : "securityModule"
+          },
+          "relationships" : [ {
+            "description" : "Fetches JWKS and validates tokens",
+            "destinationId" : "4",
+            "id" : "33",
+            "sourceId" : "10",
+            "tags" : "Relationship",
+            "technology" : "HTTPS"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring Security"
+        }, {
+          "description" : "Task CRUD, Kanban status transitions, work log management. Drives task_state_history and task_assignment_history writes via DB triggers.",
+          "documentation" : { },
+          "id" : "11",
+          "name" : "Task Module",
+          "properties" : {
+            "structurizr.dsl.identifier" : "taskModule"
+          },
+          "relationships" : [ {
+            "description" : "Task CRUD and history writes",
+            "destinationId" : "17",
+            "id" : "38",
+            "sourceId" : "11",
+            "tags" : "Relationship",
+            "technology" : "JPA"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring MVC + JPA"
+        }, {
+          "description" : "Project and sprint lifecycle: create, activate, close. Maintains planned_task_count baseline for scope-creep KPI.",
+          "documentation" : { },
+          "id" : "12",
+          "name" : "Project/Sprint Module",
+          "properties" : {
+            "structurizr.dsl.identifier" : "projectSprintModule"
+          },
+          "relationships" : [ {
+            "description" : "Project and sprint CRUD",
+            "destinationId" : "17",
+            "id" : "39",
+            "sourceId" : "12",
+            "tags" : "Relationship",
+            "technology" : "JPA"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring MVC + JPA"
+        }, {
+          "description" : "Computes and returns KPI snapshots (cycle time, scope creep, blocker resolution). Writes sprint_kpi_snapshot on sprint close.",
+          "documentation" : { },
+          "id" : "13",
+          "name" : "KPI Module",
+          "properties" : {
+            "structurizr.dsl.identifier" : "kpiModule"
+          },
+          "relationships" : [ {
+            "description" : "Reads history tables for KPI math",
+            "destinationId" : "17",
+            "id" : "40",
+            "sourceId" : "13",
+            "tags" : "Relationship",
+            "technology" : "JPA"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring MVC + JPA"
+        }, {
+          "description" : "Receives messages via long-polling. Dispatches intents to Gemini Service for NLP parsing, then calls Task or Project modules.",
+          "documentation" : { },
+          "id" : "14",
+          "name" : "Telegram Bot Handler",
+          "properties" : {
+            "structurizr.dsl.identifier" : "telegramBot"
+          },
+          "relationships" : [ {
+            "description" : "Forwards raw message text for NLP parsing",
+            "destinationId" : "15",
+            "id" : "34",
+            "sourceId" : "14",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Calls status-update and work-log endpoints",
+            "destinationId" : "11",
+            "id" : "35",
+            "sourceId" : "14",
+            "tags" : "Relationship"
+          }, {
+            "description" : "Queries sprint summaries",
+            "destinationId" : "12",
+            "id" : "36",
+            "sourceId" : "14",
+            "tags" : "Relationship"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "TelegramBots SDK"
+        }, {
+          "description" : "HTTP client for the Gemini generateContent endpoint. Builds prompts, calls the API, and parses JSON responses.",
+          "documentation" : { },
+          "id" : "15",
+          "name" : "Gemini Service",
+          "properties" : {
+            "structurizr.dsl.identifier" : "geminiService"
+          },
+          "relationships" : [ {
+            "description" : "POST /generateContent",
+            "destinationId" : "6",
+            "id" : "37",
+            "sourceId" : "15",
+            "tags" : "Relationship",
+            "technology" : "HTTPS / REST"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring RestTemplate"
+        }, {
+          "description" : "User profile management and Telegram account linking via one-time codes.",
+          "documentation" : { },
+          "id" : "16",
+          "name" : "User Module",
+          "properties" : {
+            "structurizr.dsl.identifier" : "userModule"
+          },
+          "relationships" : [ {
+            "description" : "User profile and link-code storage",
+            "destinationId" : "17",
+            "id" : "41",
+            "sourceId" : "16",
+            "tags" : "Relationship",
+            "technology" : "JPA"
+          } ],
+          "tags" : "Element,Component",
+          "technology" : "Spring MVC + JPA"
+        } ],
+        "description" : "Monolithic backend + frontend. Serves the React SPA as static files, exposes the REST API, handles Telegram long-polling, and calls Gemini. Runs as 2 replicas on OKE.",
+        "documentation" : { },
+        "id" : "9",
+        "name" : "Spring Boot Application",
+        "properties" : {
+          "structurizr.dsl.identifier" : "springBoot"
+        },
+        "relationships" : [ {
+          "description" : "Reads and writes all application data",
+          "destinationId" : "17",
+          "id" : "30",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "JDBC / JPA"
+        }, {
+          "description" : "Validates JWT bearer tokens",
+          "destinationId" : "4",
+          "id" : "31",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / JWKS"
+        }, {
+          "description" : "Sends NLP prompts and receives responses",
+          "destinationId" : "6",
+          "id" : "32",
+          "sourceId" : "9",
+          "tags" : "Relationship",
+          "technology" : "HTTPS / REST"
+        } ],
+        "tags" : "Element,Container",
+        "technology" : "Java 17 / Spring Boot 3"
+      }, {
+        "description" : "Managed cloud database. Stores all relational data and VECTOR embeddings for semantic task search. Schema: TODOUSER.",
+        "documentation" : { },
+        "id" : "17",
+        "name" : "Oracle 26ai ATP",
+        "properties" : {
+          "structurizr.dsl.identifier" : "database"
+        },
+        "tags" : "Element,Container,Database",
+        "technology" : "Oracle 26ai Autonomous Transaction Processing"
+      } ],
+      "description" : "Cloud-native project management tool. Provides a Kanban web app, Telegram bot, and KPI dashboard.",
+      "documentation" : { },
+      "group" : "Team 13",
+      "id" : "8",
+      "name" : "Oracle PM Tool",
+      "properties" : {
+        "structurizr.dsl.identifier" : "oraclePmTool"
+      },
+      "relationships" : [ {
+        "description" : "Validates user identity via OIDC",
+        "destinationId" : "4",
+        "id" : "21",
+        "sourceId" : "8",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Sends and receives bot messages",
+        "destinationId" : "5",
+        "id" : "22",
+        "sourceId" : "8",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Natural language processing for bot commands",
+        "destinationId" : "6",
+        "id" : "23",
+        "sourceId" : "8",
+        "tags" : "Relationship"
+      } ],
+      "tags" : "Element,Software System"
+    } ]
+  },
+  "name" : "Oracle PM Tool",
+  "properties" : {
+    "structurizr.inspection.error" : "19",
+    "structurizr.dsl" : "d29ya3NwYWNlICJPcmFjbGUgUE0gVG9vbCIgIkNsb3VkLW5hdGl2ZSBwcm9qZWN0IG1hbmFnZW1lbnQgdG9vbCBmb3IgYWdpbGUgdGVhbXMsIGJ1aWx0IG9uIE9DSS4iIHsKCiAgICBtb2RlbCB7CgogICAgICAgICMg4pSA4pSAIEFjdG9ycyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAKICAgICAgICBkZXZlbG9wZXIgICAgICA9IHBlcnNvbiAiRGV2ZWxvcGVyIiAgICAgICAgIlVzZXMgdGhlIEthbmJhbiBib2FyZCBhbmQgVGVsZWdyYW0gYm90IHRvIG1hbmFnZSB0YXNrcyBkYWlseS4iCiAgICAgICAgcHJvamVjdE1hbmFnZXIgPSBwZXJzb24gIlByb2plY3QgTWFuYWdlciIgICJDcmVhdGVzIHNwcmludHMsIG1vbml0b3JzIEtQSSBkYXNoYm9hcmQsIHF1ZXJpZXMgYm90IGZvciBzdW1tYXJpZXMuIgogICAgICAgIGRldm9wcyAgICAgICAgID0gcGVyc29uICJEZXZPcHMgRW5naW5lZXIiICAiUHJvdmlzaW9ucyBPQ0kgaW5mcmFzdHJ1Y3R1cmUsIG1hbmFnZXMgQ0kvQ0QsIGRlcGxveXMgdG8gT0tFLiIKCiAgICAgICAgIyDilIDilIAgRXh0ZXJuYWwgU3lzdGVtcyDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAKICAgICAgICBvY2lJYW0gPSBzb2Z0d2FyZVN5c3RlbSAiT0NJIElBTSIgIk9yYWNsZSBDbG91ZCBJZGVudGl0eSBhbmQgQWNjZXNzIE1hbmFnZW1lbnQuIE9JREMgaWRlbnRpdHkgcHJvdmlkZXIgZm9yIGFsbCB1c2VyIGF1dGhlbnRpY2F0aW9uLiIgewogICAgICAgICAgICB0YWdzICJFeHRlcm5hbCBTeXN0ZW0iCiAgICAgICAgfQoKICAgICAgICB0ZWxlZ3JhbSA9IHNvZnR3YXJlU3lzdGVtICJUZWxlZ3JhbSIgIk1lc3NhZ2luZyBwbGF0Zm9ybS4gVGhlIGJvdCB1c2VzIGxvbmctcG9sbGluZyB0byByZWNlaXZlIGRldmVsb3BlciBhbmQgUE0gY29tbWFuZHMuIiB7CiAgICAgICAgICAgIHRhZ3MgIkV4dGVybmFsIFN5c3RlbSIKICAgICAgICB9CgogICAgICAgIGdlbWluaUFwaSA9IHNvZnR3YXJlU3lzdGVtICJHZW1pbmkgQVBJIiAiR29vZ2xlIEdlbWluaSBsYXJnZSBsYW5ndWFnZSBtb2RlbC4gVXNlZCBieSB0aGUgYm90IHRvIHBhcnNlIG5hdHVyYWwgbGFuZ3VhZ2UgdGFzayBjb21tYW5kcy4iIHsKICAgICAgICAgICAgdGFncyAiRXh0ZXJuYWwgU3lzdGVtIgogICAgICAgIH0KCiAgICAgICAgb2NpciA9IHNvZnR3YXJlU3lzdGVtICJPQ0kgQ29udGFpbmVyIFJlZ2lzdHJ5IiAiU3RvcmVzIHRoZSBEb2NrZXIgaW1hZ2UgZm9yIHRoZSBTcHJpbmcgQm9vdCBhcHBsaWNhdGlvbi4iIHsKICAgICAgICAgICAgdGFncyAiRXh0ZXJuYWwgU3lzdGVtIgogICAgICAgIH0KCiAgICAgICAgIyDilIDilIAgTWFpbiBTeXN0ZW0gKGluc2lkZSBlbnRlcnByaXNlIGJvdW5kYXJ5KSDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIAKICAgICAgICBncm91cCAiVGVhbSAxMyIgewoKICAgICAgICBvcmFjbGVQbVRvb2wgPSBzb2Z0d2FyZVN5c3RlbSAiT3JhY2xlIFBNIFRvb2wiICJDbG91ZC1uYXRpdmUgcHJvamVjdCBtYW5hZ2VtZW50IHRvb2wuIFByb3ZpZGVzIGEgS2FuYmFuIHdlYiBhcHAsIFRlbGVncmFtIGJvdCwgYW5kIEtQSSBkYXNoYm9hcmQuIiB7CgogICAgICAgICAgICBzcHJpbmdCb290ID0gY29udGFpbmVyICJTcHJpbmcgQm9vdCBBcHBsaWNhdGlvbiIgIk1vbm9saXRoaWMgYmFja2VuZCArIGZyb250ZW5kLiBTZXJ2ZXMgdGhlIFJlYWN0IFNQQSBhcyBzdGF0aWMgZmlsZXMsIGV4cG9zZXMgdGhlIFJFU1QgQVBJLCBoYW5kbGVzIFRlbGVncmFtIGxvbmctcG9sbGluZywgYW5kIGNhbGxzIEdlbWluaS4gUnVucyBhcyAyIHJlcGxpY2FzIG9uIE9LRS4iICJKYXZhIDE3IC8gU3ByaW5nIEJvb3QgMyIgewoKICAgICAgICAgICAgICAgIHNlY3VyaXR5TW9kdWxlICAgICAgPSBjb21wb25lbnQgIlNlY3VyaXR5IE1vZHVsZSIgICAgICAgICJWYWxpZGF0ZXMgSldUcyBpc3N1ZWQgYnkgT0NJIElBTSBhbmQgZW5mb3JjZXMgcm9sZS1iYXNlZCBhY2Nlc3MuIENvbmZpZ3VyZWQgdmlhIFNwcmluZyBTZWN1cml0eSBPQXV0aDIgUmVzb3VyY2UgU2VydmVyLiIgICJTcHJpbmcgU2VjdXJpdHkiCiAgICAgICAgICAgICAgICB0YXNrTW9kdWxlICAgICAgICAgID0gY29tcG9uZW50ICJUYXNrIE1vZHVsZSIgICAgICAgICAgICAiVGFzayBDUlVELCBLYW5iYW4gc3RhdHVzIHRyYW5zaXRpb25zLCB3b3JrIGxvZyBtYW5hZ2VtZW50LiBEcml2ZXMgdGFza19zdGF0ZV9oaXN0b3J5IGFuZCB0YXNrX2Fzc2lnbm1lbnRfaGlzdG9yeSB3cml0ZXMgdmlhIERCIHRyaWdnZXJzLiIgIlNwcmluZyBNVkMgKyBKUEEiCiAgICAgICAgICAgICAgICBwcm9qZWN0U3ByaW50TW9kdWxlID0gY29tcG9uZW50ICJQcm9qZWN0L1NwcmludCBNb2R1bGUiICAiUHJvamVjdCBhbmQgc3ByaW50IGxpZmVjeWNsZTogY3JlYXRlLCBhY3RpdmF0ZSwgY2xvc2UuIE1haW50YWlucyBwbGFubmVkX3Rhc2tfY291bnQgYmFzZWxpbmUgZm9yIHNjb3BlLWNyZWVwIEtQSS4iICAgICAgICAgICAgICAiU3ByaW5nIE1WQyArIEpQQSIKICAgICAgICAgICAgICAgIGtwaU1vZHVsZSAgICAgICAgICAgPSBjb21wb25lbnQgIktQSSBNb2R1bGUiICAgICAgICAgICAgICJDb21wdXRlcyBhbmQgcmV0dXJucyBLUEkgc25hcHNob3RzIChjeWNsZSB0aW1lLCBzY29wZSBjcmVlcCwgYmxvY2tlciByZXNvbHV0aW9uKS4gV3JpdGVzIHNwcmludF9rcGlfc25hcHNob3Qgb24gc3ByaW50IGNsb3NlLiIgICJTcHJpbmcgTVZDICsgSlBBIgogICAgICAgICAgICAgICAgdGVsZWdyYW1Cb3QgICAgICAgICA9IGNvbXBvbmVudCAiVGVsZWdyYW0gQm90IEhhbmRsZXIiICAgIlJlY2VpdmVzIG1lc3NhZ2VzIHZpYSBsb25nLXBvbGxpbmcuIERpc3BhdGNoZXMgaW50ZW50cyB0byBHZW1pbmkgU2VydmljZSBmb3IgTkxQIHBhcnNpbmcsIHRoZW4gY2FsbHMgVGFzayBvciBQcm9qZWN0IG1vZHVsZXMuIiAiVGVsZWdyYW1Cb3RzIFNESyIKICAgICAgICAgICAgICAgIGdlbWluaVNlcnZpY2UgICAgICAgPSBjb21wb25lbnQgIkdlbWluaSBTZXJ2aWNlIiAgICAgICAgICJIVFRQIGNsaWVudCBmb3IgdGhlIEdlbWluaSBnZW5lcmF0ZUNvbnRlbnQgZW5kcG9pbnQuIEJ1aWxkcyBwcm9tcHRzLCBjYWxscyB0aGUgQVBJLCBhbmQgcGFyc2VzIEpTT04gcmVzcG9uc2VzLiIgICAgICAgICAgICAgICAgICAiU3ByaW5nIFJlc3RUZW1wbGF0ZSIKICAgICAgICAgICAgICAgIHVzZXJNb2R1bGUgICAgICAgICAgPSBjb21wb25lbnQgIlVzZXIgTW9kdWxlIiAgICAgICAgICAgICJVc2VyIHByb2ZpbGUgbWFuYWdlbWVudCBhbmQgVGVsZWdyYW0gYWNjb3VudCBsaW5raW5nIHZpYSBvbmUtdGltZSBjb2Rlcy4iICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiU3ByaW5nIE1WQyArIEpQQSIKICAgICAgICAgICAgfQoKICAgICAgICAgICAgZGF0YWJhc2UgPSBjb250YWluZXIgIk9yYWNsZSAyNmFpIEFUUCIgIk1hbmFnZWQgY2xvdWQgZGF0YWJhc2UuIFN0b3JlcyBhbGwgcmVsYXRpb25hbCBkYXRhIGFuZCBWRUNUT1IgZW1iZWRkaW5ncyBmb3Igc2VtYW50aWMgdGFzayBzZWFyY2guIFNjaGVtYTogVE9ET1VTRVIuIiAiT3JhY2xlIDI2YWkgQXV0b25vbW91cyBUcmFuc2FjdGlvbiBQcm9jZXNzaW5nIiB7CiAgICAgICAgICAgICAgICB0YWdzICJEYXRhYmFzZSIKICAgICAgICAgICAgfQogICAgICAgIH0KCiAgICAgICAgfSAjIGVuZCBlbnRlcnByaXNlCgogICAgICAgICMg4pSA4pSAIFN5c3RlbS1sZXZlbCBSZWxhdGlvbnNoaXBzIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgAogICAgICAgIGRldmVsb3BlciAgICAgIC0+IG9yYWNsZVBtVG9vbCAiTWFuYWdlcyB0YXNrcyBhbmQgdmlld3MgS1BJIGRhc2hib2FyZCIKICAgICAgICBwcm9qZWN0TWFuYWdlciAtPiBvcmFjbGVQbVRvb2wgIkNyZWF0ZXMgc3ByaW50cyBhbmQgbW9uaXRvcnMgdGVhbSBwZXJmb3JtYW5jZSIKICAgICAgICBkZXZvcHMgICAgICAgICAtPiBvcmFjbGVQbVRvb2wgIkRlcGxveXMgYW5kIG9wZXJhdGVzIgoKICAgICAgICBvcmFjbGVQbVRvb2wgLT4gb2NpSWFtICAgICJWYWxpZGF0ZXMgdXNlciBpZGVudGl0eSB2aWEgT0lEQyIKICAgICAgICBvcmFjbGVQbVRvb2wgLT4gdGVsZWdyYW0gICJTZW5kcyBhbmQgcmVjZWl2ZXMgYm90IG1lc3NhZ2VzIgogICAgICAgIG9yYWNsZVBtVG9vbCAtPiBnZW1pbmlBcGkgIk5hdHVyYWwgbGFuZ3VhZ2UgcHJvY2Vzc2luZyBmb3IgYm90IGNvbW1hbmRzIgogICAgICAgIGRldm9wcyAgICAgICAgLT4gb2NpciAgICAgIlB1c2hlcyBEb2NrZXIgaW1hZ2VzIHZpYSBidWlsZC5zaCIKCiAgICAgICAgIyDilIDilIAgQ29udGFpbmVyLWxldmVsIFJlbGF0aW9uc2hpcHMg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACiAgICAgICAgZGV2ZWxvcGVyICAgICAgLT4gc3ByaW5nQm9vdCAiQWNjZXNzZXMgS2FuYmFuIGJvYXJkIGFuZCBSRVNUIEFQSSB2aWEgYnJvd3NlciAoSFRUUFMpIgogICAgICAgIGRldmVsb3BlciAgICAgIC0+IHRlbGVncmFtICAgIlNlbmRzIHRhc2sgdXBkYXRlcyB2aWEgVGVsZWdyYW0iCiAgICAgICAgcHJvamVjdE1hbmFnZXIgLT4gc3ByaW5nQm9vdCAiQWNjZXNzZXMgS1BJIGRhc2hib2FyZCB2aWEgYnJvd3NlciAoSFRUUFMpIgogICAgICAgIHRlbGVncmFtICAgICAgIC0+IHNwcmluZ0Jvb3QgIkRlbGl2ZXJzIGJvdCBtZXNzYWdlcyB2aWEgbG9uZy1wb2xsaW5nIgogICAgICAgIHNwcmluZ0Jvb3QgICAgIC0+IGRhdGFiYXNlICAgIlJlYWRzIGFuZCB3cml0ZXMgYWxsIGFwcGxpY2F0aW9uIGRhdGEiICJKREJDIC8gSlBBIgogICAgICAgIHNwcmluZ0Jvb3QgICAgIC0+IG9jaUlhbSAgICAgIlZhbGlkYXRlcyBKV1QgYmVhcmVyIHRva2VucyIgICAgICAgICAgICJIVFRQUyAvIEpXS1MiCiAgICAgICAgc3ByaW5nQm9vdCAgICAgLT4gZ2VtaW5pQXBpICAiU2VuZHMgTkxQIHByb21wdHMgYW5kIHJlY2VpdmVzIHJlc3BvbnNlcyIgIkhUVFBTIC8gUkVTVCIKCiAgICAgICAgIyDilIDilIAgQ29tcG9uZW50LWxldmVsIFJlbGF0aW9uc2hpcHMg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACiAgICAgICAgc2VjdXJpdHlNb2R1bGUgICAgICAtPiBvY2lJYW0gICAgICAgICAgICJGZXRjaGVzIEpXS1MgYW5kIHZhbGlkYXRlcyB0b2tlbnMiICJIVFRQUyIKICAgICAgICB0ZWxlZ3JhbUJvdCAgICAgICAgIC0+IGdlbWluaVNlcnZpY2UgICAgIkZvcndhcmRzIHJhdyBtZXNzYWdlIHRleHQgZm9yIE5MUCBwYXJzaW5nIgogICAgICAgIHRlbGVncmFtQm90ICAgICAgICAgLT4gdGFza01vZHVsZSAgICAgICAiQ2FsbHMgc3RhdHVzLXVwZGF0ZSBhbmQgd29yay1sb2cgZW5kcG9pbnRzIgogICAgICAgIHRlbGVncmFtQm90ICAgICAgICAgLT4gcHJvamVjdFNwcmludE1vZHVsZSAiUXVlcmllcyBzcHJpbnQgc3VtbWFyaWVzIgogICAgICAgIGdlbWluaVNlcnZpY2UgICAgICAgLT4gZ2VtaW5pQXBpICAgICAgICAiUE9TVCAvZ2VuZXJhdGVDb250ZW50IiAgICAgICAgICAgICAgIkhUVFBTIC8gUkVTVCIKICAgICAgICB0YXNrTW9kdWxlICAgICAgICAgIC0+IGRhdGFiYXNlICAgICAgICAgIlRhc2sgQ1JVRCBhbmQgaGlzdG9yeSB3cml0ZXMiICAgICAgICJKUEEiCiAgICAgICAgcHJvamVjdFNwcmludE1vZHVsZSAtPiBkYXRhYmFzZSAgICAgICAgICJQcm9qZWN0IGFuZCBzcHJpbnQgQ1JVRCIgICAgICAgICAgICAiSlBBIgogICAgICAgIGtwaU1vZHVsZSAgICAgICAgICAgLT4gZGF0YWJhc2UgICAgICAgICAiUmVhZHMgaGlzdG9yeSB0YWJsZXMgZm9yIEtQSSBtYXRoIiAgIkpQQSIKICAgICAgICB1c2VyTW9kdWxlICAgICAgICAgIC0+IGRhdGFiYXNlICAgICAgICAgIlVzZXIgcHJvZmlsZSBhbmQgbGluay1jb2RlIHN0b3JhZ2UiICJKUEEiCgogICAgICAgICMg4pSA4pSAIERlcGxveW1lbnQg4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSA4pSACiAgICAgICAgZGVwbG95bWVudEVudmlyb25tZW50ICJQcm9kdWN0aW9uIOKAlCBPQ0kgbXgtcXVlcmV0YXJvLTEiIHsKCiAgICAgICAgICAgIGRlcGxveW1lbnROb2RlICJPcmFjbGUgQ2xvdWQgSW5mcmFzdHJ1Y3R1cmUiICJPQ0kgUmVnaW9uOiBteC1xdWVyZXRhcm8tMSIgIk9DSSIgewoKICAgICAgICAgICAgICAgIGRlcGxveW1lbnROb2RlICJPQ0kgTG9hZCBCYWxhbmNlciIgIlB1YmxpYyBIVFRQUyBlbmRwb2ludC4gVExTIHRlcm1pbmF0aW9uLiBSb3V0ZXMgcG9ydCA0NDMgdG8gT0tFIE5vZGVQb3J0IDMyNTQxLiIgIk9DSSBMQmFhUyIgewogICAgICAgICAgICAgICAgICAgIGluZnJhc3RydWN0dXJlTm9kZSAiSFRUUFMgTGlzdGVuZXIgKDQ0MykiICJvcmFjbGUtcG0uZHVja2Rucy5vcmcg4oCUIFJTQSBjZXJ0aWZpY2F0ZSAob3JhY2xlLXBtLWNlcnQtcnNhKSIgIk9DSSBMQmFhUyIKICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT0tFIENsdXN0ZXIg4oCUIG10ZHJ3b3Jrc2hvcCBuYW1lc3BhY2UiICJPcmFjbGUgS3ViZXJuZXRlcyBFbmdpbmUuIE5vZGUgcG9vbCBhY3Jvc3Mgd29ya2VyIG5vZGVzLiIgIk9DSSBPS0UiIHsKCiAgICAgICAgICAgICAgICAgICAgZGVwbG95bWVudE5vZGUgIlBvZCBSZXBsaWNhIDEiICJTcHJpbmcgQm9vdCBwb2QiICJEb2NrZXIgLyBPS0UiIHsKICAgICAgICAgICAgICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2Ugc3ByaW5nQm9vdAogICAgICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICAgICAgZGVwbG95bWVudE5vZGUgIlBvZCBSZXBsaWNhIDIiICJTcHJpbmcgQm9vdCBwb2QiICJEb2NrZXIgLyBPS0UiIHsKICAgICAgICAgICAgICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2Ugc3ByaW5nQm9vdAogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICBkZXBsb3ltZW50Tm9kZSAiT3JhY2xlIDI2YWkgQVRQIOKAlCBvcmFjbGVwbWRiIiAiTWFuYWdlZCBBdXRvbm9tb3VzIFRyYW5zYWN0aW9uIFByb2Nlc3NpbmcuIFNjaGVtYTogVE9ET1VTRVIuIFROUyBhbGlhczogb3JhY2xlcG1kYl90cC4iICJPQ0kgQVRQIiB7CiAgICAgICAgICAgICAgICAgICAgY29udGFpbmVySW5zdGFuY2UgZGF0YWJhc2UKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0KCiAgICB2aWV3cyB7CgogICAgICAgIHN5c3RlbUxhbmRzY2FwZSAiU3lzdGVtTGFuZHNjYXBlIiAiQWxsIGFjdG9ycyBhbmQgc29mdHdhcmUgc3lzdGVtcy4iIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9sYXlvdXQgbHIKICAgICAgICB9CgogICAgICAgIHN5c3RlbUNvbnRleHQgb3JhY2xlUG1Ub29sICJTeXN0ZW1Db250ZXh0IiAiT3JhY2xlIFBNIFRvb2wgYW5kIGl0cyBleHRlcm5hbCBkZXBlbmRlbmNpZXMuIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvbGF5b3V0IGxyCiAgICAgICAgfQoKICAgICAgICBjb250YWluZXIgb3JhY2xlUG1Ub29sICJDb250YWluZXJzIiAiQ29udGFpbmVycyBpbnNpZGUgT3JhY2xlIFBNIFRvb2wuIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgICAgICBhdXRvbGF5b3V0IGxyCiAgICAgICAgfQoKICAgICAgICBjb21wb25lbnQgc3ByaW5nQm9vdCAiQ29tcG9uZW50cyIgIkludGVybmFsIG1vZHVsZXMgb2YgdGhlIFNwcmluZyBCb290IGFwcGxpY2F0aW9uLiIgewogICAgICAgICAgICBpbmNsdWRlICoKICAgICAgICAgICAgYXV0b2xheW91dCBscgogICAgICAgIH0KCiAgICAgICAgZGVwbG95bWVudCBvcmFjbGVQbVRvb2wgIlByb2R1Y3Rpb24g4oCUIE9DSSBteC1xdWVyZXRhcm8tMSIgIkRlcGxveW1lbnQiICJQcm9kdWN0aW9uIGRlcGxveW1lbnQgb24gT0NJIE9LRS4iIHsKICAgICAgICAgICAgaW5jbHVkZSAqCiAgICAgICAgICAgIGF1dG9sYXlvdXQgbHIKICAgICAgICB9CgogICAgICAgIGR5bmFtaWMgb3JhY2xlUG1Ub29sICJUZWxlZ3JhbVRhc2tVcGRhdGUiICJEZXZlbG9wZXIgdXBkYXRlcyB0YXNrIHN0YXR1cyB2aWEgVGVsZWdyYW0gYm90LiIgewogICAgICAgICAgICBkZXZlbG9wZXIgIC0+IHRlbGVncmFtICAgIlNlbmRzIG5hdHVyYWwtbGFuZ3VhZ2UgY29tbWFuZCAoZS5nLiAnbWFyayB0YXNrIFggYXMgZG9uZScpIgogICAgICAgICAgICB0ZWxlZ3JhbSAgIC0+IHNwcmluZ0Jvb3QgIkRlbGl2ZXJzIG1lc3NhZ2UgdmlhIGxvbmctcG9sbGluZyIKICAgICAgICAgICAgc3ByaW5nQm9vdCAtPiBnZW1pbmlBcGkgICJQT1NUIC9nZW5lcmF0ZUNvbnRlbnQg4oCUIHBhcnNlIGludGVudCBhbmQgZXh0cmFjdCB0YXNrIHJlZmVyZW5jZSIKICAgICAgICAgICAgZ2VtaW5pQXBpICAtPiBzcHJpbmdCb290ICJSZXR1cm5zIHN0cnVjdHVyZWQgYWN0aW9uICh0YXNrSWQsIG5ld1N0YXR1cykiCiAgICAgICAgICAgIHNwcmluZ0Jvb3QgLT4gZGF0YWJhc2UgICAiVVBEQVRFIHRhc2tzIFNFVCBzdGF0dXMgPSBET05FIOKAlCB0cmlnZ2VycyB3cml0ZSB0byB0YXNrX3N0YXRlX2hpc3RvcnkiCiAgICAgICAgICAgIGRhdGFiYXNlICAgLT4gc3ByaW5nQm9vdCAiQ29uZmlybXMgcm93IHVwZGF0ZWQiCiAgICAgICAgICAgIHNwcmluZ0Jvb3QgLT4gdGVsZWdyYW0gICAiU2VuZHMgY29uZmlybWF0aW9uIHJlcGx5IgogICAgICAgICAgICB0ZWxlZ3JhbSAgIC0+IGRldmVsb3BlciAgIkRpc3BsYXlzIHRhc2sgbWFya2VkIGFzIGRvbmUiCiAgICAgICAgICAgIGF1dG9sYXlvdXQgbHIKICAgICAgICB9CgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIlBlcnNvbiIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMTE2OGJkCiAgICAgICAgICAgICAgICBjb2xvciAgICAgICNmZmZmZmYKICAgICAgICAgICAgICAgIHNoYXBlICAgICAgUGVyc29uCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiU29mdHdhcmUgU3lzdGVtIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICMxMTY4YmQKICAgICAgICAgICAgICAgIGNvbG9yICAgICAgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkV4dGVybmFsIFN5c3RlbSIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjOTk5OTk5CiAgICAgICAgICAgICAgICBjb2xvciAgICAgICNmZmZmZmYKICAgICAgICAgICAgfQogICAgICAgICAgICBlbGVtZW50ICJDb250YWluZXIiIHsKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzQzOGRkNQogICAgICAgICAgICAgICAgY29sb3IgICAgICAjZmZmZmZmCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRGF0YWJhc2UiIHsKICAgICAgICAgICAgICAgIHNoYXBlIEN5bGluZGVyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiQ29tcG9uZW50IiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM4NWJiZjAKICAgICAgICAgICAgICAgIGNvbG9yICAgICAgIzAwMDAwMAogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQp9",
+    "structurizr.inspection.info" : "0",
+    "structurizr.inspection.ignore" : "0",
+    "structurizr.inspection.warning" : "0"
+  },
+  "views" : {
+    "componentViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "containerId" : "9",
+      "description" : "Internal modules of the Spring Boot application.",
+      "elements" : [ {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "10",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "11",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "12",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "13",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "14",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "15",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "16",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "17",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalContainerBoundariesVisible" : false,
+      "key" : "Components",
+      "name" : "Component View: Oracle PM Tool - Spring Boot Application",
+      "order" : 4,
+      "relationships" : [ {
+        "id" : "33"
+      }, {
+        "id" : "34"
+      }, {
+        "id" : "35"
+      }, {
+        "id" : "36"
+      }, {
+        "id" : "37"
+      }, {
+        "id" : "38"
+      }, {
+        "id" : "39"
+      }, {
+        "id" : "40"
+      }, {
+        "id" : "41"
+      } ]
+    } ],
+    "configuration" : {
+      "styles" : {
+        "elements" : [ {
+          "background" : "#85bbf0",
+          "color" : "#000000",
+          "tag" : "Component"
+        }, {
+          "background" : "#438dd5",
+          "color" : "#ffffff",
+          "tag" : "Container"
+        }, {
+          "shape" : "Cylinder",
+          "tag" : "Database"
+        }, {
+          "background" : "#999999",
+          "color" : "#ffffff",
+          "tag" : "External System"
+        }, {
+          "background" : "#1168bd",
+          "color" : "#ffffff",
+          "shape" : "Person",
+          "tag" : "Person"
+        }, {
+          "background" : "#1168bd",
+          "color" : "#ffffff",
+          "tag" : "Software System"
+        } ]
+      },
+      "terminology" : { }
+    },
+    "containerViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Containers inside Oracle PM Tool.",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "17",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "Containers",
+      "name" : "Container View: Oracle PM Tool",
+      "order" : 3,
+      "relationships" : [ {
+        "id" : "25"
+      }, {
+        "id" : "26"
+      }, {
+        "id" : "27"
+      }, {
+        "id" : "28"
+      }, {
+        "id" : "30"
+      }, {
+        "id" : "31"
+      }, {
+        "id" : "32"
+      } ],
+      "softwareSystemId" : "8"
+    } ],
+    "deploymentViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Production deployment on OCI OKE.",
+      "elements" : [ {
+        "id" : "42",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "43",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "44",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "45",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "46",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "47",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "48",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "49",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "50",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "51",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "environment" : "Production — OCI mx-queretaro-1",
+      "key" : "Deployment",
+      "name" : "Deployment View: Oracle PM Tool - Production — OCI mx-queretaro-1",
+      "order" : 5,
+      "relationships" : [ {
+        "id" : "52"
+      }, {
+        "id" : "53"
+      } ],
+      "softwareSystemId" : "8"
+    } ],
+    "dynamicViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Developer updates task status via Telegram bot.",
+      "elementId" : "8",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "9",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "17",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "externalBoundariesVisible" : false,
+      "key" : "TelegramTaskUpdate",
+      "name" : "Dynamic View: Oracle PM Tool",
+      "order" : 6,
+      "relationships" : [ {
+        "description" : "Sends natural-language command (e.g. 'mark task X as done')",
+        "id" : "26",
+        "order" : "1",
+        "response" : false
+      }, {
+        "description" : "Delivers message via long-polling",
+        "id" : "28",
+        "order" : "2",
+        "response" : false
+      }, {
+        "description" : "POST /generateContent — parse intent and extract task reference",
+        "id" : "32",
+        "order" : "3",
+        "response" : false
+      }, {
+        "description" : "Returns structured action (taskId, newStatus)",
+        "id" : "32",
+        "order" : "4",
+        "response" : true
+      }, {
+        "description" : "UPDATE tasks SET status = DONE — triggers write to task_state_history",
+        "id" : "30",
+        "order" : "5",
+        "response" : false
+      }, {
+        "description" : "Confirms row updated",
+        "id" : "30",
+        "order" : "6",
+        "response" : true
+      }, {
+        "description" : "Sends confirmation reply",
+        "id" : "28",
+        "order" : "7",
+        "response" : true
+      }, {
+        "description" : "Displays task marked as done",
+        "id" : "26",
+        "order" : "8",
+        "response" : true
+      } ]
+    } ],
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Oracle PM Tool and its external dependencies.",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "SystemContext",
+      "name" : "System Context View: Oracle PM Tool",
+      "order" : 2,
+      "relationships" : [ {
+        "id" : "18"
+      }, {
+        "id" : "19"
+      }, {
+        "id" : "20"
+      }, {
+        "id" : "21"
+      }, {
+        "id" : "22"
+      }, {
+        "id" : "23"
+      }, {
+        "id" : "26"
+      }, {
+        "id" : "29"
+      } ],
+      "softwareSystemId" : "8"
+    } ],
+    "systemLandscapeViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "All actors and software systems.",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "3",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "4",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "5",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "6",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "7",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "8",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "SystemLandscape",
+      "name" : "System Landscape View",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "18"
+      }, {
+        "id" : "19"
+      }, {
+        "id" : "20"
+      }, {
+        "id" : "21"
+      }, {
+        "id" : "22"
+      }, {
+        "id" : "23"
+      }, {
+        "id" : "24"
+      }, {
+        "id" : "26"
+      }, {
+        "id" : "29"
+      } ]
+    } ]
+  }
+}

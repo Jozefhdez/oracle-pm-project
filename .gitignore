@@ -63,3 +63,5 @@ frontend/yarn-error.log*
 
 schema/export_old_data.sql
 schema/import_data.sql
+
+architecture/.structurizr/
