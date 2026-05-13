@@ -44,6 +44,9 @@ steps:
     command: |
       export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
       export PATH=$JAVA_HOME/bin:$PATH
+      printf 'REACT_APP_OIDC_AUTHORITY=%s\nREACT_APP_OIDC_CLIENT_ID=%s\nREACT_APP_OIDC_CLIENT_SECRET=%s\n' \
+        "${REACT_APP_OIDC_AUTHORITY}" "${REACT_APP_OIDC_CLIENT_ID}" "${REACT_APP_OIDC_CLIENT_SECRET}" \
+        > MtdrSpring/backend/src/main/frontend/.env.production
       cd MtdrSpring/backend
       mvn --no-transfer-progress clean package -DskipTests
 
