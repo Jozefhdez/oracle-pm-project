@@ -1,38 +1,53 @@
-version: 0.1 
+version: 0.1
 component: build
-timeoutInSeconds: 600
+timeoutInSeconds: 900
 shell: bash
 
 env:
   variables:
-    JAVA_HOME: /usr/lib64/graalvm/graalvm-java22
+    DOCKER_REGISTRY: "mx-queretaro-1.ocir.io/axeeisoondbm/reacttodo/q80kr"
+    OCIR_USER: "axeeisoondbm/a01644644@tec.mx"
+    TODO_PDB_NAME: "oraclepmdb"
+    OCI_REGION: "mx-queretaro-1"
+    IMAGE_NAME: "todolistapp-springboot"
+    IMAGE_TAG: "0.1"
+
+  vaultVariables:
+    OCIR_AUTH_TOKEN: "ocid1.vaultsecret.oc1.mx-queretaro-1.amaaaaaazfu3rdyaxhpi54af5li673un6573vzu57exuiq2xzfyvmxgegi5q"
 
   exportedVariables:
-    - BuildServiceDemoVersion
+    - DOCKER_REGISTRY
+    - IMAGE_NAME
+    - IMAGE_TAG
+    - TODO_PDB_NAME
 
 steps:
   - type: Command
-    name: "Install GraalVM Enterprise 22.x Native Image for Java22"
-    command:  yum -y install graalvm-22-jdk.x86_64;
-              ls /usr/lib64/graalvm/
+    name: "Install Java 17"
+    command: |
+      yum -y install java-17-openjdk-devel
+      export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+      echo "JAVA_HOME=$JAVA_HOME"
+      java -version
 
   - type: Command
-    name: "Set PATH Variable"
-    command: export PATH=$JAVA_HOME/bin:$PATH
+    name: "Login to OCIR"
+    command: |
+      echo "$OCIR_AUTH_TOKEN" | docker login ${OCI_REGION}.ocir.io \
+        -u "${OCIR_USER}" --password-stdin
 
   - type: Command
-    name: "Docker Login"
-    command:  cd MtdrSpring;
-              oci os object get --bucket-name reacttodo-ysmiy --name deployment_config.tgz --file deployment_config.tgz;
-              tar -xzvf deployment_config.tgz;
-              source env.sh;
-              cat at.cfg | docker login -u "axyyzvpljivg/adan0001@gmail.com" --password-stdin phx.ocir.io
+    name: "Build JAR and frontend"
+    command: |
+      export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+      export PATH=$JAVA_HOME/bin:$PATH
+      cd MtdrSpring/backend
+      mvn --no-transfer-progress clean package -DskipTests
 
   - type: Command
-    name: "Build"
-    command:  cd MtdrSpring;
-              source env.sh;
-              (cd backend;source build.sh)
-
-
-
+    name: "Build and push Docker image"
+    command: |
+      cd MtdrSpring/backend
+      docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} .
+      docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+      echo "Image pushed: ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
