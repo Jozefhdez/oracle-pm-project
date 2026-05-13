@@ -271,7 +271,7 @@ export default function DashboardView({
         {/* Left */}
         <Grid item xs={12} md={7} data-testid="sprint-health-section">
           <Box sx={{ mb: '17px' }}>
-            <SectionTitle>Active Sprint Health</SectionTitle>
+            <SectionTitle>Sprint Health Overview</SectionTitle>
           </Box>
 
           {projectSprints.length === 0 ? (
