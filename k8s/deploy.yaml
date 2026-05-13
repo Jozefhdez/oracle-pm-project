@@ -68,3 +68,21 @@ spec:
           labelSelector:
             matchLabels:
               app: todolistapp-springboot
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todolistapp-springboot-service
+  namespace: mtdrworkshop
+  annotations:
+    service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+    service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "10"
+spec:
+  type: LoadBalancer
+  selector:
+    app: todolistapp-springboot
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP

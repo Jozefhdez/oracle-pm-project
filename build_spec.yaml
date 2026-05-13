@@ -11,9 +11,12 @@ env:
     OCI_REGION: "mx-queretaro-1"
     IMAGE_NAME: "todolistapp-springboot"
     IMAGE_TAG: "0.1"
+    REACT_APP_OIDC_AUTHORITY: "https://idcs-a333fea8b68e4aff8867ff6094453a03.identity.oraclecloud.com"
+    REACT_APP_OIDC_CLIENT_ID: "7809ed300a374eafa7bb9403f8f1ff01"
 
   vaultVariables:
     OCIR_AUTH_TOKEN: "ocid1.vaultsecret.oc1.mx-queretaro-1.amaaaaaazfu3rdyaxhpi54af5li673un6573vzu57exuiq2xzfyvmxgegi5q"
+    REACT_APP_OIDC_CLIENT_SECRET: "ocid1.vaultsecret.oc1.mx-queretaro-1.amaaaaaazfu3rdyacgf65ctfvesmjicyx52eb4423bme4mpvq2pxisfrthja"
 
   exportedVariables:
     - DOCKER_REGISTRY
