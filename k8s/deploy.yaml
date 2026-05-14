@@ -10,13 +10,15 @@ spec:
   replicas: 2
   template:
     metadata:
+      annotations:
+        deploy-time: "${IMAGE_TAG}"
       labels:
         app: todolistapp-springboot
         version: v1
     spec:
       containers:
         - name: todolistapp-springboot
-          image: mx-queretaro-1.ocir.io/axeeisoondbm/reacttodo/q80kr/todolistapp-springboot:${IMAGE_TAG}
+          image: mx-queretaro-1.ocir.io/axeeisoondbm/reacttodo/q80kr/todolistapp-springboot:0.1
           imagePullPolicy: Always
           env:
             - name: DB_USER

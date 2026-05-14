@@ -10,6 +10,7 @@ env:
     TODO_PDB_NAME: "oraclepmdb"
     OCI_REGION: "mx-queretaro-1"
     IMAGE_NAME: "todolistapp-springboot"
+    IMAGE_TAG: "0.1"
 
   vaultVariables:
     OCIR_AUTH_TOKEN: "ocid1.vaultsecret.oc1.mx-queretaro-1.amaaaaaazfu3rdyaxhpi54af5li673un6573vzu57exuiq2xzfyvmxgegi5q"
@@ -46,7 +47,6 @@ steps:
   - type: Command
     name: "Build and push Docker image"
     command: |
-      export IMAGE_TAG=$(git rev-parse --short HEAD)
       cd MtdrSpring/backend
       docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} .
       docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
