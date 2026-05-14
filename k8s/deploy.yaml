@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: todolistapp-springboot
-          image: mx-queretaro-1.ocir.io/axeeisoondbm/reacttodo/q80kr/todolistapp-springboot:0.1
+          image: mx-queretaro-1.ocir.io/axeeisoondbm/reacttodo/q80kr/todolistapp-springboot:${IMAGE_TAG}
           imagePullPolicy: Always
           env:
             - name: DB_USER
