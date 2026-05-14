@@ -51,3 +51,23 @@ steps:
       docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} .
       docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
       echo "Image pushed: ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+
+  - type: Command
+    name: "Restart K8s deployment"
+    command: |
+      curl -LO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
+      chmod +x kubectl && mv kubectl /usr/local/bin/
+      COMPARTMENT_ID=$(oci iam compartment list --all \
+        --query "data[?name=='reacttodo'].id | [0]" --raw-output)
+      CLUSTER_ID=$(oci ce cluster list \
+        --compartment-id "$COMPARTMENT_ID" \
+        --query "data[?\"lifecycle-state\"=='ACTIVE'].id | [0]" --raw-output)
+      mkdir -p $HOME/.kube
+      oci ce cluster create-kubeconfig \
+        --cluster-id "$CLUSTER_ID" \
+        --file $HOME/.kube/config \
+        --region ${OCI_REGION} \
+        --token-version 2.0.0 \
+        --kube-endpoint PUBLIC_ENDPOINT
+      kubectl rollout restart deployment/todolistapp-springboot-deployment -n mtdrworkshop
+      kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop --timeout=120s
