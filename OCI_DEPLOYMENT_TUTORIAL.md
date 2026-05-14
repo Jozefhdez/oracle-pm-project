@@ -1,72 +1,53 @@
 # OCI Deployment Tutorial
 
-## Day to Day: Deploy a New Version
+## Day to Day: Deploy a New Version (CI/CD — automatic)
 
-**Local:**
+Push to `main` and the OCI DevOps pipeline handles everything:
+
 ```bash
-git pull origin main
-# make changes
 git add . && git commit -m "message" && git push origin main
 ```
 
-**Cloud Shell:**
-```bash
-cd ~/reacttodo/oracle-pm-project && git pull origin main
-cd MtdrSpring/backend
-. build.sh
-. deploy.sh
-kubectl rollout restart deployment/todolistapp-springboot-deployment -n mtdrworkshop
-kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop
-. setup-https.sh  # always run after deploy — OCI wipes the HTTPS listener on every reconcile
-```
-
-> The app will be available at **https://oracle-pm.duckdns.org**
-
-> If `build.sh` fails with `denied: Anonymous users are only allowed read access`, log in to OCIR first:
-> ```bash
-> docker login mx-queretaro-1.ocir.io -u 'axeeisoondbm/a01644644@tec.mx' -p '<auth-token>'
-> ```
-> Auth token: OCI Console → Profile → Tokens and keys → Auth tokens → Generate token.
+The build pipeline (~6 min) builds the image and restarts the pods automatically. The app will be live at **https://oracle-pm.duckdns.org**.
 
 ---
 
 ## Stop Resources
 
-**1. Undeploy the app from Kubernetes:**
-```bash
-cd ~/reacttodo/oracle-pm-project/MtdrSpring/backend
-. undeploy.sh
-```
+- OCI Console → search "Instances" → set compartment to `reacttodo`
+- Select all 3 instances → **Stop**
 
-**2. Stop the OKE nodes:**
-- OCI Console → search "Instances"
-- Set compartment to `reacttodo`
-- Select all instances → Stop
+> The OKE cluster control plane and Load Balancer remain active (no extra cost). Only compute nodes stop.
 
 ---
 
 ## Resume After Stopping
 
 **1. Start the OKE nodes:**
-- OCI Console → search "Instances"
-- Set compartment to `reacttodo`
-- Select all instances → Start
+- OCI Console → search "Instances" → set compartment to `reacttodo`
+- Select all 3 instances → **Start**
 - Wait ~2 min for nodes to become Ready
 
-**2. Redeploy the app:**
+**2. Restart the app pods** (Cloud Shell):
 ```bash
-cd ~/reacttodo/oracle-pm-project/MtdrSpring/backend
-. deploy.sh
+kubectl rollout restart deployment/todolistapp-springboot-deployment -n mtdrworkshop
 kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop
-. setup-https.sh
 ```
+
+This pulls the latest image already in OCIR — no need to rebuild or push.
 
 **3. Verify:**
 ```bash
 kubectl get pods -n mtdrworkshop
-pods
-services
+kubectl get svc -n mtdrworkshop
 ```
+
+> **If you pushed code while nodes were stopped:** the build pipeline ran and pushed a new image to OCIR, but the rollout step failed (no nodes). After starting the nodes, just run step 2 above to pick up the latest image.
+
+> **If HTTPS stops working** after a resume, re-run from Cloud Shell:
+> ```bash
+> cd ~/MtdrSpring/backend && . setup-https.sh
+> ```
 
 ---
 
