@@ -214,7 +214,7 @@ export default function DashboardView({
           Welcome back, {userName}
         </Typography>
         <Typography sx={{ fontSize: '0.875rem', color: '#717171' }}>
-          Here is your latest update for {activeSprintName}.
+          Here is what is happening with {activeSprintName} today.
         </Typography>
       </Box>
 
