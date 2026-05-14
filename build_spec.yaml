@@ -11,6 +11,8 @@ env:
     OCI_REGION: "mx-queretaro-1"
     IMAGE_NAME: "todolistapp-springboot"
     IMAGE_TAG: "0.1"
+    OKE_COMPARTMENT_ID: "ocid1.compartment.oc1..aaaaaaaacgyefpnpd3wup3rf42n2cxrr2neozd5laau5qvlbnc362m3f4wua"
+    OKE_CLUSTER_ID: "ocid1.cluster.oc1.mx-queretaro-1.aaaaaaaapkskwykviiqaz3qrilysqr2u4huq4zpaszyw2pukrct2x2jgsfxa"
 
   vaultVariables:
     OCIR_AUTH_TOKEN: "ocid1.vaultsecret.oc1.mx-queretaro-1.amaaaaaazfu3rdyaxhpi54af5li673un6573vzu57exuiq2xzfyvmxgegi5q"
@@ -57,14 +59,9 @@ steps:
     command: |
       curl -LO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
       chmod +x kubectl && mv kubectl /usr/local/bin/
-      COMPARTMENT_ID=$(oci iam compartment list --all \
-        --query "data[?name=='reacttodo'].id | [0]" --raw-output)
-      CLUSTER_ID=$(oci ce cluster list \
-        --compartment-id "$COMPARTMENT_ID" \
-        --query "data[?\"lifecycle-state\"=='ACTIVE'].id | [0]" --raw-output)
       mkdir -p $HOME/.kube
       oci ce cluster create-kubeconfig \
-        --cluster-id "$CLUSTER_ID" \
+        --cluster-id "${OKE_CLUSTER_ID}" \
         --file $HOME/.kube/config \
         --region ${OCI_REGION} \
         --token-version 2.0.0 \
