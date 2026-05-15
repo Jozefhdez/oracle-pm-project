@@ -1,6 +1,7 @@
 package com.springboot.MyTodoList.controller;
 
 import com.springboot.MyTodoList.dto.DeveloperStatDto;
+import com.springboot.MyTodoList.dto.SprintKpiResponse;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.SprintKpiSnapshot;
 import com.springboot.MyTodoList.service.SprintKpiSnapshotService;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,14 +27,28 @@ public class SprintKpiSnapshotController {
     private SprintService sprintService;
 
     @GetMapping
-    public ResponseEntity<SprintKpiSnapshot> getKpi(@PathVariable UUID sprintId) {
+    public ResponseEntity<SprintKpiResponse> getKpi(@PathVariable UUID sprintId) {
+        Sprint sprint = sprintService.findById(sprintId).orElse(null);
+        if (sprint == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
         SprintKpiSnapshot snapshot = sprintKpiSnapshotService.findBySprintId(sprintId)
-            .orElseGet(() -> {
-                Sprint sprint = sprintService.findById(sprintId).orElse(null);
-                return sprint != null ? sprintKpiSnapshotService.compute(sprint) : null;
-            });
-        if (snapshot == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(snapshot, HttpStatus.OK);
+            .orElseGet(() -> sprintKpiSnapshotService.compute(sprint));
+
+        SprintKpiResponse response = SprintKpiResponse.from(snapshot);
+
+        sprintKpiSnapshotService.findPreviousSprintSnapshot(sprint).ifPresent(prev -> {
+            BigDecimal current = snapshot.getAvgCycleTimeDays();
+            BigDecimal previous = prev.getAvgCycleTimeDays();
+            if (current != null && previous != null && previous.compareTo(BigDecimal.ZERO) != 0) {
+                BigDecimal changePct = current.subtract(previous)
+                    .divide(previous, 4, RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(100))
+                    .setScale(1, RoundingMode.HALF_UP);
+                response.setCycleTimeChangePct(changePct);
+            }
+        });
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/compute")

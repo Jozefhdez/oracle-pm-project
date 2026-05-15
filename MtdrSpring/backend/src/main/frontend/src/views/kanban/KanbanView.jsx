@@ -1,14 +1,18 @@
+import { useState } from 'react';
 import {
   Box,
   Card,
   CardContent,
   CircularProgress,
+  Collapse,
   FormControl,
+  IconButton,
   MenuItem,
   Select,
   Typography,
 } from '@mui/material';
-import { ORANGE_ACCENT } from '../../styles/theme';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const COLUMNS = ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'];
 
@@ -47,7 +51,6 @@ function PriorityBadge({ priority }) {
 
 function TaskCard({ task, onTaskSelect }) {
   const projectName = task.projectName ?? 'Cloud PM Tool';
-  const taskCode = `TS-${task.id}`;
 
   return (
     <Card
@@ -86,45 +89,61 @@ function TaskCard({ task, onTaskSelect }) {
 }
 
 function UserRow({ user, tasks, onTaskSelect }) {
+  const [expanded, setExpanded] = useState(true);
   const userName = getUserName(user.email) ?? `User ${user.id}`;
   const totalTasks = tasks.length;
 
   return (
-    <Box sx={{ mb: '32px' }} data-testid={`user-row-${user.id}`}>
-      {/* User name */}
-      <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', color: '#1A1A1A', mb: '12px' }}>
-        {userName}{' '}
-        <Typography
-          component="span"
-          sx={{ fontWeight: 400, color: '#9E9E9E', fontSize: '0.95rem' }}
-        >
-          ({totalTasks})
+    <Box sx={{ mb: '24px' }} data-testid={`user-row-${user.id}`}>
+      {/* User name + collapse toggle */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px', mb: expanded ? '12px' : 0 }}>
+        <Typography sx={{ fontWeight: 700, fontSize: '0.95rem', color: '#1A1A1A' }}>
+          {userName}{' '}
+          <Typography
+            component="span"
+            sx={{ fontWeight: 400, color: '#9E9E9E', fontSize: '0.95rem' }}
+          >
+            ({totalTasks})
+          </Typography>
         </Typography>
-      </Typography>
+        <IconButton
+          size="small"
+          onClick={() => setExpanded((v) => !v)}
+          sx={{ color: '#9E9E9E', p: '2px', '&:hover': { color: '#1A1A1A' } }}
+        >
+          {expanded ? (
+            <ExpandLessIcon sx={{ fontSize: '1.1rem' }} />
+          ) : (
+            <ExpandMoreIcon sx={{ fontSize: '1.1rem' }} />
+          )}
+        </IconButton>
+      </Box>
 
       {/* 4-column grid */}
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
-        {COLUMNS.map((col) => {
-          const colTasks = tasks.filter((t) => t.status === col);
-          return (
-            <Box
-              key={col}
-              sx={{
-                bgcolor: '#f5f5f0',
-                borderRadius: '8px',
-                p: '12px',
-                minHeight: '80px',
-              }}
-            >
-              {colTasks.length === 0
-                ? null
-                : colTasks.map((task) => (
-                    <TaskCard key={task.id} task={task} onTaskSelect={onTaskSelect} />
-                  ))}
-            </Box>
-          );
-        })}
-      </Box>
+      <Collapse in={expanded} unmountOnExit>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+          {COLUMNS.map((col) => {
+            const colTasks = tasks.filter((t) => t.status === col);
+            return (
+              <Box
+                key={col}
+                sx={{
+                  bgcolor: '#f5f5f0',
+                  borderRadius: '8px',
+                  p: '12px',
+                  minHeight: '80px',
+                }}
+              >
+                {colTasks.length === 0
+                  ? null
+                  : colTasks.map((task) => (
+                      <TaskCard key={task.id} task={task} onTaskSelect={onTaskSelect} />
+                    ))}
+              </Box>
+            );
+          })}
+        </Box>
+      </Collapse>
     </Box>
   );
 }

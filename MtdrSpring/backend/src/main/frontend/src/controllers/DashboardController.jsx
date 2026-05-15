@@ -35,7 +35,7 @@ export default function DashboardController() {
     const completed = tasks.filter((t) => t.status === 'DONE').length;
     const blocked = tasks.filter((t) => t.status === 'BLOCKED').length;
     const avgCycleTime = kpi?.avgCycleTimeDays ?? 0;
-    const cycleTimeChange = kpi?.cycleTimeChangePct ?? 0;
+    const cycleTimeChange = kpi?.cycleTimeChangePct ?? null;
     return {
       openTasks,
       projectCount: projectId ? 1 : 0,

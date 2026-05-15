@@ -1,5 +1,6 @@
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
-import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 
 const ORANGE_ACCENT = '#F77E47';
 
@@ -191,9 +192,6 @@ function TaskItem({ status, title }) {
         <Typography sx={{ fontSize: '0.875rem', color: '#1A1A1A', flexGrow: 1 }}>
           {title}
         </Typography>
-        <KeyboardDoubleArrowUpIcon
-          sx={{ color: '#C0392B', flexShrink: 0, fontSize: '1.1rem', fontWeight: 700 }}
-        />
       </CardContent>
     </Card>
   );
@@ -250,17 +248,28 @@ export default function DashboardView({
             value={`${stats.avgCycleTime} days`}
             borderColor={STAT_BORDERS.avgCycleTime}
             subtitleContent={
-              <Typography
-                sx={{
-                  fontSize: '0.78rem',
-                  color: '#C0392B',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '3px',
-                }}
-              >
-                ↓ {stats.cycleTimeChange}% vs Last sprint
-              </Typography>
+              stats.cycleTimeChange == null ? (
+                <Typography sx={{ fontSize: '0.82rem', color: '#717171' }}>
+                  No previous sprint
+                </Typography>
+              ) : (
+                <Typography
+                  sx={{
+                    fontSize: '0.78rem',
+                    color: stats.cycleTimeChange <= 0 ? '#2E7D32' : '#C0392B',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '3px',
+                  }}
+                >
+                  {stats.cycleTimeChange <= 0 ? (
+                    <TrendingDownIcon sx={{ fontSize: '1rem' }} />
+                  ) : (
+                    <TrendingUpIcon sx={{ fontSize: '1rem' }} />
+                  )}{' '}
+                  {Math.abs(stats.cycleTimeChange)}% vs Last sprint
+                </Typography>
+              )
             }
           />
         </Grid>

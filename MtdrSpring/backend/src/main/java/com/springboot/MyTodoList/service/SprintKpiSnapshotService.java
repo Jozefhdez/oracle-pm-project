@@ -8,6 +8,7 @@ import com.springboot.MyTodoList.model.TaskStateHistory;
 import com.springboot.MyTodoList.model.TaskStatus;
 import com.springboot.MyTodoList.model.TaskWorkLog;
 import com.springboot.MyTodoList.repository.SprintKpiSnapshotRepository;
+import com.springboot.MyTodoList.repository.SprintRepository;
 import com.springboot.MyTodoList.repository.TaskStateHistoryRepository;
 import com.springboot.MyTodoList.repository.TaskWorkLogRepository;
 import com.springboot.MyTodoList.repository.ToDoItemRepository;
@@ -32,6 +33,9 @@ public class SprintKpiSnapshotService {
     private SprintKpiSnapshotRepository snapshotRepository;
 
     @Autowired
+    private SprintRepository sprintRepository;
+
+    @Autowired
     private ToDoItemRepository taskRepository;
 
     @Autowired
@@ -42,6 +46,13 @@ public class SprintKpiSnapshotService {
 
     public Optional<SprintKpiSnapshot> findBySprintId(UUID sprintId) {
         return snapshotRepository.findBySprint_Id(sprintId);
+    }
+
+    public Optional<SprintKpiSnapshot> findPreviousSprintSnapshot(Sprint sprint) {
+        return sprintRepository.findByProject_Id(sprint.getProject().getId()).stream()
+            .filter(s -> s.getStartDate().isBefore(sprint.getStartDate()))
+            .max(Comparator.comparing(Sprint::getStartDate))
+            .flatMap(prev -> snapshotRepository.findBySprint_Id(prev.getId()));
     }
 
     public List<DeveloperStatDto> getDeveloperStats(UUID sprintId) {
