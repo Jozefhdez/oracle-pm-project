@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.BotSession;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
 import org.telegram.telegrambots.longpolling.starter.AfterBotRegistration;
@@ -72,10 +71,9 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
                 }
     }
 
-
-        public ToDoItemBotController( BotProps bp, ToDoItemService tsvc, GeminiService gs, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr) {
+        public ToDoItemBotController( BotProps bp, ToDoItemService tsvc, GeminiService gs, TelegramLinkService tls, UserRepository ur, ProjectMemberRepository pmr, ProjectRepository pr, TaskWorkLogRepository twlr, SprintRepository sr, TelegramClient tc) {
                 this.botProps = bp;
-                telegramClient = new OkHttpTelegramClient(getBotToken());
+                telegramClient = tc;
                 toDoItemService = tsvc;
             geminiService = gs;
                 telegramLinkService = tls;
@@ -142,5 +140,4 @@ actions.fnStart();
     }
 
 }
-
 
