@@ -60,6 +60,7 @@ frontend/yarn-error.log*
 .context/
 .playwright-mcp/
 .claude/
+.codex/
 
 schema/export_old_data.sql
 schema/import_data.sql
