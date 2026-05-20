@@ -69,15 +69,27 @@ Allow dynamic-group <dynamic-group> to use adm-knowledge-bases in compartment <c
 Allow dynamic-group <dynamic-group> to manage cluster-family in compartment <compartment>
 ```
 
-## Step 7 - Create the Build Pipeline
+## Step 7 - Create the Deployment Pipeline
+
+1. DevOps Project → **Deployment Pipelines → Create pipeline**, give it a name
+2. Inside the pipeline → click **+** → **Add stage**
+3. Select **Apply manifest to your Kubernetes cluster**
+4. Select your OKE cluster and namespace
+5. Under **Select Kubernetes manifest** → select your `deploy.yaml` artifact (you need to first add it as an **Artifact** in the DevOps Project → Artifacts section, pointing to your `k8s/deploy.yaml` in the repo)
+6. Click Add
+
+## Step 8 - Create the Build Pipeline
 
 1. DevOps Project → **Build Pipelines → Create build pipeline**, give it a name
 2. Inside the pipeline → click **+** → **Add stage → Managed Build**
 3. Select your **mirrored GitHub repository**
 4. Build spec path: `build_spec.yaml`
 5. Click Add
+6. After the Managed Build stage → click **+** again → **Add stage → Trigger deployment**
+7. Select the Deployment Pipeline created in Step 7
+8. Click Add
 
-## Step 8 - Create the Trigger + GitHub Webhook
+## Step 9 - Create the Trigger + GitHub Webhook
 
 **8a - Create the trigger in OCI:**
 1. DevOps Project → **Triggers → Create trigger**
@@ -93,7 +105,7 @@ Allow dynamic-group <dynamic-group> to manage cluster-family in compartment <com
 4. Event: **Just the push event**
 5. Click **Add webhook**
 
-## Step 9 - Test It End to End
+## Step 10 - Test It End to End
 
 1. Make a visible change in your code
 2. Push to GitHub:
