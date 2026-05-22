@@ -21,7 +21,7 @@ The build pipeline (~6 min) builds the image and restarts the pods automatically
 
 ---
 
-## Resume After Stopping
+## Resume After Stopping:
 
 **1. Start the OKE nodes:**
 - OCI Console → search "Instances" → set compartment to `reacttodo`
