@@ -158,6 +158,23 @@ steps:
           exit 1
         fi
       }
+      smoke_test() {
+        local url="${APP_BASE_URL}/actuator/health/readiness"
+        local attempts=12
+        local delay_seconds=10
+
+        for attempt in $(seq 1 "${attempts}"); do
+          echo "Smoke test attempt ${attempt}/${attempts}: ${url}"
+          if curl --fail --silent --show-error --max-time 20 "${url}"; then
+            echo "Smoke test passed"
+            return 0
+          fi
+          echo "Smoke test failed; waiting ${delay_seconds}s before retry"
+          sleep "${delay_seconds}"
+        done
+
+        return 1
+      }
       curl -LO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
       chmod +x kubectl && mv kubectl /usr/local/bin/
       mkdir -p $HOME/.kube
@@ -172,7 +189,7 @@ steps:
         rollback_deployment "Kubernetes rollout did not complete successfully"
         exit 1
       fi
-      if ! curl --fail --silent --show-error --max-time 20 "${APP_BASE_URL}/actuator/health/readiness"; then
+      if ! smoke_test; then
         rollback_deployment "Post-deployment smoke test failed at ${APP_BASE_URL}/actuator/health/readiness"
         exit 1
       fi
