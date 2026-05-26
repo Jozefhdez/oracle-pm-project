@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import AddIcon from '@mui/icons-material/Add';
-import { ORANGE_ACCENT, outlinedButtonSx, containedButtonSx } from '../../styles/theme';
+import { outlinedButtonSx, containedButtonSx } from '../../styles/theme';
 
 const PROGRESS_COLOR = '#245d63';
 

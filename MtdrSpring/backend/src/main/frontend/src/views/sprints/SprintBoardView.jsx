@@ -54,20 +54,6 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-function SectionTitle({ children }) {
-  return (
-    <Box>
-      <Typography
-        variant="h6"
-        sx={{ fontWeight: 700, fontSize: '1.15rem', color: '#2B2B2B', lineHeight: 1.3 }}
-      >
-        {children}
-      </Typography>
-      <Box sx={{ width: 32, height: 3, bgcolor: ORANGE_ACCENT, mt: '5px', borderRadius: '2px' }} />
-    </Box>
-  );
-}
-
 function PriorityBadge({ priority }) {
   const style = PRIORITY_BADGE[priority] ?? PRIORITY_BADGE.MEDIUM;
   return (

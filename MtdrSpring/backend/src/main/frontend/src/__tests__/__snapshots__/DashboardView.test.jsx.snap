@@ -2,8 +2,8 @@
 
 exports[`Snapshot matches snapshot when no data is present 1`] = `
 Object {
-  "kpiCards": "Open Tasks5Across 1 projectsCompleted3This SprintBlocked1Needs AttentionAvg cycle time2.5 days↓ 10% vs Last sprint",
+  "kpiCards": "Open Tasks5Across 1 projectsCompleted3This SprintBlocked1Needs AttentionAvg cycle time2.5 days 10% vs Last sprint",
   "myTasks": "My TasksNo tasks assigned to you.",
-  "sprintHealth": "Active Sprint HealthNo active sprints.",
+  "sprintHealth": "Sprint Health OverviewNo active sprints.",
 }
 `;

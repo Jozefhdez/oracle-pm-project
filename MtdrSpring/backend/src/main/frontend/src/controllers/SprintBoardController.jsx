@@ -8,13 +8,11 @@ import {
   useLogWork,
 } from '../models/hooks/useTasks';
 import { useMembers } from '../models/hooks/useMembers';
-import { useActiveProject } from '../models/ProjectContext';
 import SprintBoardView from '../views/sprints/SprintBoardView';
 
 export default function SprintBoardController() {
   const { projectId, sprintId } = useParams();
   const navigate = useNavigate();
-  const { activeProject } = useActiveProject();
 
   const { data: sprint, isLoading: loadingSprint } = useSprint(sprintId);
   const { data: tasks = [], isLoading: loadingTasks } = useSprintTasks(sprintId);

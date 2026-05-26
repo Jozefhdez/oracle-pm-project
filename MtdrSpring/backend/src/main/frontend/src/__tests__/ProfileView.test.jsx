@@ -1,7 +1,10 @@
 import React from 'react';
-import { render, screen, within, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import ProfileView from '../views/profile/ProfileView';
+
+jest.mock('react-oidc-context', () => ({
+  useAuth: () => ({ isAuthenticated: false, user: null }),
+}));
 
 const MEMBERS = [
   { user: { id: 'u1', email: 'alice.smith@oracle.com' } },
@@ -105,14 +108,8 @@ describe('Mock function - onInviteMember spy', () => {
 
     const inviteSection = getInviteSection();
     const input = within(inviteSection).getByPlaceholderText('colleague@oracle.com');
-    // Wrap userEvent in act so React flushes all state updates from each
-    // keystroke before the click assertion runs.
-    await act(async () => {
-      userEvent.type(input, 'new.dev@oracle.com');
-    });
-    await act(async () => {
-      userEvent.click(within(inviteSection).getByRole('button', { name: /send invite/i }));
-    });
+    fireEvent.change(input, { target: { value: 'new.dev@oracle.com' } });
+    fireEvent.click(within(inviteSection).getByRole('button', { name: /send invite/i }));
 
     expect(onInviteMember).toHaveBeenCalledWith('new.dev@oracle.com');
     expect(onInviteMember).toHaveBeenCalledTimes(1);

@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, screen, within, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import TaskDetailView from '../views/tasks/TaskDetailView';
 
 const TASK = {
@@ -106,9 +105,7 @@ describe('Mock function - onBack spy', () => {
   test('calls onBack exactly once when the Back button is clicked', async () => {
     const onBack = jest.fn();
     render(<TaskDetailView task={TASK} history={[]} logs={[]} onBack={onBack} />);
-    await act(async () => {
-      userEvent.click(screen.getByRole('button', { name: /back/i }));
-    });
+    fireEvent.click(screen.getByRole('button', { name: /back/i }));
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 });

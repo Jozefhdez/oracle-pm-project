@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, screen, within, waitFor, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import SprintBoardView from '../views/sprints/SprintBoardView';
 
 // @dnd-kit relies on pointer events and layout APIs that don't exist in jsdom.
@@ -170,20 +169,18 @@ describe('R4 - Marking a task as completed', () => {
     });
     await waitFor(() => getLogHoursDialog());
 
-    await act(async () => {
-      userEvent.type(within(getLogHoursDialog()).getByLabelText(/hours worked/i), '4');
+    fireEvent.change(within(getLogHoursDialog()).getByLabelText(/hours worked/i), {
+      target: { value: '4' },
     });
-    await act(async () => {
-      userEvent.click(within(getLogHoursDialog()).getByRole('button', { name: /confirm/i }));
-    });
+    fireEvent.click(within(getLogHoursDialog()).getByRole('button', { name: /confirm/i }));
 
-    await waitFor(() => {
+    await waitFor(() =>
       expect(HANDLERS.onLogWork).toHaveBeenCalledWith(
         't1',
         expect.objectContaining({ hoursWorked: 4 })
-      );
-      expect(HANDLERS.onStatusChange).toHaveBeenCalledWith('t1', 'DONE', 'u1');
-    });
+      )
+    );
+    await waitFor(() => expect(HANDLERS.onStatusChange).toHaveBeenCalledWith('t1', 'DONE', 'u1'));
   });
 
   test('cancelling the Log Hours dialog does not change the task status', async () => {
@@ -202,9 +199,7 @@ describe('R4 - Marking a task as completed', () => {
     });
     await waitFor(() => getLogHoursDialog());
 
-    await act(async () => {
-      userEvent.click(within(getLogHoursDialog()).getByRole('button', { name: /cancel/i }));
-    });
+    fireEvent.click(within(getLogHoursDialog()).getByRole('button', { name: /cancel/i }));
 
     // queryByTestId returns null instead of throwing, suitable when we
     // expect the element to be gone.
@@ -225,9 +220,7 @@ describe('Mock function - onTaskSelect spy', () => {
         {...HANDLERS}
       />
     );
-    await act(async () => {
-      userEvent.click(within(getTodoColumn()).getByText('Setup DB schema'));
-    });
+    fireEvent.click(within(getTodoColumn()).getByText('Setup DB schema'));
     expect(HANDLERS.onTaskSelect).toHaveBeenCalledWith('t1');
     expect(HANDLERS.onTaskSelect).toHaveBeenCalledTimes(1);
   });

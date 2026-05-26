@@ -11,6 +11,8 @@ env:
     OCI_REGION: "mx-queretaro-1"
     IMAGE_NAME: "todolistapp-springboot"
     IMAGE_TAG: "0.1"
+    APP_BASE_URL: "https://oracle-pm.duckdns.org"
+    OCI_NOTIFICATION_TOPIC_ID: "ocid1.onstopic.oc1.mx-queretaro-1.amaaaaaazfu3rdyaukxhxbsgiezmoarvx4s6e6xtd5dueqzyn4cg54teunkq"
     OKE_COMPARTMENT_ID: "ocid1.compartment.oc1..aaaaaaaacgyefpnpd3wup3rf42n2cxrr2neozd5laau5qvlbnc362m3f4wua"
     OKE_CLUSTER_ID: "ocid1.cluster.oc1.mx-queretaro-1.aaaaaaaapkskwykviiqaz3qrilysqr2u4huq4zpaszyw2pukrct2x2jgsfxa"
 
@@ -39,8 +41,58 @@ steps:
         -u "${OCIR_USER}" --password-stdin
 
   - type: Command
+    name: "Run automated tests"
+    command: |
+      set -euo pipefail
+      notify_failure() {
+        local title="$1"
+        local body="$2"
+        if [ -n "${OCI_NOTIFICATION_TOPIC_ID:-}" ]; then
+          if ! oci ons message publish \
+            --topic-id "${OCI_NOTIFICATION_TOPIC_ID}" \
+            --title "${title}" \
+            --body "${body}"; then
+            echo "Warning: failed to publish OCI notification"
+          fi
+        fi
+      }
+      on_failure() {
+        notify_failure \
+          "Oracle PM DevOps tests failed" \
+          "Automated tests failed for ${IMAGE_NAME}:${IMAGE_TAG}. Build run: ${OCI_BUILD_RUN_ID:-unknown}. Branch: ${OCI_PRIMARY_SOURCE_BRANCH_NAME:-unknown}. Commit: ${OCI_PRIMARY_SOURCE_COMMIT_HASH:-unknown}."
+      }
+      trap on_failure ERR
+      export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+      export PATH=$JAVA_HOME/bin:$PATH
+      cd MtdrSpring/backend
+      mvn --no-transfer-progress test
+      cd src/main/frontend
+      npm ci
+      npm run lint -- --max-warnings=0
+      CI=true npm test -- --watchAll=false
+
+  - type: Command
     name: "Build JAR and frontend"
     command: |
+      set -euo pipefail
+      notify_failure() {
+        local title="$1"
+        local body="$2"
+        if [ -n "${OCI_NOTIFICATION_TOPIC_ID:-}" ]; then
+          if ! oci ons message publish \
+            --topic-id "${OCI_NOTIFICATION_TOPIC_ID}" \
+            --title "${title}" \
+            --body "${body}"; then
+            echo "Warning: failed to publish OCI notification"
+          fi
+        fi
+      }
+      on_failure() {
+        notify_failure \
+          "Oracle PM DevOps package failed" \
+          "JAR/frontend packaging failed for ${IMAGE_NAME}:${IMAGE_TAG}. Build run: ${OCI_BUILD_RUN_ID:-unknown}. Branch: ${OCI_PRIMARY_SOURCE_BRANCH_NAME:-unknown}. Commit: ${OCI_PRIMARY_SOURCE_COMMIT_HASH:-unknown}."
+      }
+      trap on_failure ERR
       export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
       export PATH=$JAVA_HOME/bin:$PATH
       cd MtdrSpring/backend
@@ -49,6 +101,25 @@ steps:
   - type: Command
     name: "Build and push Docker image"
     command: |
+      set -euo pipefail
+      notify_failure() {
+        local title="$1"
+        local body="$2"
+        if [ -n "${OCI_NOTIFICATION_TOPIC_ID:-}" ]; then
+          if ! oci ons message publish \
+            --topic-id "${OCI_NOTIFICATION_TOPIC_ID}" \
+            --title "${title}" \
+            --body "${body}"; then
+            echo "Warning: failed to publish OCI notification"
+          fi
+        fi
+      }
+      on_failure() {
+        notify_failure \
+          "Oracle PM DevOps image failed" \
+          "Docker build or push failed for ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}. Build run: ${OCI_BUILD_RUN_ID:-unknown}. Branch: ${OCI_PRIMARY_SOURCE_BRANCH_NAME:-unknown}. Commit: ${OCI_PRIMARY_SOURCE_COMMIT_HASH:-unknown}."
+      }
+      trap on_failure ERR
       cd MtdrSpring/backend
       docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} .
       docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
@@ -57,6 +128,36 @@ steps:
   - type: Command
     name: "Restart K8s deployment"
     command: |
+      set -euo pipefail
+      notify() {
+        local title="$1"
+        local body="$2"
+        if [ -n "${OCI_NOTIFICATION_TOPIC_ID:-}" ]; then
+          if ! oci ons message publish \
+            --topic-id "${OCI_NOTIFICATION_TOPIC_ID}" \
+            --title "${title}" \
+            --body "${body}"; then
+            echo "Warning: failed to publish OCI notification"
+          fi
+        fi
+      }
+      rollback_deployment() {
+        local reason="$1"
+        notify \
+          "Oracle PM DevOps rollback started" \
+          "${reason}. Starting rollback for deployment/todolistapp-springboot-deployment in namespace mtdrworkshop. Build run: ${OCI_BUILD_RUN_ID:-unknown}. Branch: ${OCI_PRIMARY_SOURCE_BRANCH_NAME:-unknown}. Commit: ${OCI_PRIMARY_SOURCE_COMMIT_HASH:-unknown}."
+        kubectl rollout undo deployment/todolistapp-springboot-deployment -n mtdrworkshop
+        if kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop --timeout=120s; then
+          notify \
+            "Oracle PM DevOps rollback completed" \
+            "Rollback completed after failure: ${reason}. Deployment: todolistapp-springboot-deployment. Namespace: mtdrworkshop."
+        else
+          notify \
+            "Oracle PM DevOps rollback failed" \
+            "Rollback failed after original failure: ${reason}. Manual intervention required for deployment/todolistapp-springboot-deployment in namespace mtdrworkshop."
+          exit 1
+        fi
+      }
       curl -LO "https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl"
       chmod +x kubectl && mv kubectl /usr/local/bin/
       mkdir -p $HOME/.kube
@@ -67,4 +168,11 @@ steps:
         --token-version 2.0.0 \
         --kube-endpoint PUBLIC_ENDPOINT
       kubectl rollout restart deployment/todolistapp-springboot-deployment -n mtdrworkshop
-      kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop --timeout=120s
+      if ! kubectl rollout status deployment/todolistapp-springboot-deployment -n mtdrworkshop --timeout=120s; then
+        rollback_deployment "Kubernetes rollout did not complete successfully"
+        exit 1
+      fi
+      if ! curl --fail --silent --show-error --max-time 20 "${APP_BASE_URL}/actuator/health/readiness"; then
+        rollback_deployment "Post-deployment smoke test failed at ${APP_BASE_URL}/actuator/health/readiness"
+        exit 1
+      fi

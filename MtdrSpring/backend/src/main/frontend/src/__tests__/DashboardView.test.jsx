@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import DashboardView from '../views/dashboard/DashboardView';
 
 // Reusable stat values — every test uses these unless it overrides a specific one.
@@ -45,9 +44,6 @@ describe('R1 - My Tasks: real-time display of tasks assigned to the current user
 describe('R6 - Team KPIs: stat cards showing team-level metrics', () => {
   function getKpiCards() {
     return screen.getByTestId('kpi-stat-cards');
-  }
-  function getSprintHealthSection() {
-    return screen.getByTestId('sprint-health-section');
   }
 
   test('renders all four KPI card labels', () => {
