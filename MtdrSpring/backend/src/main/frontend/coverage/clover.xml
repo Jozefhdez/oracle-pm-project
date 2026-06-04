@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1780584468546" clover="3.2.0">
+  <project timestamp="1780584468546" name="All files">
+    <metrics statements="762" coveredstatements="195" conditionals="554" coveredconditionals="151" methods="343" coveredmethods="76" elements="1659" coveredelements="422" complexity="0" loc="762" ncloc="762" packages="16" files="42" classes="42"/>
+    <package name="src">
+      <metrics statements="29" coveredstatements="0" conditionals="26" coveredconditionals="0" methods="11" coveredmethods="0"/>
+      <file name="API.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/API.js">
+        <metrics statements="1" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="19" count="0" type="stmt"/>
+      </file>
+      <file name="App.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/App.js">
+        <metrics statements="17" coveredstatements="0" conditionals="18" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="47" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="54" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="58" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="62" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="120" count="0" type="stmt"/>
+      </file>
+      <file name="NewItem.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/NewItem.js">
+        <metrics statements="10" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="0" type="stmt"/>
+      </file>
+      <file name="theme.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/theme.js">
+        <metrics statements="1" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.auth">
+      <metrics statements="1" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="authConfig.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/auth/authConfig.js">
+        <metrics statements="1" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.constants">
+      <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="taskEnums.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/constants/taskEnums.js">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.controllers">
+      <metrics statements="172" coveredstatements="0" conditionals="119" coveredconditionals="0" methods="63" coveredmethods="0"/>
+      <file name="AuthView.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/controllers/AuthView.jsx">
+        <metrics statements="16" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="15" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="27" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+      </file>
+      <file name="DashboardController.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/controllers/DashboardController.jsx">
+        <metrics statements="35" coveredstatements="0" conditionals="33" coveredconditionals="0" methods="17" coveredmethods="0"/>
+        <line num="11" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="30" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="38" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="69" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="70" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+      </file>
+      <file name="KanbanBoardController.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/controllers/KanbanBoardController.jsx">
+        <metrics statements="27" coveredstatements="0" conditionals="18" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="12" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="27" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="29" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+      </file>
+      <file name="KpiDashboardController.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/controllers/KpiDashboardController.jsx">
+        <metrics statements="31" coveredstatements="0" conditionals="28" coveredconditionals="0" methods="12" coveredmethods="0"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="27" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="48" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+      </file>
+      <file name="ProfileController.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/controllers/ProfileController.jsx">
+        <metrics statements="18" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="20" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+      </file>
+      <file name="ProjectDetailController.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/controllers/ProjectDetailController.jsx">
+        <metrics statements="12" coveredstatements="0" conditionals="3" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="18" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+      </file>
+      <file name="ProjectSelectorController.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/controllers/ProjectSelectorController.jsx">
+        <metrics statements="11" coveredstatements="0" conditionals="5" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="13" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+      </file>
+      <file name="SprintBoardController.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/controllers/SprintBoardController.jsx">
+        <metrics statements="15" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+      </file>
+      <file name="TaskDetailController.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/controllers/TaskDetailController.jsx">
+        <metrics statements="7" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="12" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="16" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.models">
+      <metrics statements="19" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="7" coveredmethods="0"/>
+      <file name="CurrentUserContext.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/CurrentUserContext.js">
+        <metrics statements="5" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+      </file>
+      <file name="ProjectContext.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/ProjectContext.js">
+        <metrics statements="14" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.models.api">
+      <metrics statements="43" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="44" coveredmethods="0"/>
+      <file name="client.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/api/client.js">
+        <metrics statements="12" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="29" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+      </file>
+      <file name="kpiApi.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/api/kpiApi.js">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+      </file>
+      <file name="membersApi.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/api/membersApi.js">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+      </file>
+      <file name="projectsApi.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/api/projectsApi.js">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+      </file>
+      <file name="sprintsApi.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/api/sprintsApi.js">
+        <metrics statements="6" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+      </file>
+      <file name="tasksApi.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/api/tasksApi.js">
+        <metrics statements="11" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+      </file>
+      <file name="usersApi.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/api/usersApi.js">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="4" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.models.hooks">
+      <metrics statements="93" coveredstatements="0" conditionals="15" coveredconditionals="0" methods="57" coveredmethods="0"/>
+      <file name="useDeveloperStats.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/hooks/useDeveloperStats.js">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+      </file>
+      <file name="useKpi.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/hooks/useKpi.js">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+      </file>
+      <file name="useMembers.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/hooks/useMembers.js">
+        <metrics statements="14" coveredstatements="0" conditionals="3" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+      </file>
+      <file name="useProjectRole.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/hooks/useProjectRole.js">
+        <metrics statements="8" coveredstatements="0" conditionals="7" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="22" count="0" type="stmt"/>
+      </file>
+      <file name="useProjects.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/hooks/useProjects.js">
+        <metrics statements="9" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+      </file>
+      <file name="useSprints.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/hooks/useSprints.js">
+        <metrics statements="16" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+      </file>
+      <file name="useTasks.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/hooks/useTasks.js">
+        <metrics statements="38" coveredstatements="0" conditionals="5" coveredconditionals="0" methods="24" coveredmethods="0"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="74" count="0" type="cond" truecount="0" falsecount="1"/>
+        <line num="75" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="80" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="83" count="0" type="stmt"/>
+      </file>
+      <file name="useUsers.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/models/hooks/useUsers.js">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.styles">
+      <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="theme.js" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/styles/theme.js">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="15" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.views.common">
+      <metrics statements="31" coveredstatements="0" conditionals="37" coveredconditionals="0" methods="7" coveredmethods="0"/>
+      <file name="Layout.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/views/common/Layout.jsx">
+        <metrics statements="31" coveredstatements="0" conditionals="37" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="50" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="52" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="202" count="0" type="stmt"/>
+        <line num="203" count="0" type="stmt"/>
+        <line num="206" count="0" type="cond" truecount="0" falsecount="2"/>
+      </file>
+    </package>
+    <package name="src.views.dashboard">
+      <metrics statements="15" coveredstatements="9" conditionals="28" coveredconditionals="11" methods="10" coveredmethods="5"/>
+      <file name="DashboardView.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/views/dashboard/DashboardView.jsx">
+        <metrics statements="15" coveredstatements="9" conditionals="28" coveredconditionals="11" methods="10" coveredmethods="5"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="29" count="10" type="stmt"/>
+        <line num="43" count="20" type="stmt"/>
+        <line num="83" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="112" count="0" type="stmt"/>
+        <line num="154" count="2" type="stmt"/>
+        <line num="207" count="5" type="stmt"/>
+        <line num="292" count="0" type="stmt"/>
+        <line num="317" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.views.kanban">
+      <metrics statements="30" coveredstatements="27" conditionals="41" coveredconditionals="24" methods="19" coveredmethods="16"/>
+      <file name="KanbanView.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/views/kanban/KanbanView.jsx">
+        <metrics statements="30" coveredstatements="27" conditionals="41" coveredconditionals="24" methods="19" coveredmethods="16"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="33" count="24" type="cond" truecount="1" falsecount="1"/>
+        <line num="34" count="24" type="stmt"/>
+        <line num="35" count="24" type="stmt"/>
+        <line num="53" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="24" type="stmt"/>
+        <line num="57" count="1" type="stmt"/>
+        <line num="92" count="12" type="stmt"/>
+        <line num="93" count="12" type="cond" truecount="1" falsecount="1"/>
+        <line num="94" count="12" type="stmt"/>
+        <line num="96" count="12" type="stmt"/>
+        <line num="111" count="0" type="stmt"/>
+        <line num="126" count="96" type="stmt"/>
+        <line num="127" count="48" type="stmt"/>
+        <line num="140" count="24" type="stmt"/>
+        <line num="150" count="1" type="stmt"/>
+        <line num="152" count="12" type="stmt"/>
+        <line num="164" count="6" type="stmt"/>
+        <line num="187" count="0" type="stmt"/>
+        <line num="206" count="12" type="stmt"/>
+        <line num="237" count="24" type="stmt"/>
+        <line num="245" count="12" type="stmt"/>
+        <line num="246" count="48" type="cond" truecount="1" falsecount="1"/>
+        <line num="247" count="12" type="stmt"/>
+        <line num="254" count="12" type="stmt"/>
+        <line num="255" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="256" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="257" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.views.kpi">
+      <metrics statements="53" coveredstatements="24" conditionals="54" coveredconditionals="20" methods="32" coveredmethods="11"/>
+      <file name="KpiDashboardView.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/views/kpi/KpiDashboardView.jsx">
+        <metrics statements="53" coveredstatements="24" conditionals="54" coveredconditionals="20" methods="32" coveredmethods="11"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="38" count="16" type="stmt"/>
+        <line num="39" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="57" count="32" type="stmt"/>
+        <line num="71" count="32" type="stmt"/>
+        <line num="102" count="32" type="stmt"/>
+        <line num="122" count="16" type="stmt"/>
+        <line num="153" count="1" type="cond" truecount="0" falsecount="2"/>
+        <line num="156" count="0" type="stmt"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="184" count="0" type="stmt"/>
+        <line num="199" count="0" type="stmt"/>
+        <line num="200" count="0" type="stmt"/>
+        <line num="202" count="0" type="stmt"/>
+        <line num="203" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="205" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="206" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="207" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="208" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="211" count="0" type="stmt"/>
+        <line num="212" count="0" type="stmt"/>
+        <line num="213" count="0" type="stmt"/>
+        <line num="214" count="0" type="stmt"/>
+        <line num="216" count="0" type="stmt"/>
+        <line num="219" count="0" type="stmt"/>
+        <line num="220" count="0" type="stmt"/>
+        <line num="221" count="0" type="stmt"/>
+        <line num="222" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="224" count="0" type="stmt"/>
+        <line num="227" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="228" count="0" type="stmt"/>
+        <line num="235" count="0" type="stmt"/>
+        <line num="287" count="0" type="stmt"/>
+        <line num="297" count="0" type="stmt"/>
+        <line num="315" count="8" type="stmt"/>
+        <line num="317" count="16" type="stmt"/>
+        <line num="318" count="16" type="cond" truecount="1" falsecount="1"/>
+        <line num="320" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="321" count="9" type="cond" truecount="1" falsecount="1"/>
+        <line num="323" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="324" count="8" type="cond" truecount="2" falsecount="2"/>
+        <line num="326" count="16" type="stmt"/>
+        <line num="332" count="8" type="stmt"/>
+        <line num="355" count="0" type="stmt"/>
+        <line num="376" count="16" type="stmt"/>
+        <line num="470" count="0" type="stmt"/>
+        <line num="480" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.views.profile">
+      <metrics statements="43" coveredstatements="28" conditionals="47" coveredconditionals="25" methods="17" coveredmethods="11"/>
+      <file name="ProfileView.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/views/profile/ProfileView.jsx">
+        <metrics statements="43" coveredstatements="28" conditionals="47" coveredconditionals="25" methods="17" coveredmethods="11"/>
+        <line num="19" count="42" type="stmt"/>
+        <line num="20" count="42" type="stmt"/>
+        <line num="21" count="42" type="cond" truecount="1" falsecount="1"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="26" count="42" type="stmt"/>
+        <line num="27" count="42" type="stmt"/>
+        <line num="29" count="84" type="stmt"/>
+        <line num="34" count="28" type="cond" truecount="1" falsecount="2"/>
+        <line num="37" count="56" type="cond" truecount="1" falsecount="1"/>
+        <line num="41" count="42" type="stmt"/>
+        <line num="54" count="28" type="stmt"/>
+        <line num="55" count="28" type="stmt"/>
+        <line num="56" count="28" type="stmt"/>
+        <line num="57" count="28" type="stmt"/>
+        <line num="59" count="28" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="120" count="0" type="stmt"/>
+        <line num="133" count="0" type="stmt"/>
+        <line num="140" count="0" type="stmt"/>
+        <line num="141" count="0" type="stmt"/>
+        <line num="168" count="14" type="stmt"/>
+        <line num="169" count="14" type="stmt"/>
+        <line num="170" count="14" type="stmt"/>
+        <line num="172" count="14" type="stmt"/>
+        <line num="173" count="0" type="stmt"/>
+        <line num="174" count="0" type="stmt"/>
+        <line num="182" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="183" count="0" type="stmt"/>
+        <line num="184" count="0" type="stmt"/>
+        <line num="186" count="0" type="stmt"/>
+        <line num="189" count="0" type="stmt"/>
+        <line num="190" count="0" type="stmt"/>
+        <line num="194" count="14" type="stmt"/>
+        <line num="195" count="1" type="stmt"/>
+        <line num="196" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="197" count="1" type="stmt"/>
+        <line num="198" count="1" type="stmt"/>
+        <line num="201" count="14" type="stmt"/>
+        <line num="202" count="14" type="stmt"/>
+        <line num="204" count="14" type="stmt"/>
+        <line num="312" count="1" type="stmt"/>
+        <line num="313" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="358" count="28" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.views.projects">
+      <metrics statements="90" coveredstatements="0" conditionals="59" coveredconditionals="0" methods="31" coveredmethods="0"/>
+      <file name="ProjectDetailView.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/views/projects/ProjectDetailView.jsx">
+        <metrics statements="73" coveredstatements="0" conditionals="51" coveredconditionals="0" methods="22" coveredmethods="0"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="30" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="95" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="116" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="117" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="118" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="120" count="0" type="stmt"/>
+        <line num="212" count="0" type="stmt"/>
+        <line num="215" count="0" type="stmt"/>
+        <line num="228" count="0" type="stmt"/>
+        <line num="229" count="0" type="stmt"/>
+        <line num="230" count="0" type="stmt"/>
+        <line num="231" count="0" type="stmt"/>
+        <line num="232" count="0" type="stmt"/>
+        <line num="234" count="0" type="stmt"/>
+        <line num="235" count="0" type="stmt"/>
+        <line num="236" count="0" type="stmt"/>
+        <line num="237" count="0" type="stmt"/>
+        <line num="238" count="0" type="stmt"/>
+        <line num="239" count="0" type="stmt"/>
+        <line num="242" count="0" type="stmt"/>
+        <line num="243" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="244" count="0" type="stmt"/>
+        <line num="245" count="0" type="stmt"/>
+        <line num="247" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="248" count="0" type="stmt"/>
+        <line num="249" count="0" type="stmt"/>
+        <line num="251" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="252" count="0" type="stmt"/>
+        <line num="253" count="0" type="stmt"/>
+        <line num="255" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="256" count="0" type="stmt"/>
+        <line num="257" count="0" type="stmt"/>
+        <line num="259" count="0" type="stmt"/>
+        <line num="260" count="0" type="stmt"/>
+        <line num="261" count="0" type="stmt"/>
+        <line num="262" count="0" type="stmt"/>
+        <line num="263" count="0" type="stmt"/>
+        <line num="265" count="0" type="stmt"/>
+        <line num="267" count="0" type="stmt"/>
+        <line num="271" count="0" type="stmt"/>
+        <line num="282" count="0" type="stmt"/>
+        <line num="290" count="0" type="stmt"/>
+        <line num="298" count="0" type="stmt"/>
+        <line num="331" count="0" type="stmt"/>
+        <line num="332" count="0" type="stmt"/>
+        <line num="334" count="0" type="stmt"/>
+        <line num="361" count="0" type="stmt"/>
+        <line num="377" count="0" type="stmt"/>
+        <line num="380" count="0" type="stmt"/>
+        <line num="381" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="388" count="0" type="stmt"/>
+        <line num="394" count="0" type="stmt"/>
+      </file>
+      <file name="ProjectSelectorView.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/views/projects/ProjectSelectorView.jsx">
+        <metrics statements="17" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="9" coveredmethods="0"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="118" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="135" count="0" type="stmt"/>
+        <line num="143" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.views.sprints">
+      <metrics statements="112" coveredstatements="78" conditionals="75" coveredconditionals="41" methods="33" coveredmethods="21"/>
+      <file name="SprintBoardView.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/views/sprints/SprintBoardView.jsx">
+        <metrics statements="112" coveredstatements="78" conditionals="75" coveredconditionals="41" methods="33" coveredmethods="21"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="52" count="22" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="22" type="stmt"/>
+        <line num="54" count="22" type="stmt"/>
+        <line num="58" count="50" type="cond" truecount="1" falsecount="1"/>
+        <line num="59" count="50" type="stmt"/>
+        <line num="78" count="50" type="stmt"/>
+        <line num="89" count="50" type="stmt"/>
+        <line num="91" count="50" type="stmt"/>
+        <line num="96" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="114" count="44" type="stmt"/>
+        <line num="115" count="44" type="stmt"/>
+        <line num="117" count="44" type="stmt"/>
+        <line num="164" count="50" type="stmt"/>
+        <line num="172" count="1" type="stmt"/>
+        <line num="175" count="11" type="stmt"/>
+        <line num="176" count="11" type="stmt"/>
+        <line num="177" count="11" type="stmt"/>
+        <line num="178" count="11" type="stmt"/>
+        <line num="179" count="11" type="stmt"/>
+        <line num="180" count="11" type="stmt"/>
+        <line num="182" count="11" type="stmt"/>
+        <line num="183" count="0" type="stmt"/>
+        <line num="184" count="0" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="186" count="0" type="stmt"/>
+        <line num="187" count="0" type="stmt"/>
+        <line num="188" count="0" type="stmt"/>
+        <line num="191" count="11" type="stmt"/>
+        <line num="192" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="193" count="0" type="stmt"/>
+        <line num="194" count="0" type="stmt"/>
+        <line num="196" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="197" count="0" type="stmt"/>
+        <line num="198" count="0" type="stmt"/>
+        <line num="200" count="0" type="stmt"/>
+        <line num="201" count="0" type="stmt"/>
+        <line num="202" count="0" type="stmt"/>
+        <line num="203" count="0" type="stmt"/>
+        <line num="212" count="0" type="stmt"/>
+        <line num="214" count="0" type="stmt"/>
+        <line num="216" count="0" type="stmt"/>
+        <line num="220" count="11" type="stmt"/>
+        <line num="231" count="0" type="stmt"/>
+        <line num="238" count="0" type="stmt"/>
+        <line num="247" count="0" type="stmt"/>
+        <line num="251" count="33" type="stmt"/>
+        <line num="260" count="0" type="stmt"/>
+        <line num="264" count="22" type="stmt"/>
+        <line num="294" count="13" type="stmt"/>
+        <line num="295" count="13" type="stmt"/>
+        <line num="296" count="13" type="stmt"/>
+        <line num="297" count="13" type="stmt"/>
+        <line num="299" count="13" type="stmt"/>
+        <line num="300" count="2" type="stmt"/>
+        <line num="301" count="2" type="stmt"/>
+        <line num="302" count="2" type="stmt"/>
+        <line num="303" count="2" type="stmt"/>
+        <line num="306" count="13" type="stmt"/>
+        <line num="307" count="1" type="stmt"/>
+        <line num="308" count="1" type="cond" truecount="4" falsecount="1"/>
+        <line num="309" count="0" type="stmt"/>
+        <line num="310" count="0" type="stmt"/>
+        <line num="312" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="313" count="0" type="stmt"/>
+        <line num="314" count="0" type="stmt"/>
+        <line num="317" count="1" type="stmt"/>
+        <line num="318" count="1" type="stmt"/>
+        <line num="319" count="1" type="stmt"/>
+        <line num="320" count="1" type="stmt"/>
+        <line num="321" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="322" count="1" type="stmt"/>
+        <line num="324" count="0" type="stmt"/>
+        <line num="326" count="1" type="stmt"/>
+        <line num="330" count="13" type="stmt"/>
+        <line num="353" count="1" type="stmt"/>
+        <line num="364" count="0" type="stmt"/>
+        <line num="400" count="11" type="stmt"/>
+        <line num="401" count="11" type="stmt"/>
+        <line num="402" count="11" type="stmt"/>
+        <line num="403" count="11" type="stmt"/>
+        <line num="405" count="11" type="stmt"/>
+        <line num="407" count="11" type="stmt"/>
+        <line num="408" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="411" count="11" type="stmt"/>
+        <line num="412" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="415" count="11" type="stmt"/>
+        <line num="416" count="3" type="stmt"/>
+        <line num="417" count="3" type="stmt"/>
+        <line num="418" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="419" count="3" type="stmt"/>
+        <line num="420" count="3" type="stmt"/>
+        <line num="421" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="422" count="3" type="cond" truecount="2" falsecount="1"/>
+        <line num="423" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="424" count="3" type="stmt"/>
+        <line num="426" count="0" type="stmt"/>
+        <line num="430" count="11" type="stmt"/>
+        <line num="431" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="432" count="1" type="stmt"/>
+        <line num="433" count="1" type="stmt"/>
+        <line num="434" count="1" type="stmt"/>
+        <line num="435" count="1" type="stmt"/>
+        <line num="438" count="11" type="stmt"/>
+        <line num="439" count="2" type="stmt"/>
+        <line num="442" count="11" type="stmt"/>
+        <line num="506" count="0" type="stmt"/>
+        <line num="524" count="44" type="stmt"/>
+        <line num="527" count="200" type="stmt"/>
+        <line num="559" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.views.tasks">
+      <metrics statements="26" coveredstatements="26" conditionals="43" coveredconditionals="30" methods="12" coveredmethods="12"/>
+      <file name="TaskDetailView.jsx" path="/Users/jozefhdez/Desktop/Dev/Projects/oracle-pm-project/MtdrSpring/backend/src/main/frontend/src/views/tasks/TaskDetailView.jsx">
+        <metrics statements="26" coveredstatements="26" conditionals="43" coveredconditionals="30" methods="12" coveredmethods="12"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="20" count="16" type="cond" truecount="1" falsecount="1"/>
+        <line num="21" count="16" type="stmt"/>
+        <line num="25" count="25" type="cond" truecount="1" falsecount="1"/>
+        <line num="26" count="25" type="stmt"/>
+        <line num="27" count="25" type="stmt"/>
+        <line num="31" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="32" count="4" type="stmt"/>
+        <line num="33" count="4" type="stmt"/>
+        <line num="41" count="24" type="stmt"/>
+        <line num="52" count="40" type="stmt"/>
+        <line num="60" count="48" type="stmt"/>
+        <line num="71" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="72" count="6" type="stmt"/>
+        <line num="76" count="2" type="stmt"/>
+        <line num="79" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="84" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="89" count="4" type="stmt"/>
+        <line num="125" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="127" count="8" type="stmt"/>
+        <line num="163" count="1" type="stmt"/>
+        <line num="207" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="208" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="210" count="8" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
