@@ -15,4 +15,6 @@ import java.util.UUID;
 public interface TaskStateHistoryRepository extends JpaRepository<TaskStateHistory, UUID> {
 
     List<TaskStateHistory> findByTask_IdOrderByChangedAtAsc(UUID taskId);
+
+    List<TaskStateHistory> findByTask_Sprint_Id(UUID sprintId);
 }

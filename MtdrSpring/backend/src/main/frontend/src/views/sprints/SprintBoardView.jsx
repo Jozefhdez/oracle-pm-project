@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { devName } from '../../constants/devNames';
 import {
   DndContext,
   DragOverlay,
@@ -266,7 +267,7 @@ function AddTaskDialog({ open, members, sprintId, projectId, onClose, onSubmit }
               value={m.user?.id ?? m.id}
               sx={{ fontSize: '0.85rem' }}
             >
-              {m.user?.email ?? m.email}
+              {devName(m.user?.email ?? m.email)}
             </MenuItem>
           ))}
         </TextField>

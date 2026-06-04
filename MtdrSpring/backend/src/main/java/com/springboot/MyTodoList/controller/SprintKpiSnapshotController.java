@@ -1,9 +1,14 @@
 package com.springboot.MyTodoList.controller;
 
+import com.springboot.MyTodoList.dto.AgingWipItemDto;
+import com.springboot.MyTodoList.dto.BlockedTaskItemDto;
+import com.springboot.MyTodoList.dto.BotAdoptionDto;
 import com.springboot.MyTodoList.dto.DeveloperStatDto;
 import com.springboot.MyTodoList.dto.SprintKpiResponse;
+import com.springboot.MyTodoList.dto.TimeToActionDto;
 import com.springboot.MyTodoList.model.Sprint;
 import com.springboot.MyTodoList.model.SprintKpiSnapshot;
+import com.springboot.MyTodoList.model.SprintStatus;
 import com.springboot.MyTodoList.service.SprintKpiSnapshotService;
 import com.springboot.MyTodoList.service.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +36,10 @@ public class SprintKpiSnapshotController {
         Sprint sprint = sprintService.findById(sprintId).orElse(null);
         if (sprint == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        SprintKpiSnapshot snapshot = sprintKpiSnapshotService.findBySprintId(sprintId)
-            .orElseGet(() -> sprintKpiSnapshotService.compute(sprint));
+        SprintKpiSnapshot snapshot = sprint.getStatus() == SprintStatus.COMPLETED
+            ? sprintKpiSnapshotService.findBySprintId(sprintId)
+                .orElseGet(() -> sprintKpiSnapshotService.compute(sprint))
+            : sprintKpiSnapshotService.compute(sprint);
 
         SprintKpiResponse response = SprintKpiResponse.from(snapshot);
 
@@ -62,5 +69,25 @@ public class SprintKpiSnapshotController {
     @GetMapping("/developer-stats")
     public ResponseEntity<List<DeveloperStatDto>> getDeveloperStats(@PathVariable UUID sprintId) {
         return ResponseEntity.ok(sprintKpiSnapshotService.getDeveloperStats(sprintId));
+    }
+
+    @GetMapping("/aging-wip")
+    public ResponseEntity<List<AgingWipItemDto>> getAgingWip(@PathVariable UUID sprintId) {
+        return ResponseEntity.ok(sprintKpiSnapshotService.getAgingWip(sprintId));
+    }
+
+    @GetMapping("/blocked-tasks")
+    public ResponseEntity<List<BlockedTaskItemDto>> getBlockedTasks(@PathVariable UUID sprintId) {
+        return ResponseEntity.ok(sprintKpiSnapshotService.getBlockedTasks(sprintId));
+    }
+
+    @GetMapping("/time-to-action")
+    public ResponseEntity<List<TimeToActionDto>> getTimeToAction(@PathVariable UUID sprintId) {
+        return ResponseEntity.ok(sprintKpiSnapshotService.getTimeToAction(sprintId));
+    }
+
+    @GetMapping("/bot-adoption")
+    public ResponseEntity<List<BotAdoptionDto>> getBotAdoption(@PathVariable UUID sprintId) {
+        return ResponseEntity.ok(sprintKpiSnapshotService.getBotAdoption(sprintId));
     }
 }

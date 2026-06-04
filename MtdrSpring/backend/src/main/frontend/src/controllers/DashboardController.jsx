@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { devName } from '../constants/devNames';
 import { useNavigate } from 'react-router-dom';
 import DashboardView from '../views/dashboard/DashboardView';
 import { useCurrentUser } from '../models/CurrentUserContext';
@@ -66,7 +67,7 @@ export default function DashboardController() {
     return tasks.filter((t) => t.assignee?.id === currentUser.id);
   }, [tasks, currentUser]);
 
-  const userName = currentUser?.email?.split('@')[0] ?? 'there';
+  const userName = currentUser?.email ? devName(currentUser.email) : 'there';
   const activeSprintName = activeSprint?.name ?? activeSprint?.sprintName ?? 'the active sprint';
 
   return (

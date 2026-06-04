@@ -4,6 +4,11 @@ import { useActiveProject } from '../models/ProjectContext';
 import { useSprints } from '../models/hooks/useSprints';
 import { useKpi } from '../models/hooks/useKpi';
 import { useDeveloperStats } from '../models/hooks/useDeveloperStats';
+import { useAgingWip } from '../models/hooks/useAgingWip';
+import { useBlockedTasks } from '../models/hooks/useBlockedTasks';
+import { useTimeToAction } from '../models/hooks/useTimeToAction';
+import { useBotAdoption } from '../models/hooks/useBotAdoption';
+import { useCycleTimeTrend } from '../models/hooks/useCycleTimeTrend';
 import { useCurrentUser } from '../models/CurrentUserContext';
 import { fetchDeveloperStats } from '../models/api/kpiApi';
 import KpiDashboardView from '../views/kpi/KpiDashboardView';
@@ -31,6 +36,15 @@ export default function KpiDashboardController() {
   const { data: kpi, isLoading: loadingKpi } = useKpi(effectiveSprintId);
   const { data: developerStats = [], isLoading: loadingStats } =
     useDeveloperStats(effectiveSprintId);
+  const { data: agingWip = [], isLoading: loadingAgingWip } = useAgingWip(effectiveSprintId);
+  const { data: blockedTasks = [], isLoading: loadingBlocked } = useBlockedTasks(effectiveSprintId);
+  const { data: timeToAction = [], isLoading: loadingTimeToAction } =
+    useTimeToAction(effectiveSprintId);
+  const { data: botAdoption = [], isLoading: loadingBotAdoption } =
+    useBotAdoption(effectiveSprintId);
+  const { data: cycleTimeTrend = [], isLoading: loadingTrend } = useCycleTimeTrend(
+    isAllSprints ? activeProject?.id : null
+  );
 
   const allSprintQueries = useQueries({
     queries: sprints.map((s) => ({
@@ -47,13 +61,11 @@ export default function KpiDashboardController() {
 
   const loadingAllSprints = isAllSprints && allSprintQueries.some((q) => q.isLoading);
 
-  // Clear stored sprint when switching projects so stale data isn't shown
   useEffect(() => {
     setSprintId('');
     localStorage.removeItem(STORAGE_KEY);
   }, [activeProject?.id]);
 
-  // Auto-select a sprint when sprints load and none is selected
   useEffect(() => {
     if (sprintId || !sprints.length) return;
     const defaultSprint = pickDefaultSprint(sprints);
@@ -68,6 +80,14 @@ export default function KpiDashboardController() {
     localStorage.setItem(STORAGE_KEY, id);
   };
 
+  const loadingSprintData =
+    loadingStats ||
+    loadingKpi ||
+    loadingAgingWip ||
+    loadingBlocked ||
+    loadingTimeToAction ||
+    loadingBotAdoption;
+
   return (
     <KpiDashboardView
       projectName={activeProject?.name}
@@ -75,9 +95,15 @@ export default function KpiDashboardController() {
       sprintId={sprintId}
       kpi={kpi ?? null}
       developerStats={developerStats}
+      agingWip={agingWip}
+      blockedTasks={blockedTasks}
+      timeToAction={timeToAction}
+      botAdoption={botAdoption}
+      cycleTimeTrend={cycleTimeTrend}
       allSprintsStats={allSprintsStats}
       currentUserEmail={currentUser?.email ?? null}
-      loadingStats={loadingStats || loadingKpi || loadingAllSprints}
+      loadingStats={loadingSprintData || loadingAllSprints}
+      loadingTrend={loadingTrend}
       onSprintChange={handleSprintChange}
     />
   );

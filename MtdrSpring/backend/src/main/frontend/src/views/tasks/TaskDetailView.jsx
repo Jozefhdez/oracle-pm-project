@@ -1,4 +1,5 @@
 import { Box, Button, Card, CardContent, Grid, Typography } from '@mui/material';
+import { devName } from '../../constants/devNames';
 import WestIcon from '@mui/icons-material/West';
 
 const ORANGE_ACCENT = '#F77E47';
@@ -111,7 +112,7 @@ function HistoryTimeline({ history }) {
               {/* Meta */}
               <Typography sx={{ fontSize: '0.73rem', color: '#B0B0B0', whiteSpace: 'nowrap' }}>
                 {formatDateTime(h.changedAt)}
-                {h.changedBy?.email && ` · ${h.changedBy.email}`}
+                {h.changedBy?.email && ` · ${devName(h.changedBy.email)}`}
               </Typography>
             </Box>
           </Box>
@@ -179,7 +180,7 @@ function WorkLogSection({ logs }) {
               >
                 <Box>
                   <Typography sx={{ fontSize: '0.875rem', fontWeight: 500, color: '#1A1A1A' }}>
-                    {l.user?.email ?? 'Unknown'} · {formatDate(l.workDate)}
+                    {devName(l.user?.email) ?? 'Unknown'} · {formatDate(l.workDate)}
                   </Typography>
                   {l.note && (
                     <Typography sx={{ fontSize: '0.78rem', color: '#717171', mt: '2px' }}>
@@ -331,7 +332,7 @@ export default function TaskDetailView({ task, history, logs, onBack }) {
 
               <MetaRow label="Assignee">
                 <Typography sx={{ fontSize: '0.875rem', color: '#1A1A1A', fontWeight: 500 }}>
-                  {task?.assignee?.email ?? 'Unassigned'}
+                  {task?.assignee?.email ? devName(task.assignee.email) : 'Unassigned'}
                 </Typography>
               </MetaRow>
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from 'react-oidc-context';
+import { devName, MATRICULA_NAMES } from '../../constants/devNames';
 import {
   Box,
   Button,
@@ -24,6 +25,8 @@ function getInitials(email = '') {
 
 function getDisplayName(email = '') {
   const local = email.split('@')[0];
+  const upper = local.toUpperCase();
+  if (MATRICULA_NAMES[upper]) return MATRICULA_NAMES[upper];
   return local
     .split('.')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))

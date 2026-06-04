@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { devName } from '../../constants/devNames';
 import {
   Box,
   Card,
@@ -147,10 +148,7 @@ function UserRow({ user, tasks, onTaskSelect }) {
     </Box>
   );
 }
-const getUserName = (userEmail) => {
-  // return everything before the @ in the email
-  return userEmail.split('@')[0];
-};
+const getUserName = (userEmail) => devName(userEmail);
 export default function KanbanView({
   projectName,
   sprints = [],

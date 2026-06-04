@@ -1,6 +1,4 @@
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
-import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 
 const ORANGE_ACCENT = '#F77E47';
 
@@ -8,7 +6,6 @@ const STAT_BORDERS = {
   openTasks: '#2196F3',
   completed: '#4CAF50',
   blocked: '#F44336',
-  avgCycleTime: '#9C27B0',
 };
 
 const BAR = {
@@ -218,7 +215,7 @@ export default function DashboardView({
 
       {/* KPI stat cards */}
       <Grid container spacing="12px" sx={{ mb: '40px' }} data-testid="kpi-stat-cards">
-        <Grid item xs={6} md={3}>
+        <Grid item xs={6} md={4}>
           <StatCard
             label="Open Tasks"
             value={stats.openTasks}
@@ -226,7 +223,7 @@ export default function DashboardView({
             borderColor={STAT_BORDERS.openTasks}
           />
         </Grid>
-        <Grid item xs={6} md={3}>
+        <Grid item xs={6} md={4}>
           <StatCard
             label="Completed"
             value={stats.completed}
@@ -234,43 +231,12 @@ export default function DashboardView({
             borderColor={STAT_BORDERS.completed}
           />
         </Grid>
-        <Grid item xs={6} md={3}>
+        <Grid item xs={6} md={4}>
           <StatCard
             label="Blocked"
             value={stats.blocked}
             subtitle="Needs Attention"
             borderColor={STAT_BORDERS.blocked}
-          />
-        </Grid>
-        <Grid item xs={6} md={3}>
-          <StatCard
-            label="Avg cycle time"
-            value={`${stats.avgCycleTime} days`}
-            borderColor={STAT_BORDERS.avgCycleTime}
-            subtitleContent={
-              stats.cycleTimeChange == null ? (
-                <Typography sx={{ fontSize: '0.82rem', color: '#717171' }}>
-                  No previous sprint
-                </Typography>
-              ) : (
-                <Typography
-                  sx={{
-                    fontSize: '0.78rem',
-                    color: stats.cycleTimeChange <= 0 ? '#2E7D32' : '#C0392B',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '3px',
-                  }}
-                >
-                  {stats.cycleTimeChange <= 0 ? (
-                    <TrendingDownIcon sx={{ fontSize: '1rem' }} />
-                  ) : (
-                    <TrendingUpIcon sx={{ fontSize: '1rem' }} />
-                  )}{' '}
-                  {Math.abs(stats.cycleTimeChange)}% vs Last sprint
-                </Typography>
-              )
-            }
           />
         </Grid>
       </Grid>
