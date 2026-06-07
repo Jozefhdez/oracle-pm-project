@@ -19,3 +19,6 @@ export const fetchBotAdoption = (sprintId) =>
 
 export const fetchCycleTimeTrend = (projectId) =>
   client.get(`/projects/${projectId}/kpi/cycle-time-trend`).then((r) => r.data);
+
+export const generateKpiInsight = (payload) =>
+  client.post('/kpi/ai-insight', payload).then((r) => r.data);

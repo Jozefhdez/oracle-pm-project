@@ -1,14 +1,23 @@
 import {
   Box,
+  Button,
   Card,
   CardContent,
   CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   FormControl,
   Grid,
+  IconButton,
   MenuItem,
   Select,
+  TextField,
   Typography,
 } from '@mui/material';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import CloseIcon from '@mui/icons-material/Close';
+import SendIcon from '@mui/icons-material/Send';
 import {
   BarChart,
   Bar,
@@ -104,6 +113,169 @@ function ChartCard({ title, children }) {
         {children}
       </CardContent>
     </Card>
+  );
+}
+
+function InlineMarkdown({ text }) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <Box component="strong" key={`${part}-${index}`} sx={{ fontWeight: 700 }}>
+          {part.slice(2, -2)}
+        </Box>
+      );
+    }
+    return part;
+  });
+}
+
+function MarkdownInsight({ text }) {
+  const lines = text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  return (
+    <Box sx={{ color: '#2B2B2B' }}>
+      {lines.map((line, index) => {
+        const isBullet = /^[-*]\s+/.test(line);
+
+        if (isBullet) {
+          return (
+            <Box
+              component="ul"
+              key={`${line}-${index}`}
+              sx={{ m: 0, pl: '18px', mb: index === lines.length - 1 ? 0 : 0.8 }}
+            >
+              <Typography component="li" sx={{ fontSize: '0.9rem', lineHeight: 1.55 }}>
+                <InlineMarkdown text={line.replace(/^[-*]\s+/, '')} />
+              </Typography>
+            </Box>
+          );
+        }
+
+        return (
+          <Typography
+            key={`${line}-${index}`}
+            sx={{ fontSize: '0.9rem', lineHeight: 1.6, mb: index === lines.length - 1 ? 0 : 1 }}
+          >
+            <InlineMarkdown text={line.replace(/^#{1,4}\s+/, '')} />
+          </Typography>
+        );
+      })}
+    </Box>
+  );
+}
+
+function AiInsightDialog({ open, question, insight, loading, onClose, onQuestionChange, onAsk }) {
+  const canAsk = question.trim().length > 0 && !loading;
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      PaperProps={{
+        sx: {
+          borderRadius: '8px',
+          bgcolor: '#fbf9f8',
+          border: '1px solid #E8E8E8',
+          boxShadow: '0 18px 48px rgba(31, 28, 25, 0.18)',
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px',
+          pb: 1,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <AutoAwesomeIcon sx={{ color: ORANGE_ACCENT, fontSize: 22 }} />
+          <Typography sx={{ fontWeight: 700, fontSize: '1.05rem', color: '#1A1A1A' }}>
+            AI KPI Insight
+          </Typography>
+        </Box>
+        <IconButton size="small" onClick={onClose} aria-label="Close AI insight">
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </DialogTitle>
+
+      <DialogContent sx={{ pt: '8px !important' }}>
+        <Box
+          sx={{
+            minHeight: 142,
+            border: '1px solid #E8E8E8',
+            borderRadius: '8px',
+            bgcolor: '#fff',
+            p: '16px',
+            mb: '14px',
+          }}
+        >
+          {loading ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#717171' }}>
+              <CircularProgress size={18} />
+              <Typography sx={{ fontSize: '0.875rem' }}>Reading KPI context...</Typography>
+            </Box>
+          ) : (
+            <MarkdownInsight
+              text={insight || 'Open this panel to generate an AI summary for the current filters.'}
+            />
+          )}
+        </Box>
+
+        <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <TextField
+            value={question}
+            onChange={(e) => onQuestionChange(e.target.value)}
+            placeholder="Ask about workload, risks, or sprint performance"
+            size="small"
+            fullWidth
+            sx={{
+              flex: 1,
+              '& .MuiOutlinedInput-root': {
+                bgcolor: '#fff',
+                borderRadius: '8px',
+                fontSize: '0.875rem',
+                height: 48,
+                boxSizing: 'border-box',
+              },
+              '& .MuiOutlinedInput-input': {
+                height: '100%',
+                boxSizing: 'border-box',
+                px: '14px',
+                py: 0,
+              },
+            }}
+          />
+          <Button
+            variant="contained"
+            onClick={onAsk}
+            disabled={!canAsk}
+            aria-label="Ask AI"
+            sx={{
+              flex: '0 0 48px',
+              minWidth: 48,
+              width: 48,
+              height: 48,
+              p: 0,
+              borderRadius: '8px',
+              bgcolor: '#2B2B2B',
+              boxShadow: 'none',
+              '&:hover': { bgcolor: '#1A1A1A', boxShadow: 'none' },
+            }}
+          >
+            <SendIcon sx={{ fontSize: 20 }} />
+          </Button>
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -318,9 +490,17 @@ export default function KpiDashboardView({
   allSprintsStats,
   currentUserEmail,
   developerFilter = ALL_DEVELOPERS,
+  aiOpen = false,
+  aiQuestion = '',
+  aiInsight = '',
+  aiLoading = false,
   loadingStats,
   onSprintChange,
   onDeveloperFilterChange,
+  onOpenAi,
+  onCloseAi,
+  onAiQuestionChange,
+  onAskAi,
 }) {
   const isAllSprints = sprintId === 'all';
   const visibleDeveloperStats = filterStatsByDeveloper(developerStats, developerFilter);
@@ -448,8 +628,37 @@ export default function KpiDashboardView({
               ))}
             </Select>
           </FormControl>
+
+          <Button
+            variant="outlined"
+            onClick={onOpenAi}
+            disabled={!sprintId || loadingStats}
+            aria-label="Open AI KPI insight"
+            sx={{
+              minWidth: 42,
+              height: 40,
+              px: '10px',
+              borderRadius: '8px',
+              borderColor: '#E8E8E8',
+              color: '#2B2B2B',
+              bgcolor: '#fbf9f8',
+              '&:hover': { borderColor: ORANGE_ACCENT, bgcolor: '#fff7f1' },
+            }}
+          >
+            <AutoAwesomeIcon sx={{ fontSize: 19 }} />
+          </Button>
         </Box>
       </Box>
+
+      <AiInsightDialog
+        open={aiOpen}
+        question={aiQuestion}
+        insight={aiInsight}
+        loading={aiLoading}
+        onClose={onCloseAi}
+        onQuestionChange={onAiQuestionChange}
+        onAsk={onAskAi}
+      />
 
       {!sprintId && (
         <Typography sx={{ fontSize: '0.875rem', color: '#717171' }}>

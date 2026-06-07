@@ -3,7 +3,7 @@
   "name": "Oracle PM Tool",
   "icons": [
     {
-      "src": "oracle-tab.svg",
+      "src": "oracle-tab.svg?v=2",
       "type": "image/svg+xml",
       "sizes": "any"
     }
