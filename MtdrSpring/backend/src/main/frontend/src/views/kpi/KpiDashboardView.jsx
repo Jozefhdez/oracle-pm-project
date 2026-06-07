@@ -2,24 +2,16 @@ import {
   Box,
   Card,
   CardContent,
-  Chip,
   CircularProgress,
   FormControl,
   Grid,
   MenuItem,
   Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
   Typography,
 } from '@mui/material';
 import {
   BarChart,
   Bar,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -32,9 +24,7 @@ import { devName } from '../../constants/devNames';
 
 const BAR_TASKS = '#31a09c';
 const BAR_HOURS = '#d7790e';
-const BAR_COMPLETION = '#5999B5';
-const LINE_CYCLE = '#d7790e';
-const LINE_THROUGHPUT = '#31a09c';
+const ALL_DEVELOPERS = 'all';
 
 const DEV_COLORS = ['#5999B5', '#D7790F', '#699E61', '#9E7FCC', '#F0CC72'];
 
@@ -43,9 +33,6 @@ const STAT_BORDERS = {
   hours: '#4CAF50',
   avgTasks: '#9C27B0',
   avgHours: ORANGE_ACCENT,
-  scopeCreep: '#E91E63',
-  rework: '#FF9800',
-  improvement: null,
 };
 
 const TOOLTIP_STYLE = {
@@ -197,300 +184,32 @@ function GroupedBarChart({ data, devNames, dataKeySuffix, tooltipFormatter }) {
   );
 }
 
-function SprintQualityKPIs({ kpi }) {
-  const reworkRate =
-    kpi?.tasksCompleted > 0 ? ((kpi.tasksReworked / kpi.tasksCompleted) * 100).toFixed(1) : null;
-
-  const changePct = kpi?.cycleTimeChangePct != null ? Number(kpi.cycleTimeChangePct) : null;
-  const changeIsImprovement = changePct != null && changePct < 0;
-  const changeBorderColor =
-    changePct == null ? '#9E9E9E' : changeIsImprovement ? '#4CAF50' : '#F44336';
-  const changeLabel = changePct == null ? '—' : `${changePct > 0 ? '+' : ''}${changePct}%`;
-
-  return (
-    <Box sx={{ mb: '28px' }}>
-      <Box sx={{ mb: '16px' }}>
-        <SectionTitle>Sprint Quality KPIs</SectionTitle>
-      </Box>
-      <Grid container spacing="16px">
-        <Grid item xs={6} sm={4} md>
-          <StatCard
-            label="Scope Creep"
-            value={kpi?.scopeCreepRatePct != null ? `${kpi.scopeCreepRatePct}%` : null}
-            description="Tasks added after sprint start"
-            borderColor={STAT_BORDERS.scopeCreep}
-          />
-        </Grid>
-        <Grid item xs={6} sm={4} md>
-          <StatCard
-            label="Rework Rate"
-            value={reworkRate != null ? `${reworkRate}%` : null}
-            description={
-              kpi?.tasksReworked != null
-                ? `${kpi.tasksReworked} of ${kpi.tasksCompleted} tasks reworked`
-                : 'Tasks moved back from done'
-            }
-            borderColor={STAT_BORDERS.rework}
-          />
-        </Grid>
-        <Grid item xs={6} sm={4} md>
-          <StatCard
-            label="Cycle Time vs Prev"
-            value={changeLabel}
-            description={
-              changeIsImprovement ? 'Improvement vs previous sprint' : 'Change vs previous sprint'
-            }
-            borderColor={changeBorderColor}
-          />
-        </Grid>
-      </Grid>
-    </Box>
-  );
+function filterStatsByDeveloper(stats, developerFilter) {
+  if (!developerFilter || developerFilter === ALL_DEVELOPERS) return stats;
+  return stats.filter((d) => d.email === developerFilter);
 }
 
-function AgingWipTable({ agingWip }) {
-  if (agingWip.length === 0) {
-    return (
-      <Typography sx={{ fontSize: '0.875rem', color: '#717171' }}>No in-progress tasks.</Typography>
-    );
-  }
-  return (
-    <Table size="small">
-      <TableHead>
-        <TableRow>
-          <TableCell sx={{ fontSize: '0.8rem', color: '#717171', fontWeight: 600, pb: '6px' }}>
-            Task
-          </TableCell>
-          <TableCell sx={{ fontSize: '0.8rem', color: '#717171', fontWeight: 600, pb: '6px' }}>
-            Assignee
-          </TableCell>
-          <TableCell
-            align="right"
-            sx={{ fontSize: '0.8rem', color: '#717171', fontWeight: 600, pb: '6px' }}
-          >
-            Days
-          </TableCell>
-          <TableCell
-            align="center"
-            sx={{ fontSize: '0.8rem', color: '#717171', fontWeight: 600, pb: '6px' }}
-          >
-            Status
-          </TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {agingWip.map((item) => (
-          <TableRow key={item.taskId} sx={{ '&:last-child td': { border: 0 } }}>
-            <TableCell sx={{ fontSize: '0.82rem', color: '#1A1A1A', maxWidth: 200 }}>
-              {item.title}
-            </TableCell>
-            <TableCell sx={{ fontSize: '0.82rem', color: '#717171' }}>
-              {devName(item.assigneeEmail)}
-            </TableCell>
-            <TableCell align="right" sx={{ fontSize: '0.82rem', color: '#1A1A1A' }}>
-              {item.daysInProgress}
-            </TableCell>
-            <TableCell align="center">
-              <Chip
-                label={item.wipHealth}
-                size="small"
-                sx={{
-                  fontSize: '0.72rem',
-                  fontWeight: 600,
-                  bgcolor: item.wipHealth === 'STALE' ? '#FFEBEE' : '#E8F5E9',
-                  color: item.wipHealth === 'STALE' ? '#C62828' : '#2E7D32',
-                  border: 'none',
-                }}
-              />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-}
-
-function BlockedTasksTable({ blockedTasks }) {
-  if (blockedTasks.length === 0) {
-    return (
-      <Typography sx={{ fontSize: '0.875rem', color: '#717171' }}>No blocked tasks.</Typography>
-    );
-  }
-
-  const priorityColor = { HIGH: '#F44336', MEDIUM: '#FF9800', LOW: '#9E9E9E' };
-
-  return (
-    <Table size="small">
-      <TableHead>
-        <TableRow>
-          <TableCell sx={{ fontSize: '0.8rem', color: '#717171', fontWeight: 600, pb: '6px' }}>
-            Task
-          </TableCell>
-          <TableCell sx={{ fontSize: '0.8rem', color: '#717171', fontWeight: 600, pb: '6px' }}>
-            Priority
-          </TableCell>
-          <TableCell sx={{ fontSize: '0.8rem', color: '#717171', fontWeight: 600, pb: '6px' }}>
-            Assignee
-          </TableCell>
-          <TableCell
-            align="right"
-            sx={{ fontSize: '0.8rem', color: '#717171', fontWeight: 600, pb: '6px' }}
-          >
-            Days Blocked
-          </TableCell>
-          <TableCell
-            align="right"
-            sx={{ fontSize: '0.8rem', color: '#717171', fontWeight: 600, pb: '6px' }}
-          >
-            Reworks
-          </TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {blockedTasks.map((item) => (
-          <TableRow key={item.taskId} sx={{ '&:last-child td': { border: 0 } }}>
-            <TableCell sx={{ fontSize: '0.82rem', color: '#1A1A1A', maxWidth: 180 }}>
-              {item.title}
-            </TableCell>
-            <TableCell>
-              <Chip
-                label={item.priority}
-                size="small"
-                sx={{
-                  fontSize: '0.7rem',
-                  fontWeight: 600,
-                  bgcolor: `${priorityColor[item.priority] ?? '#9E9E9E'}22`,
-                  color: priorityColor[item.priority] ?? '#9E9E9E',
-                  border: 'none',
-                }}
-              />
-            </TableCell>
-            <TableCell sx={{ fontSize: '0.82rem', color: '#717171' }}>
-              {devName(item.assigneeEmail)}
-            </TableCell>
-            <TableCell align="right" sx={{ fontSize: '0.82rem', color: '#1A1A1A' }}>
-              {item.daysBlocked}
-            </TableCell>
-            <TableCell align="right" sx={{ fontSize: '0.82rem', color: '#717171' }}>
-              {item.reworkCount}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-}
-
-function TrendsSection({ cycleTimeTrend, loadingTrend }) {
-  if (loadingTrend) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', py: '40px' }}>
-        <CircularProgress size={28} />
-      </Box>
-    );
-  }
-  if (!cycleTimeTrend.length) return null;
-
-  const trendData = cycleTimeTrend.map((p) => ({
-    sprint: truncate(p.sprintName, 16),
-    cycleTime: p.avgCycleTimeDays != null ? Number(p.avgCycleTimeDays) : null,
-    throughput: p.tasksPerDay != null ? Number(p.tasksPerDay) : null,
+function AllSprintsCharts({ allSprintsStats, currentUserEmail, developerFilter }) {
+  const filteredAllSprintsStats = allSprintsStats.map(({ sprint, developerStats }) => ({
+    sprint,
+    developerStats: filterStatsByDeveloper(developerStats, developerFilter),
   }));
 
-  return (
-    <Grid container spacing="28px" sx={{ mb: '28px' }}>
-      <Grid item xs={12} md={6}>
-        <ChartCard title="Cycle Time Trend">
-          <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={trendData} margin={{ top: 4, right: 8, left: 0, bottom: 48 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EBEBEB" vertical={false} />
-              <XAxis
-                dataKey="sprint"
-                tick={{ fontSize: 10, fill: '#717171' }}
-                angle={-30}
-                textAnchor="end"
-                interval={0}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fontSize: 11, fill: '#717171' }}
-                width={32}
-                axisLine={false}
-                tickLine={false}
-              />
-              <Tooltip
-                formatter={(v) =>
-                  v != null ? [`${v} days`, 'Avg Cycle Time'] : ['—', 'Avg Cycle Time']
-                }
-                contentStyle={TOOLTIP_STYLE}
-              />
-              <Line
-                type="monotone"
-                dataKey="cycleTime"
-                stroke={LINE_CYCLE}
-                strokeWidth={2}
-                dot={{ r: 4, fill: LINE_CYCLE }}
-                connectNulls={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <ChartCard title="Sprint Throughput">
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={trendData} margin={{ top: 4, right: 8, left: 0, bottom: 48 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#EBEBEB" vertical={false} />
-              <XAxis
-                dataKey="sprint"
-                tick={{ fontSize: 10, fill: '#717171' }}
-                angle={-30}
-                textAnchor="end"
-                interval={0}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fontSize: 11, fill: '#717171' }}
-                width={32}
-                axisLine={false}
-                tickLine={false}
-              />
-              <Tooltip
-                formatter={(v) =>
-                  v != null ? [`${v} tasks/day`, 'Throughput'] : ['—', 'Throughput']
-                }
-                contentStyle={TOOLTIP_STYLE}
-              />
-              <Bar
-                dataKey="throughput"
-                fill={LINE_THROUGHPUT}
-                radius={[4, 4, 0, 0]}
-                maxBarSize={44}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      </Grid>
-    </Grid>
-  );
-}
-
-function AllSprintsCharts({ allSprintsStats, currentUserEmail, cycleTimeTrend, loadingTrend }) {
-  const allStats = allSprintsStats.flatMap((s) => s.developerStats);
+  const allStats = filteredAllSprintsStats.flatMap((s) => s.developerStats);
   const devNames = [...new Set(allStats.map((d) => devName(d.email)))];
 
   const totalTasks = allStats.reduce((s, d) => s + d.totalAssigned, 0);
   const totalHours = allStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0);
 
-  const myStats = currentUserEmail ? allStats.filter((d) => d.email === currentUserEmail) : [];
-  const myTasks = myStats.length ? myStats.reduce((s, d) => s + d.tasksCompleted, 0) : null;
-  const myHours = myStats.length
-    ? myStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0)
+  const focusEmail =
+    developerFilter && developerFilter !== ALL_DEVELOPERS ? developerFilter : currentUserEmail;
+  const focusStats = focusEmail ? allStats.filter((d) => d.email === focusEmail) : [];
+  const myTasks = focusStats.length ? focusStats.reduce((s, d) => s + d.tasksCompleted, 0) : null;
+  const myHours = focusStats.length
+    ? focusStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0)
     : null;
 
-  const tasksData = allSprintsStats.map(({ sprint, developerStats }) => {
+  const tasksData = filteredAllSprintsStats.map(({ sprint, developerStats }) => {
     const point = { sprint: sprint.name };
     developerStats.forEach((d) => {
       point[`${devName(d.email)}__tasks`] = d.tasksCompleted;
@@ -498,7 +217,7 @@ function AllSprintsCharts({ allSprintsStats, currentUserEmail, cycleTimeTrend, l
     return point;
   });
 
-  const hoursData = allSprintsStats.map(({ sprint, developerStats }) => {
+  const hoursData = filteredAllSprintsStats.map(({ sprint, developerStats }) => {
     const point = { sprint: sprint.name };
     developerStats.forEach((d) => {
       point[`${devName(d.email)}__hours`] = Number(Number(d.totalHoursWorked ?? 0).toFixed(1));
@@ -539,7 +258,13 @@ function AllSprintsCharts({ allSprintsStats, currentUserEmail, cycleTimeTrend, l
         </ChartCard>
       </Grid>
       <Grid item xs={12} md={6} data-testid="your-stats-card">
-        <ChartCard title="Your Stats (All Sprints)">
+        <ChartCard
+          title={
+            developerFilter && developerFilter !== ALL_DEVELOPERS
+              ? 'Selected Developer (All Sprints)'
+              : 'Your Stats (All Sprints)'
+          }
+        >
           <Grid container spacing="12px">
             <Grid item xs={6}>
               <StatCard
@@ -559,10 +284,6 @@ function AllSprintsCharts({ allSprintsStats, currentUserEmail, cycleTimeTrend, l
             </Grid>
           </Grid>
         </ChartCard>
-      </Grid>
-
-      <Grid item xs={12}>
-        <TrendsSection cycleTimeTrend={cycleTimeTrend} loadingTrend={loadingTrend} />
       </Grid>
 
       <Grid item xs={12} md={6}>
@@ -593,41 +314,51 @@ export default function KpiDashboardView({
   projectName,
   sprints,
   sprintId,
-  kpi,
   developerStats,
-  agingWip,
-  blockedTasks,
-  botAdoption,
-  cycleTimeTrend,
   allSprintsStats,
   currentUserEmail,
+  developerFilter = ALL_DEVELOPERS,
   loadingStats,
-  loadingTrend,
   onSprintChange,
+  onDeveloperFilterChange,
 }) {
   const isAllSprints = sprintId === 'all';
+  const visibleDeveloperStats = filterStatsByDeveloper(developerStats, developerFilter);
 
-  const totalTasks = developerStats.reduce((s, d) => s + d.totalAssigned, 0);
-  const totalHours = developerStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0);
+  const allDeveloperStats = [
+    ...developerStats,
+    ...allSprintsStats.flatMap((s) => s.developerStats ?? []),
+  ];
+  const developerOptions = Array.from(
+    new Map(
+      allDeveloperStats
+        .filter((d) => d?.email)
+        .map((d) => [d.email, { email: d.email, name: devName(d.email) }])
+    ).values()
+  ).sort((a, b) => a.name.localeCompare(b.name));
 
-  const myStat = currentUserEmail
-    ? (developerStats.find((d) => d.email === currentUserEmail) ?? null)
+  const totalTasks = visibleDeveloperStats.reduce((s, d) => s + d.totalAssigned, 0);
+  const totalHours = visibleDeveloperStats.reduce(
+    (s, d) => Number(s) + Number(d.totalHoursWorked ?? 0),
+    0
+  );
+
+  const focusEmail =
+    developerFilter && developerFilter !== ALL_DEVELOPERS ? developerFilter : currentUserEmail;
+  const myStat = focusEmail
+    ? (visibleDeveloperStats.find((d) => d.email === focusEmail) ??
+      developerStats.find((d) => d.email === focusEmail) ??
+      null)
     : null;
   const myTasks = myStat ? String(myStat.tasksCompleted) : '—';
   const myHours = myStat ? Number(myStat.totalHoursWorked ?? 0).toFixed(1) : '—';
+  const personalStatsTitle =
+    developerFilter && developerFilter !== ALL_DEVELOPERS ? 'Selected Developer' : 'Your Stats';
 
-  const chartData = developerStats.map((d) => ({
+  const chartData = visibleDeveloperStats.map((d) => ({
     name: devName(d.email),
     tasksCompleted: d.tasksCompleted,
     totalHours: Number(Number(d.totalHoursWorked ?? 0).toFixed(1)),
-    completionRate:
-      d.totalAssigned > 0 ? Number(((d.tasksCompleted / d.totalAssigned) * 100).toFixed(1)) : 0,
-  }));
-
-  const botAdoptionData = botAdoption.map((d) => ({
-    name: devName(d.email),
-    web: d.webUpdates,
-    bot: d.botUpdates,
   }));
 
   return (
@@ -650,40 +381,74 @@ export default function KpiDashboardView({
           </Typography>
         </Box>
 
-        <FormControl size="small" sx={{ minWidth: 200 }}>
-          <Select
-            value={sprintId}
-            onChange={(e) => onSprintChange(e.target.value)}
-            displayEmpty
-            sx={{
-              fontSize: '0.85rem',
-              fontWeight: 500,
-              color: '#2B2B2B',
-              bgcolor: '#fbf9f8',
-              borderRadius: '8px',
-              '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
-              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
-              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
-              '& .MuiSelect-icon': { color: '#2B2B2B' },
-            }}
-          >
-            <MenuItem value="" disabled sx={{ fontSize: '0.85rem', color: '#717171' }}>
-              Select sprint…
-            </MenuItem>
-            <MenuItem value="all" sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#2B2B2B' }}>
-              All Sprints
-            </MenuItem>
-            {sprints.map((s) => (
-              <MenuItem
-                key={s.id}
-                value={s.id}
-                sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#2B2B2B' }}
-              >
-                {s.name}
+        <Box sx={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <Select
+              value={sprintId}
+              onChange={(e) => onSprintChange(e.target.value)}
+              displayEmpty
+              sx={{
+                fontSize: '0.85rem',
+                fontWeight: 500,
+                color: '#2B2B2B',
+                bgcolor: '#fbf9f8',
+                borderRadius: '8px',
+                '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
+                '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
+                '& .MuiSelect-icon': { color: '#2B2B2B' },
+              }}
+            >
+              <MenuItem value="" disabled sx={{ fontSize: '0.85rem', color: '#717171' }}>
+                Select sprint…
               </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+              <MenuItem value="all" sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#2B2B2B' }}>
+                All Sprints
+              </MenuItem>
+              {sprints.map((s) => (
+                <MenuItem
+                  key={s.id}
+                  value={s.id}
+                  sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#2B2B2B' }}
+                >
+                  {s.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl size="small" sx={{ minWidth: 210 }}>
+            <Select
+              value={developerFilter}
+              onChange={(e) => onDeveloperFilterChange(e.target.value)}
+              displayEmpty
+              sx={{
+                fontSize: '0.85rem',
+                fontWeight: 500,
+                color: '#2B2B2B',
+                bgcolor: '#fbf9f8',
+                borderRadius: '8px',
+                '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
+                '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
+                '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#E8E8E8' },
+                '& .MuiSelect-icon': { color: '#2B2B2B' },
+              }}
+            >
+              <MenuItem value={ALL_DEVELOPERS} sx={{ fontSize: '0.85rem', fontWeight: 500 }}>
+                All Developers
+              </MenuItem>
+              {developerOptions.map((dev) => (
+                <MenuItem
+                  key={dev.email}
+                  value={dev.email}
+                  sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#2B2B2B' }}
+                >
+                  {dev.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
 
       {!sprintId && (
@@ -703,17 +468,13 @@ export default function KpiDashboardView({
         <AllSprintsCharts
           allSprintsStats={allSprintsStats}
           currentUserEmail={currentUserEmail}
-          cycleTimeTrend={cycleTimeTrend}
-          loadingTrend={loadingTrend}
+          developerFilter={developerFilter}
         />
       )}
 
       {/* Single sprint view */}
       {sprintId && !isAllSprints && !loadingStats && (
         <>
-          {/* Sprint Quality KPIs */}
-          <SprintQualityKPIs kpi={kpi} />
-
           {/* Sprint Totals + Your Stats */}
           <Grid container spacing="28px" sx={{ mb: '28px' }}>
             <Grid item xs={12} md={6} data-testid="sprint-totals-card">
@@ -740,13 +501,17 @@ export default function KpiDashboardView({
             </Grid>
 
             <Grid item xs={12} md={6} data-testid="your-stats-card">
-              <ChartCard title="Your Stats">
+              <ChartCard title={personalStatsTitle}>
                 <Grid container spacing="12px">
                   <Grid item xs={6}>
                     <StatCard
                       label="Tasks Completed"
                       value={myTasks}
-                      description="Tasks you completed this sprint"
+                      description={
+                        developerFilter !== ALL_DEVELOPERS
+                          ? 'Tasks completed by selected developer'
+                          : 'Tasks you completed this sprint'
+                      }
                       borderColor={STAT_BORDERS.avgTasks}
                     />
                   </Grid>
@@ -754,7 +519,11 @@ export default function KpiDashboardView({
                     <StatCard
                       label="Hours Logged"
                       value={myHours}
-                      description="Hours you logged this sprint"
+                      description={
+                        developerFilter !== ALL_DEVELOPERS
+                          ? 'Hours logged by selected developer'
+                          : 'Hours you logged this sprint'
+                      }
                       borderColor={STAT_BORDERS.avgHours}
                     />
                   </Grid>
@@ -790,90 +559,9 @@ export default function KpiDashboardView({
                     />
                   </ChartCard>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                  <ChartCard title="Completion Rate by Developer">
-                    <StatBarChart
-                      data={chartData}
-                      dataKey="completionRate"
-                      fill={BAR_COMPLETION}
-                      tooltipFormatter={(v) => [`${v}%`, 'Completion Rate']}
-                    />
-                  </ChartCard>
-                </Grid>
-                {botAdoptionData.length > 0 && (
-                  <Grid item xs={12} md={6}>
-                    <ChartCard title="Bot vs Web Updates by Developer">
-                      <ResponsiveContainer width="100%" height={230}>
-                        <BarChart
-                          data={botAdoptionData}
-                          margin={{ top: 4, right: 8, left: 0, bottom: 36 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" stroke="#EBEBEB" vertical={false} />
-                          <XAxis
-                            dataKey="name"
-                            tick={{ fontSize: 11, fill: '#717171' }}
-                            angle={-25}
-                            textAnchor="end"
-                            interval={0}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <YAxis
-                            tick={{ fontSize: 11, fill: '#717171' }}
-                            allowDecimals={false}
-                            width={28}
-                            axisLine={false}
-                            tickLine={false}
-                          />
-                          <Tooltip
-                            contentStyle={TOOLTIP_STYLE}
-                            cursor={{ fill: 'rgba(0,0,0,0.03)' }}
-                          />
-                          <Legend
-                            verticalAlign="top"
-                            wrapperStyle={{ fontSize: '11px', paddingBottom: '12px' }}
-                          />
-                          <Bar
-                            dataKey="web"
-                            name="Web"
-                            stackId="a"
-                            fill={BAR_TASKS}
-                            radius={[0, 0, 0, 0]}
-                            maxBarSize={44}
-                          />
-                          <Bar
-                            dataKey="bot"
-                            name="Telegram Bot"
-                            stackId="a"
-                            fill={BAR_HOURS}
-                            radius={[4, 4, 0, 0]}
-                            maxBarSize={44}
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </ChartCard>
-                  </Grid>
-                )}
               </Grid>
             </>
           )}
-
-          {/* Live Sprint Health */}
-          <Box sx={{ mb: '16px' }}>
-            <SectionTitle>Live Sprint Health</SectionTitle>
-          </Box>
-          <Grid container spacing="28px">
-            <Grid item xs={12} md={6}>
-              <ChartCard title="Aging Work in Progress">
-                <AgingWipTable agingWip={agingWip ?? []} />
-              </ChartCard>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <ChartCard title="Blocked Tasks">
-                <BlockedTasksTable blockedTasks={blockedTasks ?? []} />
-              </ChartCard>
-            </Grid>
-          </Grid>
         </>
       )}
     </Box>

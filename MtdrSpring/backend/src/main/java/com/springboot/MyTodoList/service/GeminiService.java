@@ -61,6 +61,7 @@ public class GeminiService {
         LOG_HOURS,
         DELETE_TASK,
         STATUS_SUMMARY,
+        MY_ASSIGNED_TASKS,
         HELP,
         UNKNOWN
     }
@@ -208,7 +209,7 @@ public class GeminiService {
           You are an intent parser for a Telegram project-management bot.
           Return ONLY JSON with this exact schema:
           {
-            \"action\": \"CREATE_TASK|UPDATE_STATUS|LOG_HOURS|DELETE_TASK|STATUS_SUMMARY|HELP|UNKNOWN\",
+            \"action\": \"CREATE_TASK|UPDATE_STATUS|LOG_HOURS|DELETE_TASK|STATUS_SUMMARY|MY_ASSIGNED_TASKS|HELP|UNKNOWN\",
             \"title\": string|null,
             \"priority\": \"LOW|MEDIUM|HIGH\"|null,
             \"status\": \"TODO|IN_PROGRESS|BLOCKED|DONE\"|null,
@@ -221,7 +222,12 @@ public class GeminiService {
           - Keep confidence between 0 and 1.
           - Use UNKNOWN if not clear.
           - For CREATE_TASK, use title and optional priority.
+          - For CREATE_TASK titles, rewrite the user's request into concise English, 2-6 words, starting with an action verb.
+          - Translate Spanish task requests into English. Example: "crea tarea para arreglar deployment pipepline" -> title "Fix deployment pipeline".
+          - Fix obvious spelling mistakes in CREATE_TASK titles.
           - For STATUS_SUMMARY, if user asks about a specific sprint or task, put it in statusQuery.
+          - Use MY_ASSIGNED_TASKS when the user asks for their assigned tasks, their work, or what they need to do.
+          - MY_ASSIGNED_TASKS examples: "que tareas tengo asignadas", "what tasks are assigned to me", "my tasks", "what do I need to work on".
           - Output must be valid minified JSON (single JSON object), without markdown or extra prose.
           - Do not include markdown or code fences.
           User text: %s
@@ -311,6 +317,15 @@ public class GeminiService {
         return new ParsedIntent(IntentAction.HELP, null, null, null, null, null, 0.8, null);
       }
 
+      if (lower.contains("tareas tengo asignadas")
+          || lower.contains("tareas asignadas")
+          || lower.contains("mis tareas")
+          || lower.contains("my tasks")
+          || lower.contains("assigned to me")
+          || lower.contains("what do i need to work on")) {
+        return new ParsedIntent(IntentAction.MY_ASSIGNED_TASKS, null, null, null, null, null, 0.85, null);
+      }
+
       String priority = null;
       String cleaned = raw;
       if (lower.contains("high priority")) {
@@ -324,9 +339,11 @@ public class GeminiService {
         cleaned = cleaned.replaceAll("(?i)\\blow\\s+priority\\b", "").trim();
       }
 
-      Matcher createMatcher = Pattern.compile("(?i)^create(?:\\s+task)?\\s+(.+)$").matcher(cleaned);
+      Matcher createMatcher = Pattern
+          .compile("(?i)^(?:create|crea|crear)(?:\\s+(?:task|tarea))?(?:\\s+para)?\\s+(.+)$")
+          .matcher(cleaned);
       if (createMatcher.find()) {
-        String title = createMatcher.group(1).trim();
+        String title = normalizeHeuristicCreateTitle(createMatcher.group(1).trim());
         if (!title.isEmpty()) {
           return new ParsedIntent(IntentAction.CREATE_TASK, title, priority, null, null, null, 0.85, null);
         }
@@ -340,6 +357,23 @@ public class GeminiService {
       }
 
       return new ParsedIntent(IntentAction.UNKNOWN, null, null, null, null, null, 0.0, null);
+    }
+
+    private String normalizeHeuristicCreateTitle(String rawTitle) {
+      if (rawTitle == null) return "";
+      String title = rawTitle.trim();
+      title = title.replaceAll("(?i)^para\\s+", "");
+      title = title.replaceAll("(?i)\\b(arreglar|corregir|reparar)\\b", "Fix");
+      title = title.replaceAll("(?i)\\bcrear\\b", "Create");
+      title = title.replaceAll("(?i)\\bagregar\\b", "Add");
+      title = title.replaceAll("(?i)\\bimplementar\\b", "Implement");
+      title = title.replaceAll("(?i)\\bmejorar\\b", "Improve");
+      title = title.replaceAll("(?i)\\bpipeline\\b", "pipeline");
+      title = title.replaceAll("(?i)\\bpipepline\\b", "pipeline");
+      title = title.replaceAll("(?i)\\bdeployment\\b", "deployment");
+      title = title.replaceAll("\\s+", " ").trim();
+      if (title.isEmpty()) return "";
+      return title.substring(0, 1).toUpperCase(Locale.ROOT) + title.substring(1);
     }
 
     private GeminiApiResponse callGemini(String body) throws Exception {

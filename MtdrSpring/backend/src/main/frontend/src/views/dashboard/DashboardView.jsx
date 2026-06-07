@@ -1,3 +1,5 @@
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
 
 const ORANGE_ACCENT = '#F77E47';
@@ -6,6 +8,7 @@ const STAT_BORDERS = {
   openTasks: '#2196F3',
   completed: '#4CAF50',
   blocked: '#F44336',
+  avgCycleTime: '#9C27B0',
 };
 
 const BAR = {
@@ -74,6 +77,38 @@ function StatCard({ label, value, subtitle, borderColor, subtitleContent }) {
       </CardContent>
     </Card>
   );
+}
+
+function CycleTimeSubtitle({ cycleTimeChange }) {
+  if (cycleTimeChange == null) {
+    return (
+      <Typography sx={{ fontSize: '0.82rem', color: '#717171' }}>No previous sprint</Typography>
+    );
+  }
+
+  const change = Number(cycleTimeChange);
+  const isImproved = change < 0;
+  const Icon = isImproved ? TrendingDownIcon : TrendingUpIcon;
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
+        color: isImproved ? '#2E7D32' : '#C62828',
+      }}
+    >
+      <Icon sx={{ fontSize: '1rem' }} />
+      <Typography sx={{ fontSize: '0.82rem', color: 'inherit' }}>
+        {Math.abs(change).toFixed(1)}% vs Last sprint
+      </Typography>
+    </Box>
+  );
+}
+
+function formatCycleTime(days) {
+  return Number(Number(days ?? 0).toFixed(2)).toString();
 }
 
 function SprintProgressBar({ todo, inProgress, blocked, done }) {
@@ -215,7 +250,7 @@ export default function DashboardView({
 
       {/* KPI stat cards */}
       <Grid container spacing="12px" sx={{ mb: '40px' }} data-testid="kpi-stat-cards">
-        <Grid item xs={6} md={4}>
+        <Grid item xs={6} md={3}>
           <StatCard
             label="Open Tasks"
             value={stats.openTasks}
@@ -223,7 +258,7 @@ export default function DashboardView({
             borderColor={STAT_BORDERS.openTasks}
           />
         </Grid>
-        <Grid item xs={6} md={4}>
+        <Grid item xs={6} md={3}>
           <StatCard
             label="Completed"
             value={stats.completed}
@@ -231,12 +266,20 @@ export default function DashboardView({
             borderColor={STAT_BORDERS.completed}
           />
         </Grid>
-        <Grid item xs={6} md={4}>
+        <Grid item xs={6} md={3}>
           <StatCard
             label="Blocked"
             value={stats.blocked}
             subtitle="Needs Attention"
             borderColor={STAT_BORDERS.blocked}
+          />
+        </Grid>
+        <Grid item xs={6} md={3}>
+          <StatCard
+            label="Avg cycle time"
+            value={`${formatCycleTime(stats.avgCycleTime)} days`}
+            borderColor={STAT_BORDERS.avgCycleTime}
+            subtitleContent={<CycleTimeSubtitle cycleTimeChange={stats.cycleTimeChange} />}
           />
         </Grid>
       </Grid>

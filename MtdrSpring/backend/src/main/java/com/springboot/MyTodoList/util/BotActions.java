@@ -27,9 +27,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -38,6 +40,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -45,9 +50,133 @@ public class BotActions {
 
     private static final Logger logger = LoggerFactory.getLogger(BotActions.class);
     private static final long CONFIRMATION_TTL_MS = 5 * 60 * 1000;
+    private static final String CALLBACK_CONFIRM = "confirm";
+    private static final String CALLBACK_CANCEL = "cancel";
+    private static final String CALLBACK_STATUS_PREFIX = "status:";
+    private static final String CALLBACK_HOURS_MENU_PREFIX = "hours-menu:";
+    private static final String CALLBACK_LOG_HOURS_PREFIX = "hours:";
+    private static final String CALLBACK_CUSTOM_HOURS_PREFIX = "custom-hours:";
+    private static final String CALLBACK_VIEW_TASK_PREFIX = "view-task:";
+    private static final String CALLBACK_DRAFT_PRIORITY_PREFIX = "draft-priority:";
+    private static final String CALLBACK_DRAFT_ASSIGNEE_PREFIX = "draft-assignee:";
+    private static final String CALLBACK_DRAFT_CONFIRM = "draft-confirm";
+    private static final String CALLBACK_DRAFT_CANCEL = "draft-cancel";
     private static final Map<Long, PendingCommand> pendingCommands = new ConcurrentHashMap<>();
+    private static final Map<Long, PendingTaskDraft> pendingTaskDrafts = new ConcurrentHashMap<>();
 
     private record PendingCommand(String command, long createdAtMs) {}
+    private record PendingTaskDraft(String title, TaskPriority priority, UUID assigneeId, long createdAtMs) {}
+
+    private InlineKeyboardButton inlineButton(String text, String callbackData) {
+        return InlineKeyboardButton.builder()
+            .text(text)
+            .callbackData(callbackData)
+            .build();
+    }
+
+    private InlineKeyboardMarkup confirmationKeyboard() {
+        return new InlineKeyboardMarkup(List.of(
+            new InlineKeyboardRow(
+                inlineButton("Confirm", CALLBACK_CONFIRM),
+                inlineButton("Cancel", CALLBACK_CANCEL)
+            )
+        ));
+    }
+
+    private InlineKeyboardMarkup taskActionKeyboard(Task task) {
+        String taskId = task.getId().toString();
+        List<InlineKeyboardRow> rows = new ArrayList<>();
+
+        if (task.getStatus() == TaskStatus.TODO) {
+            rows.add(new InlineKeyboardRow(
+                inlineButton("Start Task", CALLBACK_STATUS_PREFIX + taskId + ":IN_PROGRESS"),
+                inlineButton("Mark Done", CALLBACK_STATUS_PREFIX + taskId + ":DONE")
+            ));
+        } else if (task.getStatus() == TaskStatus.IN_PROGRESS) {
+            rows.add(new InlineKeyboardRow(
+                inlineButton("Block Task", CALLBACK_STATUS_PREFIX + taskId + ":BLOCKED"),
+                inlineButton("Mark Done", CALLBACK_STATUS_PREFIX + taskId + ":DONE")
+            ));
+        } else if (task.getStatus() == TaskStatus.BLOCKED) {
+            rows.add(new InlineKeyboardRow(
+                inlineButton("Resume Task", CALLBACK_STATUS_PREFIX + taskId + ":IN_PROGRESS"),
+                inlineButton("Move To Todo", CALLBACK_STATUS_PREFIX + taskId + ":TODO")
+            ));
+        } else if (task.getStatus() == TaskStatus.DONE) {
+            rows.add(new InlineKeyboardRow(
+                inlineButton("Reopen Task", CALLBACK_STATUS_PREFIX + taskId + ":IN_PROGRESS")
+            ));
+        }
+
+        rows.add(new InlineKeyboardRow(
+            inlineButton("Log Hours", CALLBACK_HOURS_MENU_PREFIX + taskId)
+        ));
+
+        return new InlineKeyboardMarkup(rows);
+    }
+
+    private InlineKeyboardMarkup hoursKeyboard(Task task) {
+        String taskId = task.getId().toString();
+        return new InlineKeyboardMarkup(List.of(
+            new InlineKeyboardRow(
+                inlineButton("0.5h", CALLBACK_LOG_HOURS_PREFIX + taskId + ":0.5"),
+                inlineButton("1h", CALLBACK_LOG_HOURS_PREFIX + taskId + ":1"),
+                inlineButton("1.5h", CALLBACK_LOG_HOURS_PREFIX + taskId + ":1.5"),
+                inlineButton("2h", CALLBACK_LOG_HOURS_PREFIX + taskId + ":2")
+            ),
+            new InlineKeyboardRow(
+                inlineButton("Custom", CALLBACK_CUSTOM_HOURS_PREFIX + taskId),
+                inlineButton("Cancel", CALLBACK_CANCEL)
+            )
+        ));
+    }
+
+    private InlineKeyboardMarkup assignedTasksKeyboard(List<Task> tasks) {
+        List<InlineKeyboardRow> rows = new ArrayList<>();
+        int limit = Math.min(tasks.size(), 10);
+        for (int i = 0; i < limit; i++) {
+            Task task = tasks.get(i);
+            String label = task.getTitle();
+            if (label.length() > 32) label = label.substring(0, 29) + "...";
+            rows.add(new InlineKeyboardRow(
+                inlineButton(label, CALLBACK_VIEW_TASK_PREFIX + task.getId())
+            ));
+        }
+        return new InlineKeyboardMarkup(rows);
+    }
+
+    private InlineKeyboardMarkup createDraftKeyboard(PendingTaskDraft draft, List<ProjectMember> memberships) {
+        List<InlineKeyboardRow> rows = new ArrayList<>();
+        rows.add(new InlineKeyboardRow(
+            inlineButton(priorityButtonLabel(draft, TaskPriority.LOW), CALLBACK_DRAFT_PRIORITY_PREFIX + "LOW"),
+            inlineButton(priorityButtonLabel(draft, TaskPriority.MEDIUM), CALLBACK_DRAFT_PRIORITY_PREFIX + "MEDIUM"),
+            inlineButton(priorityButtonLabel(draft, TaskPriority.HIGH), CALLBACK_DRAFT_PRIORITY_PREFIX + "HIGH")
+        ));
+
+        for (ProjectMember membership : memberships) {
+            User member = membership.getUser();
+            if (member == null || member.getId() == null) continue;
+            rows.add(new InlineKeyboardRow(
+                inlineButton(assigneeButtonLabel(draft, member), CALLBACK_DRAFT_ASSIGNEE_PREFIX + member.getId())
+            ));
+        }
+
+        rows.add(new InlineKeyboardRow(
+            inlineButton("Confirm", CALLBACK_DRAFT_CONFIRM),
+            inlineButton("Cancel", CALLBACK_DRAFT_CANCEL)
+        ));
+        return new InlineKeyboardMarkup(rows);
+    }
+
+    private String priorityButtonLabel(PendingTaskDraft draft, TaskPriority priority) {
+        return draft.priority() == priority ? priority.name() + " selected" : priority.name();
+    }
+
+    private String assigneeButtonLabel(PendingTaskDraft draft, User user) {
+        String label = safeUserEmail(user);
+        if (label.length() > 28) label = label.substring(0, 25) + "...";
+        return user.getId().equals(draft.assigneeId()) ? label + " selected" : label;
+    }
 
     String requestText;
     long chatId;
@@ -326,6 +455,604 @@ public class BotActions {
         return null;
     }
 
+    private User getLinkedUserOrNotify() {
+        User user = userRepository.findByTelegramChatId(String.valueOf(chatId)).orElse(null);
+        if (user == null) {
+            BotHelper.sendMessageToTelegram(chatId, "Please /link your account first.", telegramClient);
+            exit = true;
+        }
+        return user;
+    }
+
+    private Task getAccessibleTaskOrNotify(User user, UUID taskId) {
+        Task task = todoService.getToDoItemById(taskId);
+        if (task == null) {
+            BotHelper.sendMessageToTelegram(chatId, "Task not found.", telegramClient);
+            exit = true;
+            return null;
+        }
+
+        List<ProjectMember> memberships = projectMemberRepository.findByUser_Id(user.getId());
+        boolean hasAccess = memberships.stream()
+            .anyMatch(m -> m.getProject() != null
+                && task.getProject() != null
+                && m.getProject().getId().equals(task.getProject().getId()));
+
+        if (!hasAccess) {
+            BotHelper.sendMessageToTelegram(chatId, "You do not have access to this task.", telegramClient);
+            exit = true;
+            return null;
+        }
+
+        return task;
+    }
+
+    private String taskDetailsMessage(Task task) {
+        String sprintName = safeSprintName(task);
+        String assignee = safeAssigneeEmail(task);
+        return String.format(
+            "<b>%s</b>\nStatus    %s\nPriority  %s\nSprint    %s\nAssigned  %s",
+            task.getTitle(),
+            displayStatus(task.getStatus()),
+            task.getPriority(),
+            sprintName,
+            assignee
+        );
+    }
+
+    private String displayStatus(TaskStatus status) {
+        if (status == null) return "Unknown";
+        return status.name().replace("_", " ");
+    }
+
+    private String safeSprintName(Task task) {
+        try {
+            Sprint sprint = task.getSprint();
+            if (sprint == null) return "Backlog";
+            String name = sprint.getName();
+            return name == null || name.isBlank() ? "Unavailable" : name;
+        } catch (RuntimeException e) {
+            UUID sprintId = safeSprintId(task);
+            if (sprintId != null) {
+                try {
+                    Sprint sprint = sprintRepository.findById(sprintId).orElse(null);
+                    if (sprint != null && sprint.getName() != null && !sprint.getName().isBlank()) {
+                        return sprint.getName();
+                    }
+                } catch (RuntimeException repositoryError) {
+                    logger.warn(
+                        "Could not resolve sprint {} for task {}: {}",
+                        sprintId,
+                        task.getId(),
+                        repositoryError.getMessage()
+                    );
+                }
+            }
+            logger.warn("Could not read sprint name for task {}: {}", task.getId(), e.getMessage());
+            return "Unavailable";
+        }
+    }
+
+    private UUID safeSprintId(Task task) {
+        try {
+            Sprint sprint = task.getSprint();
+            return sprint == null ? null : sprint.getId();
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    private String safeAssigneeEmail(Task task) {
+        try {
+            User assignee = task.getAssignee();
+            if (assignee == null) return "Unassigned";
+            String email = assignee.getEmail();
+            return email == null || email.isBlank() ? "Unassigned" : email;
+        } catch (RuntimeException e) {
+            UUID assigneeId = safeAssigneeId(task);
+            if (assigneeId != null) {
+                try {
+                    User assignee = userRepository.findById(assigneeId).orElse(null);
+                    if (assignee != null && assignee.getEmail() != null && !assignee.getEmail().isBlank()) {
+                        return assignee.getEmail();
+                    }
+                } catch (RuntimeException repositoryError) {
+                    logger.warn(
+                        "Could not resolve assignee {} for task {}: {}",
+                        assigneeId,
+                        task.getId(),
+                        repositoryError.getMessage()
+                    );
+                }
+            }
+            logger.warn("Could not read assignee email for task {}: {}", task.getId(), e.getMessage());
+            return "Unavailable";
+        }
+    }
+
+    private UUID safeProjectId(Task task) {
+        try {
+            Project project = task.getProject();
+            return project == null ? null : project.getId();
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    private UUID safeAssigneeId(Task task) {
+        try {
+            User assignee = task.getAssignee();
+            return assignee == null ? null : assignee.getId();
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    public void fnCallback() {
+        if (requestText == null || requestText.isBlank() || exit) return;
+
+        String data = requestText.trim();
+
+        if (CALLBACK_CONFIRM.equals(data) || CALLBACK_CANCEL.equals(data)) {
+            requestText = data;
+            tryHandlePendingConfirmation();
+            exit = true;
+            return;
+        }
+
+        if (data.startsWith(CALLBACK_STATUS_PREFIX)) {
+            handleStatusCallback(data);
+            return;
+        }
+
+        if (data.startsWith(CALLBACK_HOURS_MENU_PREFIX)) {
+            handleHoursMenuCallback(data);
+            return;
+        }
+
+        if (data.startsWith(CALLBACK_LOG_HOURS_PREFIX)) {
+            handleLogHoursCallback(data);
+            return;
+        }
+
+        if (data.startsWith(CALLBACK_CUSTOM_HOURS_PREFIX)) {
+            handleCustomHoursCallback(data);
+            return;
+        }
+
+        if (data.startsWith(CALLBACK_VIEW_TASK_PREFIX)) {
+            handleViewTaskCallback(data);
+            return;
+        }
+
+        if (data.startsWith(CALLBACK_DRAFT_PRIORITY_PREFIX)
+            || data.startsWith(CALLBACK_DRAFT_ASSIGNEE_PREFIX)
+            || CALLBACK_DRAFT_CONFIRM.equals(data)
+            || CALLBACK_DRAFT_CANCEL.equals(data)) {
+            handleCreateDraftCallback(data);
+            return;
+        }
+
+        BotHelper.sendMessageToTelegram(chatId, "Unsupported action. Please try again.", telegramClient);
+        exit = true;
+    }
+
+    private void handleStatusCallback(String data) {
+        String[] parts = data.split(":", 3);
+        if (parts.length != 3) {
+            BotHelper.sendMessageToTelegram(chatId, "Invalid status action.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        UUID taskId;
+        TaskStatus newStatus;
+        try {
+            taskId = UUID.fromString(parts[1]);
+            newStatus = TaskStatus.valueOf(parts[2]);
+        } catch (IllegalArgumentException e) {
+            BotHelper.sendMessageToTelegram(chatId, "Invalid status action.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        User user = getLinkedUserOrNotify();
+        if (user == null) return;
+
+        Task task = getAccessibleTaskOrNotify(user, taskId);
+        if (task == null) return;
+
+        Sprint activeSprint = getActiveSprint(task.getProject().getId());
+        todoService.patchStatusAndSprint(task.getId(), newStatus, activeSprint, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
+
+        String msg = "\"" + task.getTitle() + "\" moved to " + displayStatus(newStatus);
+        if (newStatus == TaskStatus.DONE) {
+            msg += "\n\nLog actual hours:";
+            BotHelper.sendInlineKeyboardMessage(chatId, msg, telegramClient, hoursKeyboard(task));
+        } else {
+            BotHelper.sendInlineKeyboardMessage(chatId, msg, telegramClient, taskActionKeyboard(task));
+        }
+        exit = true;
+    }
+
+    private void handleHoursMenuCallback(String data) {
+        String idRaw = data.substring(CALLBACK_HOURS_MENU_PREFIX.length()).trim();
+        UUID taskId;
+        try {
+            taskId = UUID.fromString(idRaw);
+        } catch (IllegalArgumentException e) {
+            BotHelper.sendMessageToTelegram(chatId, "Invalid task action.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        User user = getLinkedUserOrNotify();
+        if (user == null) return;
+
+        Task task = getAccessibleTaskOrNotify(user, taskId);
+        if (task == null) return;
+
+        BotHelper.sendInlineKeyboardMessage(
+            chatId,
+            "Log actual hours for \"" + task.getTitle() + "\"",
+            telegramClient,
+            hoursKeyboard(task)
+        );
+        exit = true;
+    }
+
+    private void handleLogHoursCallback(String data) {
+        String[] parts = data.split(":", 3);
+        if (parts.length != 3) {
+            BotHelper.sendMessageToTelegram(chatId, "Invalid hours action.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        UUID taskId;
+        double hours;
+        try {
+            taskId = UUID.fromString(parts[1]);
+            hours = Double.parseDouble(parts[2]);
+            if (hours <= 0 || hours > 100) throw new NumberFormatException();
+        } catch (IllegalArgumentException e) {
+            BotHelper.sendMessageToTelegram(chatId, "Invalid hours action.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        User user = getLinkedUserOrNotify();
+        if (user == null) return;
+
+        Task task = getAccessibleTaskOrNotify(user, taskId);
+        if (task == null) return;
+
+        TaskWorkLog log = new TaskWorkLog();
+        log.setTask(task);
+        log.setUser(user);
+        log.setWorkDate(LocalDate.now());
+        log.setHoursWorked(BigDecimal.valueOf(hours));
+        taskWorkLogRepository.save(log);
+
+        BotHelper.sendMessageToTelegram(chatId, "Logged " + hours + "h on \"" + task.getTitle() + "\"", telegramClient);
+        exit = true;
+    }
+
+    private void handleCustomHoursCallback(String data) {
+        String idRaw = data.substring(CALLBACK_CUSTOM_HOURS_PREFIX.length()).trim();
+        UUID taskId;
+        try {
+            taskId = UUID.fromString(idRaw);
+        } catch (IllegalArgumentException e) {
+            BotHelper.sendMessageToTelegram(chatId, "Invalid task action.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        User user = getLinkedUserOrNotify();
+        if (user == null) return;
+
+        Task task = getAccessibleTaskOrNotify(user, taskId);
+        if (task == null) return;
+
+        BotHelper.sendMessageToTelegram(
+            chatId,
+            "Send custom hours with:\n/loghours &lt;hours&gt; " + task.getTitle(),
+            telegramClient
+        );
+        exit = true;
+    }
+
+    private void handleViewTaskCallback(String data) {
+        String idRaw = data.substring(CALLBACK_VIEW_TASK_PREFIX.length()).trim();
+        UUID taskId;
+        try {
+            taskId = UUID.fromString(idRaw);
+        } catch (IllegalArgumentException e) {
+            BotHelper.sendMessageToTelegram(chatId, "Invalid task action.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        User user = getLinkedUserOrNotify();
+        if (user == null) return;
+
+        Task task = getAccessibleTaskOrNotify(user, taskId);
+        if (task == null) return;
+
+        UUID assigneeId = safeAssigneeId(task);
+        if (assigneeId != null && !assigneeId.equals(user.getId())) {
+            BotHelper.sendMessageToTelegram(chatId, "This task is no longer assigned to you.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        BotHelper.sendInlineKeyboardMessage(
+            chatId,
+            taskDetailsMessage(task),
+            telegramClient,
+            taskActionKeyboard(task)
+        );
+        exit = true;
+    }
+
+    private void startCreateTaskDraft(String title, TaskPriority priority) {
+        User user = getLinkedUserOrNotify();
+        if (user == null) return;
+
+        ProjectContext context = getProjectContextOrNotify(user);
+        if (context == null) return;
+
+        TaskPriority selectedPriority = priority == null ? TaskPriority.MEDIUM : priority;
+        PendingTaskDraft draft = new PendingTaskDraft(title.trim(), selectedPriority, user.getId(), System.currentTimeMillis());
+        pendingTaskDrafts.put(chatId, draft);
+        sendCreateDraftMessage(draft, context.memberships());
+        exit = true;
+    }
+
+    private void handleCreateDraftCallback(String data) {
+        PendingTaskDraft draft = pendingTaskDrafts.get(chatId);
+        if (draft == null) {
+            BotHelper.sendMessageToTelegram(chatId, "No pending task draft. Send a create request again.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        User user = getLinkedUserOrNotify();
+        if (user == null) return;
+
+        ProjectContext context = getProjectContextOrNotify(user);
+        if (context == null) return;
+
+        if (CALLBACK_DRAFT_CANCEL.equals(data)) {
+            pendingTaskDrafts.remove(chatId);
+            BotHelper.sendMessageToTelegram(chatId, "Task creation cancelled.", telegramClient);
+            exit = true;
+            return;
+        }
+
+        if (data.startsWith(CALLBACK_DRAFT_PRIORITY_PREFIX)) {
+            String priorityRaw = data.substring(CALLBACK_DRAFT_PRIORITY_PREFIX.length()).trim().toUpperCase();
+            try {
+                TaskPriority priority = TaskPriority.valueOf(priorityRaw);
+                draft = new PendingTaskDraft(draft.title(), priority, draft.assigneeId(), System.currentTimeMillis());
+                pendingTaskDrafts.put(chatId, draft);
+                sendCreateDraftMessage(draft, context.memberships());
+            } catch (IllegalArgumentException e) {
+                BotHelper.sendMessageToTelegram(chatId, "Invalid priority selection.", telegramClient);
+            }
+            exit = true;
+            return;
+        }
+
+        if (data.startsWith(CALLBACK_DRAFT_ASSIGNEE_PREFIX)) {
+            String assigneeRaw = data.substring(CALLBACK_DRAFT_ASSIGNEE_PREFIX.length()).trim();
+            try {
+                UUID assigneeId = UUID.fromString(assigneeRaw);
+                if (findMemberByUserId(context.memberships(), assigneeId) == null) {
+                    BotHelper.sendMessageToTelegram(chatId, "That user is not part of this project.", telegramClient);
+                    exit = true;
+                    return;
+                }
+                draft = new PendingTaskDraft(draft.title(), draft.priority(), assigneeId, System.currentTimeMillis());
+                pendingTaskDrafts.put(chatId, draft);
+                sendCreateDraftMessage(draft, context.memberships());
+            } catch (IllegalArgumentException e) {
+                BotHelper.sendMessageToTelegram(chatId, "Invalid assignee selection.", telegramClient);
+            }
+            exit = true;
+            return;
+        }
+
+        if (CALLBACK_DRAFT_CONFIRM.equals(data)) {
+            createTaskFromDraft(draft, user, context);
+            pendingTaskDrafts.remove(chatId);
+            exit = true;
+            return;
+        }
+
+        BotHelper.sendMessageToTelegram(chatId, "Unsupported task draft action.", telegramClient);
+        exit = true;
+    }
+
+    private void sendCreateDraftMessage(PendingTaskDraft draft, List<ProjectMember> memberships) {
+        User assignee = findMemberByUserId(memberships, draft.assigneeId());
+        String assigneeLabel = assignee == null ? "Unassigned" : safeUserEmail(assignee);
+        String msg = String.format(
+            "Task draft\n\nTitle: <b>%s</b>\nPriority: %s\nAssignee: %s\n\nChoose priority and assignee, then confirm.",
+            draft.title(),
+            draft.priority(),
+            assigneeLabel
+        );
+        BotHelper.sendInlineKeyboardMessage(chatId, msg, telegramClient, createDraftKeyboard(draft, memberships));
+    }
+
+    private void createTaskFromDraft(PendingTaskDraft draft, User actor, ProjectContext context) {
+        User assignee = findMemberByUserId(context.memberships(), draft.assigneeId());
+        if (assignee == null) {
+            BotHelper.sendMessageToTelegram(chatId, "Selected assignee is no longer available.", telegramClient);
+            return;
+        }
+
+        Sprint sprint = getActiveSprint(context.project().getId());
+
+        Task task = new Task();
+        task.setTitle(draft.title());
+        task.setProject(context.project());
+        task.setSprint(sprint);
+        task.setCreatedBy(actor);
+        task.setAssignee(assignee);
+        task.setPriority(draft.priority());
+        task.setStatus(TaskStatus.TODO);
+
+        try {
+            todoService.addToDoItem(task, actor, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
+            String location = sprint != null ? sprint.getName() : "backlog";
+            BotHelper.sendMessageToTelegram(
+                chatId,
+                "Task created in " + location + "\n<b>" + draft.title() + "</b>\nPriority: " + draft.priority() + "\nAssignee: " + safeUserEmail(assignee),
+                telegramClient
+            );
+        } catch (Exception e) {
+            logger.error("Failed to create task from draft", e);
+            BotHelper.sendMessageToTelegram(chatId, "Failed to create task due to a server error.", telegramClient);
+        }
+    }
+
+    private User findMemberByUserId(List<ProjectMember> memberships, UUID userId) {
+        if (memberships == null || userId == null) return null;
+        for (ProjectMember membership : memberships) {
+            try {
+                User member = membership.getUser();
+                if (member != null && userId.equals(member.getId())) {
+                    return userRepository.findById(userId).orElse(member);
+                }
+            } catch (RuntimeException e) {
+                logger.warn("Could not read project member user: {}", e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    private String safeUserEmail(User user) {
+        if (user == null) return "Unassigned";
+        try {
+            String email = user.getEmail();
+            return email == null || email.isBlank() ? user.getId().toString() : email;
+        } catch (RuntimeException e) {
+            try {
+                UUID userId = user.getId();
+                User resolved = userRepository.findById(userId).orElse(null);
+                if (resolved != null && resolved.getEmail() != null && !resolved.getEmail().isBlank()) {
+                    return resolved.getEmail();
+                }
+                return userId.toString();
+            } catch (RuntimeException nested) {
+                return "Unavailable";
+            }
+        }
+    }
+
+    private record ProjectContext(Project project, List<ProjectMember> memberships) {}
+
+    private ProjectContext getProjectContextOrNotify(User user) {
+        List<ProjectMember> memberships = projectMemberRepository.findByUser_Id(user.getId());
+        if (memberships.isEmpty()) {
+            BotHelper.sendMessageToTelegram(chatId, "You are not assigned to any projects.", telegramClient);
+            exit = true;
+            return null;
+        }
+
+        Project memberProject = memberships.get(0).getProject();
+        if (memberProject == null || memberProject.getId() == null) {
+            BotHelper.sendMessageToTelegram(chatId, "Project not found.", telegramClient);
+            exit = true;
+            return null;
+        }
+
+        Project project = projectRepository.findById(memberProject.getId()).orElse(null);
+        if (project == null) {
+            BotHelper.sendMessageToTelegram(chatId, "Project not found.", telegramClient);
+            exit = true;
+            return null;
+        }
+
+        List<ProjectMember> projectMemberships = projectMemberRepository.findByProject_Id(project.getId());
+        if (projectMemberships.isEmpty()) {
+            projectMemberships = memberships;
+        }
+        return new ProjectContext(project, projectMemberships);
+    }
+
+    private void sendMyAssignedTasks() {
+        User user = getLinkedUserOrNotify();
+        if (user == null) return;
+
+        ProjectContext context = getProjectContextOrNotify(user);
+        if (context == null) return;
+
+        UUID projectId = context.project().getId();
+        List<Task> assignedTasks = todoService.findByAssigneeId(user.getId()).stream()
+            .filter(task -> projectId.equals(safeProjectId(task)))
+            .sorted(Comparator
+                .comparing((Task task) -> task.getStatus() == TaskStatus.DONE)
+                .thenComparing(task -> task.getStatus() == null ? "" : task.getStatus().name())
+                .thenComparing(Task::getTitle, String.CASE_INSENSITIVE_ORDER))
+            .collect(Collectors.toList());
+
+        if (assignedTasks.isEmpty()) {
+            BotHelper.sendMessageToTelegram(
+                chatId,
+                "You do not have assigned tasks in " + context.project().getName() + ".",
+                telegramClient
+            );
+            exit = true;
+            return;
+        }
+
+        StringBuilder msg = new StringBuilder();
+        msg.append("<b>Your assigned tasks</b>\n");
+        msg.append(context.project().getName()).append("\n\n");
+
+        int limit = Math.min(assignedTasks.size(), 10);
+        for (int i = 0; i < limit; i++) {
+            Task task = assignedTasks.get(i);
+            msg.append(i + 1)
+                .append(". <b>")
+                .append(task.getTitle())
+                .append("</b>\n   ")
+                .append(displayStatus(task.getStatus()))
+                .append(" / ")
+                .append(task.getPriority())
+                .append("\n");
+        }
+
+        List<Task> visibleTasks = assignedTasks.subList(0, limit);
+        if (assignedTasks.size() > limit) {
+            msg.append("\nShowing ").append(limit).append(" of ").append(assignedTasks.size()).append(" assigned tasks.");
+        }
+        msg.append("\n\nSelect a task to open its status and actions.");
+
+        BotHelper.sendInlineKeyboardMessage(chatId, msg.toString(), telegramClient, assignedTasksKeyboard(visibleTasks));
+        exit = true;
+    }
+
+    private boolean isMyAssignedTasksRequest(String text) {
+        if (text == null) return false;
+        String normalized = Normalizer.normalize(text, Normalizer.Form.NFD)
+            .replaceAll("\\p{M}", "")
+            .toLowerCase()
+            .trim();
+
+        return normalized.contains("tareas tengo asignadas")
+            || normalized.contains("tareas asignadas")
+            || normalized.contains("mis tareas")
+            || normalized.contains("my tasks")
+            || normalized.contains("assigned to me")
+            || normalized.contains("what tasks")
+            || normalized.contains("what do i need to work on");
+    }
+
     public void setRequestText(String cmd) { requestText = cmd; }
     public void setChatId(long chId) { chatId = chId; }
     public void setTelegramClient(TelegramClient tc) { telegramClient = tc; }
@@ -366,10 +1093,24 @@ public class BotActions {
 
     public void fnHelp() {
         if (!requestText.equals("/help") || exit) return;
-        String helpMsg = "<b>Commands</b>\n\n" +
-                         "/link &lt;code&gt;\n" +
-                         "/status [sprint or task name]\n" +
-                         "/create &lt;title&gt; | LOW | MEDIUM | HIGH\n" +
+        String helpMsg = "<b>Oracle PM Bot Help</b>\n\n" +
+                         "<b>Natural language</b>\n" +
+                         "You can type normal requests. I will understand them and use buttons when confirmation is needed.\n\n" +
+                         "Examples:\n" +
+                         "- crea tarea para arreglar deployment pipepline\n" +
+                         "- create a high priority task to polish the demo flow\n" +
+                         "- que tareas tengo asignadas\n" +
+                         "- show me the status of final demo task\n" +
+                         "- move final demo task to done\n" +
+                         "- log 2 hours on final demo task\n\n" +
+                         "<b>Creating tasks</b>\n" +
+                         "Natural language task creation creates a draft first. You can choose priority, assignee, and then Confirm.\n" +
+                         "Example result: Fix deployment pipeline\n\n" +
+                         "<b>Direct commands</b>\n" +
+                         "/link &lt;code&gt; - connect your Telegram account\n" +
+                         "/status [sprint or task name] - project, sprint, or task status\n" +
+                         "my tasks / que tareas tengo asignadas - list your assigned tasks\n" +
+                         "/create &lt;title&gt; | LOW|MEDIUM|HIGH - create directly\n" +
                          "/updatestatus &lt;TODO|IN_PROGRESS|BLOCKED|DONE&gt; &lt;title&gt;\n" +
                          "/loghours &lt;hours&gt; &lt;title&gt;\n" +
                          "/delete &lt;title&gt;";
@@ -495,13 +1236,12 @@ public class BotActions {
         }
 
         if (taskMatch != null) {
-            String msg = String.format(
-                "<b>%s</b>\nStatus    %s\nPriority  %s",
-                taskMatch.getTitle(),
-                taskMatch.getStatus(),
-                taskMatch.getPriority()
+            BotHelper.sendInlineKeyboardMessage(
+                chatId,
+                taskDetailsMessage(taskMatch),
+                telegramClient,
+                taskActionKeyboard(taskMatch)
             );
-            BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
             exit = true;
             return;
         }
@@ -520,13 +1260,12 @@ public class BotActions {
                 telegramClient);
         } else {
             Task task = exactTaskMatches.get(0);
-            String msg = String.format(
-                "<b>%s</b>\nStatus    %s\nPriority  %s",
-                task.getTitle(),
-                task.getStatus(),
-                task.getPriority()
+            BotHelper.sendInlineKeyboardMessage(
+                chatId,
+                taskDetailsMessage(task),
+                telegramClient,
+                taskActionKeyboard(task)
             );
-            BotHelper.sendMessageToTelegram(chatId, msg, telegramClient);
         }
         exit = true;
     }
@@ -697,7 +1436,7 @@ public class BotActions {
                 new PendingCommand("/_deleteconfirm " + selectedTask.getId(), System.currentTimeMillis())
             );
             String baseConfirmMsg = String.format(
-                "Delete \"%s\"?\n%s / %s\n\nReply <b>confirm</b> or <b>cancel</b>.",
+                "Delete \"%s\"?\n%s / %s",
                 selectedTask.getTitle(),
                 selectedTask.getStatus(),
                 selectedTask.getPriority()
@@ -706,7 +1445,7 @@ public class BotActions {
             if (previousPending != null && previousPending.command() != null && previousPending.command().startsWith("/_deleteconfirm ")) {
                 confirmMsg = "Previous delete request replaced.\n\n" + baseConfirmMsg;
             }
-            BotHelper.sendMessageToTelegram(chatId, confirmMsg, telegramClient, null);
+            BotHelper.sendInlineKeyboardMessage(chatId, confirmMsg, telegramClient, confirmationKeyboard());
         }
         exit = true;
     }
@@ -784,7 +1523,7 @@ public class BotActions {
             boolean assignedToSprint = selectedTask.getSprint() == null && activeSprint != null;
             todoService.patchStatusAndSprint(selectedTask.getId(), newStatus, activeSprint, user, com.springboot.MyTodoList.model.ChangeSource.TELEGRAM);
 
-            String msg = "\"" + selectedTask.getTitle() + "\" moved to " + newStatus;
+            String msg = "\"" + selectedTask.getTitle() + "\" moved to " + displayStatus(newStatus);
             if (assignedToSprint) {
                 msg += " in " + activeSprint.getName();
             }
@@ -1015,6 +1754,11 @@ public class BotActions {
             return;
         }
 
+        if (isMyAssignedTasksRequest(requestText)) {
+            sendMyAssignedTasks();
+            return;
+        }
+
         // Keep slash commands deterministic. Unknown slash commands should not go to LLM parsing.
         if (requestText.trim().startsWith("/")) {
             logger.warn("Unrecognized slash command from chatId={}: {}", chatId, requestText);
@@ -1121,6 +1865,9 @@ public class BotActions {
                         ? "/status " + intent.statusQuery().trim()
                         : "/status";
                     break;
+                case MY_ASSIGNED_TASKS:
+                    previewCommand = "my tasks";
+                    break;
                 case HELP:
                     previewCommand = "/help";
                     break;
@@ -1146,7 +1893,9 @@ public class BotActions {
                 return;
             }
 
-            if (parserRequireConfirmation) {
+            if (parserRequireConfirmation
+                && intent.action() != GeminiService.IntentAction.CREATE_TASK
+                && intent.action() != GeminiService.IntentAction.MY_ASSIGNED_TASKS) {
                 if (!previewCommand.startsWith("/")) {
                     BotHelper.sendMessageToTelegram(chatId,
                         "I parsed your request but it is incomplete. Please rephrase with more details.",
@@ -1158,12 +1907,12 @@ public class BotActions {
 
                 pendingCommands.put(chatId, new PendingCommand(previewCommand, System.currentTimeMillis()));
                 String confirmMsg = String.format(
-                    "Parser confirmation mode is ON.\nAction: %s\nConfidence: %.2f\nWould run: %s\n\nReply 'confirm' to execute or 'cancel' to discard.",
+                    "Parser confirmation mode is ON.\nAction: %s\nConfidence: %.2f\nWould run: %s",
                     intent.action(),
                     intent.confidence(),
                     previewCommand
                 );
-                BotHelper.sendMessageToTelegram(chatId, confirmMsg, telegramClient, null);
+                BotHelper.sendInlineKeyboardMessage(chatId, confirmMsg, telegramClient, confirmationKeyboard());
                 exit = true;
                 return;
             }
@@ -1175,7 +1924,7 @@ public class BotActions {
                         exit = true;
                         return;
                     }
-                    String normalizedPriority = "MEDIUM";
+                    TaskPriority normalizedPriority = TaskPriority.MEDIUM;
                     if (intent.priority() != null && !intent.priority().isBlank()) {
                         String p = intent.priority().trim().toUpperCase();
                         if (!("LOW".equals(p) || "MEDIUM".equals(p) || "HIGH".equals(p))) {
@@ -1186,10 +1935,9 @@ public class BotActions {
                             exit = true;
                             return;
                         }
-                        normalizedPriority = p;
+                        normalizedPriority = TaskPriority.valueOf(p);
                     }
-                    requestText = "/create " + intent.title().trim() + " | " + normalizedPriority;
-                    fnCreate();
+                    startCreateTaskDraft(intent.title().trim(), normalizedPriority);
                     return;
                 case UPDATE_STATUS:
                     if (intent.status() == null || intent.status().isBlank() || intent.title() == null || intent.title().isBlank()) {
@@ -1231,6 +1979,9 @@ public class BotActions {
                         requestText = "/status";
                     }
                     fnStatus();
+                    return;
+                case MY_ASSIGNED_TASKS:
+                    sendMyAssignedTasks();
                     return;
                 case HELP:
                     requestText = "/help";

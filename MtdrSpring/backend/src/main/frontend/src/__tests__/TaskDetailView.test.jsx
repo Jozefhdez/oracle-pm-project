@@ -60,8 +60,8 @@ describe('R3 - Completed task: minimum required information', () => {
 
   test('displays the developer / assignee name in the details sidebar', () => {
     render(<TaskDetailView task={TASK} history={[]} logs={[]} onBack={jest.fn()} />);
-    // Scoped to the sidebar so the email appearing elsewhere doesn't satisfy this.
-    expect(within(getSidebar()).getByText('alice.smith@oracle.com')).toBeInTheDocument();
+    // Scoped to the sidebar so the assignee appearing elsewhere doesn't satisfy this.
+    expect(within(getSidebar()).getByText('ALICE.SMITH')).toBeInTheDocument();
   });
 
   test('displays the total hours at the top of Work Logs', () => {
@@ -95,9 +95,9 @@ describe('R2 - State changes: history timeline', () => {
 
   test('shows the user who made each status change', () => {
     render(<TaskDetailView task={TASK} history={HISTORY} logs={[]} onBack={jest.fn()} />);
-    // Alice made both transitions, so her email appears once per row.
-    const emails = within(getStateHistory()).getAllByText(/alice\.smith@oracle\.com/i);
-    expect(emails.length).toBeGreaterThanOrEqual(1);
+    // Alice made both transitions, so her display name appears once per row.
+    const names = within(getStateHistory()).getAllByText(/ALICE\.SMITH/i);
+    expect(names.length).toBeGreaterThanOrEqual(1);
   });
 });
 

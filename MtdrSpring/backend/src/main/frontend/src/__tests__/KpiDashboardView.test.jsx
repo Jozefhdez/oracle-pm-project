@@ -47,9 +47,12 @@ const BASE_PROPS = {
   sprints: SPRINTS,
   sprintId: 's1',
   developerStats: DEV_STATS,
+  allSprintsStats: [],
   currentUserEmail: 'alice.smith@oracle.com',
   loadingStats: false,
   onSprintChange: jest.fn(),
+  developerFilter: 'all',
+  onDeveloperFilterChange: jest.fn(),
 };
 
 function getSprintTotalsCard() {
@@ -95,6 +98,23 @@ describe('R7 - Per-person KPIs: tasks and hours for each developer per sprint', 
   test('shows personal stats for a different user (bob) in Your Stats', () => {
     render(<KpiDashboardView {...BASE_PROPS} currentUserEmail="bob.jones@oracle.com" />);
     const statsCard = getYourStatsCard();
+    expect(within(statsCard).getByText('3')).toBeInTheDocument();
+    expect(within(statsCard).getByText('24.5')).toBeInTheDocument();
+  });
+});
+
+describe('Final demo - developer KPI filter', () => {
+  test('filters sprint indicators to a selected developer', () => {
+    render(<KpiDashboardView {...BASE_PROPS} developerFilter="bob.jones@oracle.com" />);
+
+    const totalsCard = getSprintTotalsCard();
+    expect(within(totalsCard).getByText('Total Tasks')).toBeInTheDocument();
+    expect(within(totalsCard).getByText('3')).toBeInTheDocument();
+    expect(within(totalsCard).getByText('Total Real Hours')).toBeInTheDocument();
+    expect(within(totalsCard).getByText('24.5')).toBeInTheDocument();
+
+    const statsCard = getYourStatsCard();
+    expect(within(statsCard).getByText('Selected Developer')).toBeInTheDocument();
     expect(within(statsCard).getByText('3')).toBeInTheDocument();
     expect(within(statsCard).getByText('24.5')).toBeInTheDocument();
   });

@@ -20,6 +20,7 @@ import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsume
 import org.telegram.telegrambots.longpolling.starter.AfterBotRegistration;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -92,6 +93,25 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
         @Override
         public void consume(Update update) {
 
+                if (update.hasCallbackQuery()) {
+                        CallbackQuery callbackQuery = update.getCallbackQuery();
+                        if (callbackQuery == null || callbackQuery.getData() == null) return;
+
+                        Long callbackChatId = null;
+                        if (callbackQuery.getMessage() != null) {
+                                callbackChatId = callbackQuery.getMessage().getChatId();
+                        } else if (callbackQuery.getFrom() != null) {
+                                callbackChatId = callbackQuery.getFrom().getId();
+                        }
+                        if (callbackChatId == null) return;
+
+                        BotActions actions = createActions();
+                        actions.setRequestText(callbackQuery.getData());
+                        actions.setChatId(callbackChatId);
+                        actions.fnCallback();
+                        return;
+                }
+
                 if (!update.hasMessage() || !update.getMessage().hasText()) return;
 
 
@@ -99,23 +119,7 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
                 String messageTextFromTelegram = update.getMessage().getText();
                 long chatId = update.getMessage().getChatId();
 
-                BotActions actions = new BotActions(
-                    telegramClient,
-                    toDoItemService,
-                    geminiService,
-                    telegramLinkService,
-                    userRepository,
-                    projectMemberRepository,
-                    projectRepository,
-                    taskWorkLogRepository,
-                    sprintRepository,
-                    parserDryRun,
-                    parserRequireConfirmation,
-                    parserDebug,
-                    botUseHttpApi,
-                    botInternalApiBaseUrl,
-                    botInternalApiKey
-                );
+                BotActions actions = createActions();
                 actions.setRequestText(messageTextFromTelegram);
                 actions.setChatId(chatId);
 
@@ -134,10 +138,29 @@ actions.fnStart();
 
 	}
 
+        private BotActions createActions() {
+                return new BotActions(
+                    telegramClient,
+                    toDoItemService,
+                    geminiService,
+                    telegramLinkService,
+                    userRepository,
+                    projectMemberRepository,
+                    projectRepository,
+                    taskWorkLogRepository,
+                    sprintRepository,
+                    parserDryRun,
+                    parserRequireConfirmation,
+                    parserDebug,
+                    botUseHttpApi,
+                    botInternalApiBaseUrl,
+                    botInternalApiKey
+                );
+        }
+
 	@AfterBotRegistration
     public void afterRegistration(BotSession botSession) {
         logger.info("Registered bot running state is: {}", botSession.isRunning());
     }
 
 }
-

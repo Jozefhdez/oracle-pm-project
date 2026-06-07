@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from 'react-oidc-context';
-import { devName, MATRICULA_NAMES } from '../../constants/devNames';
+import { MATRICULA_NAMES } from '../../constants/devNames';
 import {
   Box,
   Button,

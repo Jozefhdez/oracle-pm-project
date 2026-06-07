@@ -2,7 +2,7 @@
 
 exports[`Snapshot matches snapshot with tasks for two users 1`] = `
 Object {
-  "alice": "alice.smith (2)MediumWrite unit testsCloud PM ToolHighBuild API layerCloud PM Tool",
-  "bob": "bob.jones (2)HighFix broken pipelineCloud PM ToolLowDesign DB schemaCloud PM Tool",
+  "alice": "ALICE.SMITH (2)MediumWrite unit testsCloud PM ToolHighBuild API layerCloud PM Tool",
+  "bob": "BOB.JONES (2)HighFix broken pipelineCloud PM ToolLowDesign DB schemaCloud PM Tool",
 }
 `;
