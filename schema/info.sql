@@ -221,7 +221,7 @@ VALUES (
     0
 );
 
--- Sprint 5 — Final Presentation  (ACTIVE)
+-- Sprint 5 — Final Presentation  (ACTIVE) heehee
 INSERT INTO sprints (id, name, project_id, status, start_date, end_date, planned_task_count)
 VALUES (
     HEXTORAW('2B14F41F5DF142A1BEEB0A9B70E8F56F'),
