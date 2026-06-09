@@ -215,7 +215,7 @@ function WorkLogSection({ logs }) {
 
 /* Main view */
 
-export default function TaskDetailView({ task, history, logs, members, onReassign, onBack }) {
+export default function TaskDetailView({ task, history, logs, members = [], onReassign, onBack }) {
   const statusStyle = STATUS_STYLE[task?.status] ?? STATUS_STYLE.TODO;
   const priorityStyle = PRIORITY_STYLE[task?.priority] ?? PRIORITY_STYLE.MEDIUM;
 
@@ -352,6 +352,21 @@ export default function TaskDetailView({ task, history, logs, members, onReassig
                     onReassign({ assigneeId: selectedId || null, user });
                   }}
                   displayEmpty
+                  renderValue={(value) => {
+                    if (!value)
+                      return (
+                        <Typography sx={{ fontSize: '0.875rem', color: '#9E9E9E' }}>
+                          Unassigned
+                        </Typography>
+                      );
+                    const found = members.find((m) => (m.user ?? m).id === value);
+                    const email = found ? (found.user ?? found).email : task?.assignee?.email;
+                    return (
+                      <Typography sx={{ fontSize: '0.875rem', fontWeight: 500, color: '#1A1A1A' }}>
+                        {devName(email) ?? value}
+                      </Typography>
+                    );
+                  }}
                   sx={{
                     fontSize: '0.875rem',
                     fontWeight: 500,
