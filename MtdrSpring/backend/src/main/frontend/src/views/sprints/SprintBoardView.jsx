@@ -49,10 +49,19 @@ const PRIORITY_BADGE = {
 
 const COLUMNS = ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'];
 
+function parseDate(str) {
+  if (!str) return null;
+  if (str.includes('T')) {
+    return new Date(str.endsWith('Z') || str.includes('+') ? str : str + 'Z');
+  }
+  const [y, m, d] = str.split('-');
+  return new Date(Number(y), Number(m) - 1, Number(d));
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return '';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const d = parseDate(dateStr);
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
 function PriorityBadge({ priority }) {
@@ -194,10 +203,6 @@ function AddTaskDialog({ open, members, sprintId, projectId, onClose, onSubmit }
       setError('Title is required.');
       return;
     }
-    if (!assigneeId) {
-      setError('Please select an assignee.');
-      return;
-    }
     setSubmitting(true);
     setError('');
     try {
@@ -207,8 +212,7 @@ function AddTaskDialog({ open, members, sprintId, projectId, onClose, onSubmit }
         priority,
         projectId,
         sprintId,
-        createdById: assigneeId,
-        assigneeId,
+        assigneeId: assigneeId || null,
       });
       handleClose();
     } catch {
@@ -256,11 +260,14 @@ function AddTaskDialog({ open, members, sprintId, projectId, onClose, onSubmit }
         </TextField>
         <TextField
           select
-          label="Assignee"
+          label="Assignee (optional)"
           value={assigneeId}
           onChange={(e) => setAssignee(e.target.value)}
           fullWidth
         >
+          <MenuItem value="" sx={{ fontSize: '0.85rem', color: '#9E9E9E' }}>
+            Unassigned
+          </MenuItem>
           {members.map((m) => (
             <MenuItem
               key={m.user?.id ?? m.id}

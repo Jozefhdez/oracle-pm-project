@@ -12,3 +12,5 @@ export const patchTaskStatus = (taskId, status) =>
   client.patch(`/tasks/${taskId}/status`, { status }).then((r) => r.data);
 export const addWorkLog = (taskId, data) =>
   client.post(`/tasks/${taskId}/work-logs`, data).then((r) => r.data);
+export const patchTaskAssignee = (taskId, assigneeId) =>
+  client.patch(`/tasks/${taskId}/assignee`, { assigneeId }).then((r) => r.data);

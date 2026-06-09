@@ -94,6 +94,30 @@ public class ToDoItemController {
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}/assignee")
+    public ResponseEntity<Task> patchAssignee(@PathVariable UUID id,
+                                              @RequestBody Map<String, String> body,
+                                              @AuthenticationPrincipal Jwt jwt) {
+        String assigneeIdStr = body.get("assigneeId");
+        User newAssignee = null;
+        if (assigneeIdStr != null && !assigneeIdStr.isBlank()) {
+            ResponseEntity<User> userResp = userService.getUserById(UUID.fromString(assigneeIdStr));
+            if (!userResp.getStatusCode().is2xxSuccessful()) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            newAssignee = userResp.getBody();
+        }
+
+        String ociIamId = jwt.getSubject();
+        String email = jwt.getClaimAsString("email");
+        if (email == null) email = ociIamId.contains("@") ? ociIamId : ociIamId + "@unknown";
+        User actor = userService.findOrProvision(ociIamId, email);
+
+        Task updated = toDoItemService.patchAssignee(id, newAssignee, actor);
+        if (updated == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteTask(@PathVariable UUID id) {
         boolean flag = toDoItemService.deleteToDoItem(id);

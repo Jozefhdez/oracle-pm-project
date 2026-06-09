@@ -26,6 +26,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  LabelList,
   ResponsiveContainer,
 } from 'recharts';
 import { ORANGE_ACCENT } from '../../styles/theme';
@@ -42,7 +43,21 @@ const STAT_BORDERS = {
   hours: '#4CAF50',
   avgTasks: '#9C27B0',
   avgHours: ORANGE_ACCENT,
+  medianTasks: '#E91E63',
+  medianHours: '#795548',
 };
+
+function calcAverage(values) {
+  if (values.length === 0) return null;
+  return values.reduce((s, v) => s + v, 0) / values.length;
+}
+
+function calcMedian(values) {
+  if (values.length === 0) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
 
 const TOOLTIP_STYLE = {
   borderRadius: '8px',
@@ -282,7 +297,7 @@ function AiInsightDialog({ open, question, insight, loading, onClose, onQuestion
 function StatBarChart({ data, dataKey, fill, tooltipFormatter }) {
   return (
     <ResponsiveContainer width="100%" height={230}>
-      <BarChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 36 }}>
+      <BarChart data={data} margin={{ top: 20, right: 8, left: 0, bottom: 36 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#EBEBEB" vertical={false} />
         <XAxis
           dataKey="name"
@@ -305,7 +320,9 @@ function StatBarChart({ data, dataKey, fill, tooltipFormatter }) {
           contentStyle={TOOLTIP_STYLE}
           cursor={{ fill: 'rgba(0,0,0,0.03)' }}
         />
-        <Bar dataKey={dataKey} fill={fill} radius={[4, 4, 0, 0]} maxBarSize={44} />
+        <Bar dataKey={dataKey} fill={fill} radius={[4, 4, 0, 0]} maxBarSize={44}>
+          <LabelList dataKey={dataKey} position="top" style={{ fontSize: 11, fill: '#717171' }} />
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );
@@ -317,7 +334,7 @@ function GroupedBarChart({ data, devNames, dataKeySuffix, tooltipFormatter }) {
   const displayData = data.map((d) => ({ ...d, sprint: truncate(d.sprint, 18) }));
   return (
     <ResponsiveContainer width="100%" height={320}>
-      <BarChart data={displayData} margin={{ top: 4, right: 8, left: 0, bottom: 72 }}>
+      <BarChart data={displayData} margin={{ top: 20, right: 8, left: 0, bottom: 72 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#EBEBEB" vertical={false} />
         <XAxis
           dataKey="sprint"
@@ -349,7 +366,13 @@ function GroupedBarChart({ data, devNames, dataKeySuffix, tooltipFormatter }) {
             fill={DEV_COLORS[i % DEV_COLORS.length]}
             radius={[3, 3, 0, 0]}
             maxBarSize={28}
-          />
+          >
+            <LabelList
+              dataKey={`${dev}__${dataKeySuffix}`}
+              position="top"
+              style={{ fontSize: 9, fill: '#717171' }}
+            />
+          </Bar>
         ))}
       </BarChart>
     </ResponsiveContainer>
@@ -380,6 +403,20 @@ function AllSprintsCharts({ allSprintsStats, currentUserEmail, developerFilter }
   const myHours = focusStats.length
     ? focusStats.reduce((s, d) => s + Number(d.totalHoursWorked ?? 0), 0)
     : null;
+
+  const devAggMap = new Map();
+  allStats.forEach((d) => {
+    const prev = devAggMap.get(d.email) ?? { tasks: 0, hours: 0 };
+    devAggMap.set(d.email, {
+      tasks: prev.tasks + d.tasksCompleted,
+      hours: prev.hours + Number(d.totalHoursWorked ?? 0),
+    });
+  });
+  const devAgg = [...devAggMap.values()];
+  const allSprintsAvgTasks = calcAverage(devAgg.map((d) => d.tasks));
+  const allSprintsAvgHours = calcAverage(devAgg.map((d) => d.hours));
+  const allSprintsMedianTasks = calcMedian(devAgg.map((d) => d.tasks));
+  const allSprintsMedianHours = calcMedian(devAgg.map((d) => d.hours));
 
   const tasksData = filteredAllSprintsStats.map(({ sprint, developerStats }) => {
     const point = { sprint: sprint.name };
@@ -458,6 +495,47 @@ function AllSprintsCharts({ allSprintsStats, currentUserEmail, developerFilter }
         </ChartCard>
       </Grid>
 
+      {devAgg.length > 1 && (
+        <Grid item xs={12}>
+          <ChartCard title="Team Averages">
+            <Grid container spacing="12px">
+              <Grid item xs={6} md={3}>
+                <StatCard
+                  label="Avg Tasks Done / Dev"
+                  value={allSprintsAvgTasks?.toFixed(1) ?? '—'}
+                  description="Mean completed tasks per developer"
+                  borderColor={STAT_BORDERS.avgTasks}
+                />
+              </Grid>
+              <Grid item xs={6} md={3}>
+                <StatCard
+                  label="Avg Hours / Dev"
+                  value={allSprintsAvgHours?.toFixed(1) ?? '—'}
+                  description="Mean hours worked per developer"
+                  borderColor={STAT_BORDERS.avgHours}
+                />
+              </Grid>
+              <Grid item xs={6} md={3}>
+                <StatCard
+                  label="Median Tasks Done / Dev"
+                  value={allSprintsMedianTasks?.toFixed(1) ?? '—'}
+                  description="Median completed tasks per developer"
+                  borderColor={STAT_BORDERS.medianTasks}
+                />
+              </Grid>
+              <Grid item xs={6} md={3}>
+                <StatCard
+                  label="Median Hours / Dev"
+                  value={allSprintsMedianHours?.toFixed(1) ?? '—'}
+                  description="Median hours worked per developer"
+                  borderColor={STAT_BORDERS.medianHours}
+                />
+              </Grid>
+            </Grid>
+          </ChartCard>
+        </Grid>
+      )}
+
       <Grid item xs={12} md={6}>
         <ChartCard title="Tasks Completed by Developer per Sprint">
           <GroupedBarChart
@@ -534,6 +612,13 @@ export default function KpiDashboardView({
   const myHours = myStat ? Number(myStat.totalHoursWorked ?? 0).toFixed(1) : '—';
   const personalStatsTitle =
     developerFilter && developerFilter !== ALL_DEVELOPERS ? 'Selected Developer' : 'Your Stats';
+
+  const devTaskValues = developerStats.map((d) => d.tasksCompleted);
+  const devHourValues = developerStats.map((d) => Number(d.totalHoursWorked ?? 0));
+  const avgTasksPerDev = calcAverage(devTaskValues);
+  const avgHoursPerDev = calcAverage(devHourValues);
+  const medianTasksPerDev = calcMedian(devTaskValues);
+  const medianHoursPerDev = calcMedian(devHourValues);
 
   const chartData = visibleDeveloperStats.map((d) => ({
     name: devName(d.email),
@@ -740,6 +825,50 @@ export default function KpiDashboardView({
               </ChartCard>
             </Grid>
           </Grid>
+
+          {/* Team Averages */}
+          {developerStats.length > 1 && (
+            <Grid container spacing="28px" sx={{ mb: '28px' }}>
+              <Grid item xs={12}>
+                <ChartCard title="Team Averages">
+                  <Grid container spacing="12px">
+                    <Grid item xs={6} md={3}>
+                      <StatCard
+                        label="Avg Tasks Done / Dev"
+                        value={avgTasksPerDev?.toFixed(1) ?? '—'}
+                        description="Mean completed tasks per developer"
+                        borderColor={STAT_BORDERS.avgTasks}
+                      />
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                      <StatCard
+                        label="Avg Hours / Dev"
+                        value={avgHoursPerDev?.toFixed(1) ?? '—'}
+                        description="Mean hours worked per developer"
+                        borderColor={STAT_BORDERS.avgHours}
+                      />
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                      <StatCard
+                        label="Median Tasks Done / Dev"
+                        value={medianTasksPerDev?.toFixed(1) ?? '—'}
+                        description="Median completed tasks per developer"
+                        borderColor={STAT_BORDERS.medianTasks}
+                      />
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                      <StatCard
+                        label="Median Hours / Dev"
+                        value={medianHoursPerDev?.toFixed(1) ?? '—'}
+                        description="Median hours worked per developer"
+                        borderColor={STAT_BORDERS.medianHours}
+                      />
+                    </Grid>
+                  </Grid>
+                </ChartCard>
+              </Grid>
+            </Grid>
+          )}
 
           {/* Developer Performance */}
           {developerStats.length > 0 && (

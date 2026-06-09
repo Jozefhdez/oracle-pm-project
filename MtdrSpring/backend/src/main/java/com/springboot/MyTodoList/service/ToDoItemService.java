@@ -149,6 +149,20 @@ public class ToDoItemService {
         }
     }
 
+    @Transactional
+    public Task patchAssignee(UUID id, User newAssignee, User actor) {
+        Task task = toDoItemRepository.findById(id).orElse(null);
+        if (task == null) return null;
+
+        if (actor != null) {
+            String hexId = actor.getId().toString().replace("-", "");
+            jdbcTemplate.update("BEGIN app_ctx.set_actor(HEXTORAW(?), ?); END;", hexId, ChangeSource.WEB.name());
+        }
+
+        task.setAssignee(newAssignee);
+        return toDoItemRepository.save(task);
+    }
+
     /**
      * Bot-specific helper that updates status and optionally assigns the task to a sprint
      * inside a single transaction.

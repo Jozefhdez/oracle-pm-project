@@ -26,10 +26,19 @@ const STATUS_STYLE = {
   UPCOMING: { bgcolor: '#E2E8F0', color: '#4A5568' },
 };
 
+function parseDate(str) {
+  if (!str) return null;
+  if (str.includes('T')) {
+    return new Date(str.endsWith('Z') || str.includes('+') ? str : str + 'Z');
+  }
+  const [y, m, d] = str.split('-');
+  return new Date(Number(y), Number(m) - 1, Number(d));
+}
+
 function formatDate(dateStr) {
   if (!dateStr) return '';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const d = parseDate(dateStr);
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
 function DeleteDialog({ open, sprint, onClose, onConfirm }) {

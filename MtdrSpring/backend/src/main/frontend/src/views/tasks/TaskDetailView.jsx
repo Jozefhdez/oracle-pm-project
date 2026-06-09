@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, Grid, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Grid, MenuItem, Select, Typography } from '@mui/material';
 import { devName } from '../../constants/devNames';
 import WestIcon from '@mui/icons-material/West';
 
@@ -22,19 +22,30 @@ function formatPriority(p) {
   return p.charAt(0) + p.slice(1).toLowerCase();
 }
 
+function parseDate(str) {
+  if (!str) return null;
+  if (str.includes('T')) {
+    // Timestamp from server has no timezone suffix — treat as UTC
+    return new Date(str.endsWith('Z') || str.includes('+') ? str : str + 'Z');
+  }
+  // Date-only string (YYYY-MM-DD) — parse as local midnight to avoid day shift
+  const [y, m, d] = str.split('-');
+  return new Date(Number(y), Number(m) - 1, Number(d));
+}
+
 function formatDate(str) {
   if (!str) return '—';
-  const d = new Date(str);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const d = parseDate(str);
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function formatDateTime(str) {
   if (!str) return '—';
-  const d = new Date(str);
+  const d = parseDate(str);
   return (
-    d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) +
+    d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) +
     ' at ' +
-    d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
   );
 }
 
@@ -204,7 +215,7 @@ function WorkLogSection({ logs }) {
 
 /* Main view */
 
-export default function TaskDetailView({ task, history, logs, onBack }) {
+export default function TaskDetailView({ task, history, logs, members, onReassign, onBack }) {
   const statusStyle = STATUS_STYLE[task?.status] ?? STATUS_STYLE.TODO;
   const priorityStyle = PRIORITY_STYLE[task?.priority] ?? PRIORITY_STYLE.MEDIUM;
 
@@ -331,9 +342,40 @@ export default function TaskDetailView({ task, history, logs, onBack }) {
               </MetaRow>
 
               <MetaRow label="Assignee">
-                <Typography sx={{ fontSize: '0.875rem', color: '#1A1A1A', fontWeight: 500 }}>
-                  {task?.assignee?.email ? devName(task.assignee.email) : 'Unassigned'}
-                </Typography>
+                <Select
+                  size="small"
+                  value={task?.assignee?.id ?? ''}
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    const member = members.find((m) => (m.user ?? m).id === selectedId);
+                    const user = member ? (member.user ?? member) : null;
+                    onReassign({ assigneeId: selectedId || null, user });
+                  }}
+                  displayEmpty
+                  sx={{
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    color: '#1A1A1A',
+                    bgcolor: '#fff',
+                    borderRadius: '6px',
+                    minWidth: 140,
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#e0dedc' },
+                  }}
+                >
+                  <MenuItem value="">
+                    <Typography sx={{ fontSize: '0.875rem', color: '#9E9E9E' }}>
+                      Unassigned
+                    </Typography>
+                  </MenuItem>
+                  {members.map((m) => {
+                    const user = m.user ?? m;
+                    return (
+                      <MenuItem key={user.id} value={user.id}>
+                        {devName(user.email)}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
               </MetaRow>
 
               <MetaRow label="Created">

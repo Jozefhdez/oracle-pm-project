@@ -7,6 +7,7 @@ import {
   createTask,
   patchTaskStatus,
   addWorkLog,
+  patchTaskAssignee,
 } from '../api/tasksApi';
 
 export const useSprintTasks = (sprintId) =>
@@ -60,6 +61,30 @@ export const useCreateTask = (sprintId) => {
     mutationFn: (payload) => createTask(sprintId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks', 'sprint', sprintId] });
+      queryClient.invalidateQueries({ queryKey: ['developerStats'] });
+    },
+  });
+};
+
+export const useReassignTask = (taskId) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ assigneeId }) => patchTaskAssignee(taskId, assigneeId),
+    onMutate: async ({ assigneeId, user }) => {
+      await queryClient.cancelQueries({ queryKey: ['task', taskId] });
+      const previous = queryClient.getQueryData(['task', taskId]);
+      queryClient.setQueryData(['task', taskId], (old) => ({
+        ...old,
+        assignee: assigneeId ? user : null,
+      }));
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(['task', taskId], ctx.previous);
+    },
+    onSuccess: (updated) => {
+      queryClient.setQueryData(['task', taskId], updated);
+      queryClient.invalidateQueries({ queryKey: ['developerStats'] });
     },
   });
 };
