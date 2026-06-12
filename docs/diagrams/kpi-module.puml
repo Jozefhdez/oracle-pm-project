@@ -1,0 +1,58 @@
+@startuml
+
+class AgingWipItemDto {
+}
+
+
+class BlockedTaskItemDto {
+}
+
+
+class BotAdoptionDto {
+}
+
+
+class CycleTimeTrendPointDto {
+}
+
+
+class KpiAiInsightController {
+}
+
+
+class ProjectKpiController {
+}
+
+
+class SprintKpiResponse {
+}
+
+
+class SprintKpiSnapshot {
+}
+
+
+class SprintKpiSnapshotController {
+}
+
+
+interface SprintKpiSnapshotRepository {
+}
+
+
+class SprintKpiSnapshotService {
+}
+
+
+class TimeToActionDto {
+}
+
+
+
+
+ProjectKpiController -->  SprintKpiSnapshotService : sprintKpiSnapshotService
+SprintKpiSnapshotController -->  SprintKpiSnapshotService : sprintKpiSnapshotService
+SprintKpiSnapshotService -->  SprintKpiSnapshotRepository : snapshotRepository
+
+
+@enduml

@@ -1,0 +1,129 @@
+@startuml
+
+class Invitation {
+}
+
+
+interface InvitationRepository {
+}
+
+
+class InvitationService {
+}
+
+
+class Project {
+}
+
+
+class ProjectController {
+}
+
+
+class ProjectKpiController {
+}
+
+
+class ProjectMember {
+}
+
+
+class ProjectMemberController {
+}
+
+
+interface ProjectMemberRepository {
+}
+
+
+class ProjectMemberService {
+}
+
+
+interface ProjectRepository {
+}
+
+
+enum ProjectRole {
+	{field} +DEVELOPER
+	{field} +PROJECT_MANAGER
+	{field} +VIEWER
+}
+
+
+class ProjectService {
+}
+
+
+class Sprint {
+}
+
+
+class SprintController {
+}
+
+
+class SprintKpiResponse {
+}
+
+
+class SprintKpiSnapshot {
+}
+
+
+class SprintKpiSnapshotController {
+}
+
+
+interface SprintKpiSnapshotRepository {
+}
+
+
+class SprintKpiSnapshotService {
+}
+
+
+interface SprintRepository {
+}
+
+
+class SprintService {
+}
+
+
+enum SprintStatus {
+	{field} +ACTIVE
+	{field} +COMPLETED
+	{field} +UPCOMING
+}
+
+
+
+
+Invitation -->  Project :  @ManyToOne\nproject
+InvitationService -->  InvitationRepository : invitationRepository
+InvitationService -->  ProjectMemberRepository : projectMemberRepository
+InvitationService -->  ProjectRepository : projectRepository
+Project "1" o-- "0..*"  ProjectMember : members
+ProjectController -->  ProjectService : projectService
+ProjectKpiController -->  SprintKpiSnapshotService : sprintKpiSnapshotService
+ProjectMember -->  Project :  @ManyToOne\nproject
+ProjectMember -->  ProjectRole :  @Column("ROLE")\nrole
+ProjectMemberController -->  InvitationService : invitationService
+ProjectMemberController -->  ProjectMemberService : projectMemberService
+ProjectMemberService -->  ProjectMemberRepository : projectMemberRepository
+ProjectService -->  ProjectMemberRepository : projectMemberRepository
+ProjectService -->  ProjectRepository : projectRepository
+Sprint -->  Project :  @ManyToOne\nproject
+Sprint -->  SprintStatus :  @Column("STATUS")\nstatus
+SprintController -->  ProjectService : projectService
+SprintController -->  SprintService : sprintService
+SprintKpiSnapshot -->  Sprint :  @OneToOne\nsprint
+SprintKpiSnapshotController -->  SprintKpiSnapshotService : sprintKpiSnapshotService
+SprintKpiSnapshotController -->  SprintService : sprintService
+SprintKpiSnapshotService -->  SprintKpiSnapshotRepository : snapshotRepository
+SprintKpiSnapshotService -->  SprintRepository : sprintRepository
+SprintService -->  SprintRepository : sprintRepository
+
+
+@enduml

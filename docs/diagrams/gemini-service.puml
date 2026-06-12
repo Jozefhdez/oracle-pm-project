@@ -1,0 +1,57 @@
+@startuml
+
+class GeminiService {
+}
+
+
+enum IntentAction {
+	{field} +CREATE_TASK
+	{field} +DELETE_TASK
+	{field} +HELP
+	{field} +LOG_HOURS
+	{field} +MY_ASSIGNED_TASKS
+	{field} +STATUS_SUMMARY
+	{field} +UNKNOWN
+	{field} +UPDATE_STATUS
+}
+
+
+class IntentDiagnostics {
+}
+
+
+class KpiAiInsightController {
+}
+
+
+enum ParseStage {
+	{field} +API_CONFIGURATION
+	{field} +API_REQUEST_FAILED
+	{field} +MODEL_EMPTY_RESPONSE
+	{field} +MODEL_NON_JSON_RESPONSE
+	{field} +PARSER_EXCEPTION
+	{field} +SUCCESS
+}
+
+
+class ParsedIntent {
+}
+
+
+class SemanticCandidate {
+}
+
+
+class SemanticSelection {
+}
+
+
+
+
+IntentDiagnostics *--  ParseStage : stage
+IntentDiagnostics *--  ParsedIntent : intent
+KpiAiInsightController *--  GeminiService : geminiService
+ParsedIntent *--  IntentAction : action
+
+
+@enduml

@@ -1,0 +1,24 @@
+@startuml
+
+class CorsConfig {
+}
+
+
+class DbSettings {
+}
+
+
+class OracleConfiguration {
+}
+
+
+class WebSecurityConfiguration {
+}
+
+
+
+
+OracleConfiguration -->  DbSettings : dbSettings
+
+
+@enduml

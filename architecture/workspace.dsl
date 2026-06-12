@@ -31,13 +31,27 @@ workspace "Oracle PM Tool" "Cloud-native project management tool for agile teams
 
             springBoot = container "Spring Boot Application" "Monolithic backend + frontend. Serves the React SPA as static files, exposes the REST API, handles Telegram long-polling, and calls Gemini. Runs as 2 replicas on OKE." "Java 17 / Spring Boot 3" {
 
-                securityModule      = component "Security Module"        "Validates JWTs issued by OCI IAM and enforces role-based access. Configured via Spring Security OAuth2 Resource Server."  "Spring Security"
-                taskModule          = component "Task Module"            "Task CRUD, Kanban status transitions, work log management. Drives task_state_history and task_assignment_history writes via DB triggers." "Spring MVC + JPA"
-                projectSprintModule = component "Project/Sprint Module"  "Project and sprint lifecycle: create, activate, close. Maintains planned_task_count baseline for scope-creep KPI."              "Spring MVC + JPA"
-                kpiModule           = component "KPI Module"             "Computes and returns KPI snapshots (cycle time, scope creep, blocker resolution). Writes sprint_kpi_snapshot on sprint close."  "Spring MVC + JPA"
-                telegramBot         = component "Telegram Bot Handler"   "Receives messages via long-polling. Dispatches intents to Gemini Service for NLP parsing, then calls Task or Project modules." "TelegramBots SDK"
-                geminiService       = component "Gemini Service"         "HTTP client for the Gemini generateContent endpoint. Builds prompts, calls the API, and parses JSON responses."                  "Spring RestTemplate"
-                userModule          = component "User Module"            "User profile management and Telegram account linking via one-time codes."                                                        "Spring MVC + JPA"
+                securityModule      = component "Security Module"        "Validates JWTs issued by OCI IAM and enforces role-based access. Configured via Spring Security OAuth2 Resource Server."  "Spring Security" {
+                    url "https://github.com/Jozefhdez/oracle-pm-project/blob/main/docs/diagrams/security-module.puml"
+                }
+                taskModule          = component "Task Module"            "Task CRUD, Kanban status transitions, work log management. Drives task_state_history and task_assignment_history writes via DB triggers." "Spring MVC + JPA" {
+                    url "https://github.com/Jozefhdez/oracle-pm-project/blob/main/docs/diagrams/task-module.puml"
+                }
+                projectSprintModule = component "Project/Sprint Module"  "Project and sprint lifecycle: create, activate, close. Maintains planned_task_count baseline for scope-creep KPI."              "Spring MVC + JPA" {
+                    url "https://github.com/Jozefhdez/oracle-pm-project/blob/main/docs/diagrams/project-sprint-module.puml"
+                }
+                kpiModule           = component "KPI Module"             "Computes and returns KPI snapshots (cycle time, scope creep, blocker resolution). Writes sprint_kpi_snapshot on sprint close."  "Spring MVC + JPA" {
+                    url "https://github.com/Jozefhdez/oracle-pm-project/blob/main/docs/diagrams/kpi-module.puml"
+                }
+                telegramBot         = component "Telegram Bot Handler"   "Receives messages via long-polling. Dispatches intents to Gemini Service for NLP parsing, then calls Task or Project modules." "TelegramBots SDK" {
+                    url "https://github.com/Jozefhdez/oracle-pm-project/blob/main/docs/diagrams/telegram-bot-handler.puml"
+                }
+                geminiService       = component "Gemini Service"         "HTTP client for the Gemini generateContent endpoint. Builds prompts, calls the API, and parses JSON responses."                  "Spring RestTemplate" {
+                    url "https://github.com/Jozefhdez/oracle-pm-project/blob/main/docs/diagrams/gemini-service.puml"
+                }
+                userModule          = component "User Module"            "User profile management and Telegram account linking via one-time codes."                                                        "Spring MVC + JPA" {
+                    url "https://github.com/Jozefhdez/oracle-pm-project/blob/main/docs/diagrams/user-module.puml"
+                }
             }
 
             database = container "Oracle 26ai ATP" "Managed cloud database. Stores all relational data and VECTOR embeddings for semantic task search. Schema: TODOUSER." "Oracle 26ai Autonomous Transaction Processing" {

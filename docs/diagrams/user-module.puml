@@ -1,0 +1,49 @@
+@startuml
+
+class Invitation {
+}
+
+
+interface InvitationRepository {
+}
+
+
+class InvitationService {
+}
+
+
+class TelegramLinkCode {
+}
+
+
+interface TelegramLinkCodeRepository {
+}
+
+
+class User {
+}
+
+
+class UserController {
+}
+
+
+interface UserRepository {
+}
+
+
+class UserService {
+}
+
+
+
+
+InvitationService -->  InvitationRepository : invitationRepository
+InvitationService -->  UserRepository : userRepository
+TelegramLinkCode -->  User :  @ManyToOne\nuser
+UserController -->  UserService : userService
+UserService -->  InvitationService : invitationService
+UserService -->  UserRepository : userRepository
+
+
+@enduml

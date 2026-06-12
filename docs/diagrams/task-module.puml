@@ -1,0 +1,89 @@
+@startuml
+
+enum ChangeSource {
+	{field} +SYSTEM
+	{field} +TELEGRAM
+	{field} +WEB
+}
+
+
+class TaskAssignmentHistory {
+}
+
+
+interface TaskAssignmentHistoryRepository {
+}
+
+
+class TaskAssignmentHistoryService {
+}
+
+
+class TaskStateHistory {
+}
+
+
+class TaskStateHistoryController {
+}
+
+
+interface TaskStateHistoryRepository {
+}
+
+
+class TaskStateHistoryService {
+}
+
+
+class TaskWorkLog {
+}
+
+
+class TaskWorkLogController {
+}
+
+
+interface TaskWorkLogRepository {
+}
+
+
+class TaskWorkLogService {
+}
+
+
+class ToDoItem {
+}
+
+
+class ToDoItemBotController {
+}
+
+
+class ToDoItemController {
+}
+
+
+interface ToDoItemRepository {
+}
+
+
+class ToDoItemService {
+}
+
+
+
+
+TaskAssignmentHistoryService -->  TaskAssignmentHistoryRepository : taskAssignmentHistoryRepository
+TaskStateHistory -->  ChangeSource :  @Column("SOURCE")\nsource
+TaskStateHistoryController -->  TaskStateHistoryService : taskStateHistoryService
+TaskStateHistoryService -->  TaskStateHistoryRepository : taskStateHistoryRepository
+TaskWorkLogController -->  TaskWorkLogService : taskWorkLogService
+TaskWorkLogController -->  ToDoItemService : toDoItemService
+TaskWorkLogService -->  TaskWorkLogRepository : taskWorkLogRepository
+ToDoItemBotController -->  TaskWorkLogRepository : taskWorkLogRepository
+ToDoItemBotController -->  ToDoItemService : toDoItemService
+ToDoItemController -->  ToDoItemService : toDoItemService
+ToDoItemService -->  ToDoItemRepository : toDoItemRepository
+
+
+@enduml

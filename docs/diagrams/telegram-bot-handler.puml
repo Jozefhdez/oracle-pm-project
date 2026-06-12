@@ -1,0 +1,95 @@
+@startuml
+
+class BotActions {
+}
+
+
+class BotClient {
+}
+
+
+enum BotCommands {
+	{field} +ADD_ITEM
+	{field} +HIDE_COMMAND
+	{field} +LLM_REQ
+	{field} +START_COMMAND
+	{field} +TODO_LIST
+}
+
+
+class BotConversation {
+}
+
+
+class BotHelper {
+}
+
+
+class BotInternalStatusController {
+}
+
+
+enum BotLabels {
+	{field} +ADD_NEW_ITEM
+	{field} +DASH
+	{field} +DELETE
+	{field} +DONE
+	{field} +HIDE_MAIN_SCREEN
+	{field} +LIST_ALL_ITEMS
+	{field} +MY_TODO_LIST
+	{field} +SHOW_MAIN_SCREEN
+	{field} +UNDO
+}
+
+
+enum BotMessages {
+	{field} +BOT_REGISTERED_STARTED
+	{field} +BYE
+	{field} +HELLO_MYTODO_BOT
+	{field} +ITEM_DELETED
+	{field} +ITEM_DONE
+	{field} +ITEM_UNDONE
+	{field} +NEW_ITEM_ADDED
+	{field} +TYPE_NEW_TODO_ITEM
+}
+
+
+class BotProps {
+}
+
+
+class TelegramController {
+}
+
+
+class TelegramLinkCode {
+}
+
+
+interface TelegramLinkCodeRepository {
+}
+
+
+interface TelegramLinkService {
+}
+
+
+class TelegramLinkServiceImpl {
+}
+
+
+class ToDoItemBotController {
+}
+
+
+
+
+BotActions -->  TelegramLinkService : telegramLinkService
+TelegramController *--  TelegramLinkService : telegramLinkService
+TelegramLinkServiceImpl *--  TelegramLinkCodeRepository : linkCodeRepository
+TelegramLinkServiceImpl ..|>  TelegramLinkService
+ToDoItemBotController *--  BotProps : botProps
+ToDoItemBotController -->  TelegramLinkService : telegramLinkService
+
+
+@enduml
